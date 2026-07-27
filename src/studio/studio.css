@@ -86,3 +86,13 @@ label input, label textarea { margin-top: 4px; }
 .studio-check-warn { background: #fffbeb; }
 .studio-check-fail { background: #fef2f2; }
 .studio-advanced pre { background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 6px; overflow: auto; font-size: 11px; max-height: 240px; }
+
+/* --- outline rail --- */
+.studio-rail { width: 200px; flex: none; background: #fff; border-right: 1px solid #ddd; padding: 10px; overflow: auto; }
+.studio-rail-title { font-size: 11px; text-transform: uppercase; color: #888; margin: 0 0 8px; }
+.studio-outline, .studio-outline ul { list-style: none; padding: 0; margin: 0; }
+.studio-outline ul { margin-left: 10px; }
+.studio-outline-block { font-weight: 700; font-size: 13px; display: block; margin-top: 8px; }
+.studio-outline button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 3px 6px; border-radius: 4px; font-size: 12px; }
+.studio-outline button:hover { background: #f1f5f9; }
+.studio-outline button.active { background: #dbeafe; color: #1d4ed8; }

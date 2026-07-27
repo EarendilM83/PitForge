@@ -12,18 +12,25 @@
 - **Phase 9** — export pipeline: CSS concat+minify+hash, referenced-assets-only copy, sitemap/robots/404/manifest, .htaccess/nginx/_redirects/README, prettified HTML, ZIP streamed + headless CLI. Verified: ZIP unzips, `python3 -m http.server` serves index/CSS/AVIF 200, no JS, no localhost, h1 literal. (commit 1bf22e1)
 
 ## In progress / remaining (Phase 10 polish)
-- Outline tree rail (blocks+fields, click-to-select) — NOT built.
-- README.md documenting all commands — NOT updated (still the pre-build one).
-- Browser-level verification of Edit tab interactions (click-select, contentEditable typing, undo) and Preview-tab fidelity — pending.
+- Browser-level verification of Edit tab interactions (click-select, contentEditable typing, undo) and Preview-tab fidelity — everything is code-complete and type-checks, but no headless browser was available this run.
 - `chokidar` watch of project folder (§3 lists it; not wired — Studio re-fetches on load only).
 - PFIcon inlines SVG at export — currently `<img>` in both modes.
 - Font preload in head — skipped (demo has no fonts).
+- Rail has Outline only; Content/Media rail panels not built (media replace lives in the image inspector).
+
+## Phase 10 done
+- Outline rail (blocks → fields, click selects + scrolls into view).
+- README.md documents all commands, the API and the demo.
+- Width switcher (360/768/1280/full) and Preview tab (static render in iframe) shipped earlier.
 
 ## Verified working
 - `npm install`, `npx tsc --noEmit` clean, `npm run dev`, all 7 API endpoints.
 - Checks endpoint: 14 pass + 1 deliberate `title-length` warn.
 - `npm run export -- --project demo --domain https://example.com` → valid ZIP.
 - `POST /api/projects/:id/export` streams ZIP; `/head` returns head/JSON-LD/robots/sitemap.
+- Edit persistence: PUT content → reload from disk shows change → restored (Phase 4
+  checkpoint verified at the storage layer; UI interaction layer pending browser test).
+- Dev server stopped after verification; nothing left running.
 
 ## Key architectural note
 Server-side rendering of blocks in dev MUST go through `src/server/ssr-entry.ts`
