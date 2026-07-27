@@ -10,7 +10,7 @@ Running log of choices made where the spec left something open.
 - **Field type:** the zod `fieldSchema` validates on load; the app consumes a hand-written,
   permissive `Field` interface so TS doesn't fight the discriminated union.
 - **PFButton:** implemented as `PFLink` with a `btn-<variant>` class — same semantics, less code.
-- **PFIcon:** renders `<img>` in both modes for now; SVG inlining at export is a TODO.
+- **PFIcon:** ~~renders `<img>` in both modes~~ — **superseded** below: SVG now inlined in both modes.
 - **Preview tab:** renders `renderToStaticMarkup` client-side into an iframe `srcDoc`
   (same static mode as export, §8.3) instead of a server round-trip.
 - **Richtext storage:** tiny HTML subset string (`<b>`, `<i>`, `<a>`), rendered with
