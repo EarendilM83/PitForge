@@ -36,7 +36,8 @@ export default function RepeatInspector({ state, dispatch, fieldKey, field }: In
       </p>
       <ul className="studio-repeat-list">
         {items.map((item, i) => {
-          const titleKey = Object.keys(field.item ?? {})[0];
+          const titleKey =
+            Object.keys(field.item ?? {}).find((k) => typeof item[k] === 'string' && item[k]) ?? Object.keys(field.item ?? {})[0];
           const title = String(item[titleKey] ?? '') || `Item ${i + 1}`;
           return (
             <li key={i}>

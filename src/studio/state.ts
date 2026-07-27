@@ -43,9 +43,10 @@ export type Action =
   | { type: 'error'; error: string | null };
 
 function setDeep(content: Content, key: string, value: ContentValue): Content {
-  // Keys like "games.slides.0.name" index into arrays.
+  // Direct top-level keys (including whole-array replacements like "games.slides")
+  // always win; only keys with numeric segments ("games.slides.0.name") index into arrays.
+  if (key in content || !/\.\d+(\.|$)/.test(key)) return { ...content, [key]: value };
   const parts = key.split('.');
-  // Find the longest prefix that is an array-bearing content key.
   const next: Content = { ...content };
   for (let i = parts.length; i > 0; i--) {
     const prefix = parts.slice(0, i).join('.');

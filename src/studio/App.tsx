@@ -13,6 +13,8 @@ import type { ContentValue, Project } from '../runtime/types';
 
 // Blocks are loaded by Vite as modules, not through the API (§7).
 const blockModules = import.meta.glob('/projects/*/blocks/*.tsx', { eager: true }) as Record<string, BlockModule>;
+// Raw block CSS for the Preview iframe (export reads the same files from disk, §9).
+const blockCssRaw = import.meta.glob('/projects/*/blocks/*.css', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
 export function blocksFor(projectId: string): Record<string, BlockModule> {
   const out: Record<string, BlockModule> = {};
@@ -21,6 +23,11 @@ export function blocksFor(projectId: string): Record<string, BlockModule> {
     if (p.startsWith(prefix)) out[p.slice(prefix.length, -4)] = mod;
   }
   return out;
+}
+
+export function blockCssFor(projectId: string, blocks: string[]): string {
+  const prefix = `/projects/${projectId}/blocks/`;
+  return blocks.map((b) => blockCssRaw[`${prefix}${b}.css`] ?? '').join('\n');
 }
 
 export default function App() {
@@ -163,6 +170,28 @@ export default function App() {
 }
 
 function PreviewTab({ state }: { state: StudioState }) {
+  // Prefetch icon SVGs so the static render can inline them exactly like the export does.
+  const [iconSvg, setIconSvg] = React.useState<Record<string, string>>({});
+  React.useEffect(() => {
+    const project = state.project!;
+    const jobs: Promise<void>[] = [];
+    const map: Record<string, string> = {};
+    for (const [key, field] of Object.entries(project.manifest.fields)) {
+      if (field.type !== 'icon') continue;
+      const v = state.content[key] as { src?: string } | undefined;
+      if (!v?.src?.endsWith('.svg')) continue;
+      jobs.push(
+        fetch(v.src)
+          .then((r) => (r.ok ? r.text() : ''))
+          .then((t) => {
+            if (t) map[key] = t;
+          })
+          .catch(() => {})
+      );
+    }
+    Promise.all(jobs).then(() => setIconSvg({ ...map }));
+  }, [state.project, state.content]);
+
   const pf = React.useMemo(
     () => ({
       mode: 'static' as const,
@@ -171,8 +200,9 @@ function PreviewTab({ state }: { state: StudioState }) {
       selected: null,
       onSelect: () => {},
       onChange: () => {},
+      iconSvg,
     }),
-    [state.content, state.project]
+    [state.content, state.project, iconSvg]
   );
   const html = React.useMemo(() => {
     return renderToStaticMarkup(
@@ -181,6 +211,6 @@ function PreviewTab({ state }: { state: StudioState }) {
       </PFProvider>
     );
   }, [pf, state.project]);
-  const srcDoc = `<!doctype html><html><head><meta charset="utf-8"><style>${state.project!.tokensCss}</style></head><body>${html}</body></html>`;
+  const srcDoc = `<!doctype html><html><head><meta charset="utf-8"><style>${state.project!.tokensCss}\n${blockCssFor(state.project!.id, state.project!.config.blocks)}</style></head><body>${html}</body></html>`;
   return <iframe className="studio-preview" title="Preview" srcDoc={srcDoc} />;
 }

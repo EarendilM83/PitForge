@@ -11,6 +11,7 @@ export interface InspectorProps {
 
 /** Get the current value for a (possibly nested) key. */
 export function getValue(state: StudioState, key: string): unknown {
+  if (key in state.content) return state.content[key];
   const parts = key.split('.');
   for (let i = parts.length; i > 0; i--) {
     const prefix = parts.slice(0, i).join('.');

@@ -34,5 +34,13 @@ Running log of choices made where the spec left something open.
   to ≤ the original width so no missing files are referenced.
 - **Checks without a domain:** the `/checks` and `/head` endpoints use
   `?domain=`, falling back to `pitforge.json.domain`, then `https://www.example.com`.
+- **PFIcon inlining:** static/export mode inlines sanitised SVG pre-loaded into
+  `PFContext.iconSvg` by the server renderer (synchronous — `renderToStaticMarkup`
+  cannot await); edit mode fetches the same file in the browser. Fallback is `<img>`.
+- **External-change watch:** chokidar watches `projects/`; the Studio polls
+  `/api/projects/:id/version` every 3 s and shows a Reload/Dismiss banner. Own
+  saves reset the baseline so they never trigger the banner.
+- **UI verification:** Playwright (devDependency) + `scripts/verify-ui.mjs`, which
+  restores the demo content via the API after mutating it during tests.
 - **Demo slug:** marked custom via `seo._custom: ["seo.slug"]` so the authored
   slug wins over derivation from the h1.
