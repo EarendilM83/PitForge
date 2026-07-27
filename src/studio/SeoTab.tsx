@@ -103,6 +103,62 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
           </div>
         ))}
         <button onClick={() => set('seo.hreflang', [...hreflang, { lang: '', href: '/' }])}>+ hreflang</button>
+        <label>
+          OG title (falls back to SEO title)
+          <input value={String(c['seo.og.title'] ?? '')} onChange={(e) => set('seo.og.title', e.target.value)} />
+        </label>
+        <label>
+          OG description (falls back to meta description)
+          <textarea rows={2} value={String(c['seo.og.description'] ?? '')} onChange={(e) => set('seo.og.description', e.target.value)} />
+        </label>
+        <label>
+          OG image URL
+          <input value={String((c['seo.og.image'] as { src?: string } | undefined)?.src ?? '')} onChange={(e) => set('seo.og.image', { ...((c['seo.og.image'] as object) ?? {}), src: e.target.value })} />
+        </label>
+        <label>
+          OG type
+          <select value={String(c['seo.og.type'] ?? 'website')} onChange={(e) => set('seo.og.type', e.target.value)}>
+            <option value="website">website</option>
+            <option value="article">article</option>
+          </select>
+        </label>
+        <label>
+          Twitter card
+          <select value={String(c['seo.twitter.card'] ?? 'summary_large_image')} onChange={(e) => set('seo.twitter.card', e.target.value)}>
+            <option value="summary_large_image">summary_large_image</option>
+            <option value="summary">summary</option>
+          </select>
+        </label>
+        <label>
+          Secondary keywords (comma separated)
+          <input
+            value={((c['seo.secondaryKeywords'] as string[] | undefined) ?? []).join(', ')}
+            onChange={(e) => set('seo.secondaryKeywords', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
+          />
+        </label>
+        <label>
+          Date published (ISO)
+          <input value={String(c['seo.datePublished'] ?? '')} onChange={(e) => set('seo.datePublished', e.target.value)} placeholder="2026-01-15" />
+        </label>
+        <p className="studio-muted">Date modified is set automatically at export.</p>
+        <p className="studio-muted">Breadcrumb</p>
+        {((c['seo.breadcrumb'] as { label: string; href: string }[] | undefined) ?? []).map((b, i, arr) => (
+          <div key={i} className="studio-repeat-row">
+            <input value={b.label} placeholder="Label" onChange={(e) => set('seo.breadcrumb', arr.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} />
+            <input value={b.href} placeholder="/" onChange={(e) => set('seo.breadcrumb', arr.map((x, j) => (j === i ? { ...x, href: e.target.value } : x)))} />
+            <button onClick={() => set('seo.breadcrumb', arr.filter((_, j) => j !== i))}>×</button>
+          </div>
+        ))}
+        <button onClick={() => set('seo.breadcrumb', [...((c['seo.breadcrumb'] as object[] | undefined) ?? []), { label: '', href: '/' }])}>+ breadcrumb</button>
+        <p className="studio-muted">Schema FAQ (feeds FAQPage JSON-LD)</p>
+        {((c['seo.schema.faq'] as { q: string; a: string }[] | undefined) ?? []).map((f, i, arr) => (
+          <div key={i} className="studio-schema-faq">
+            <input value={f.q} placeholder="Question" onChange={(e) => set('seo.schema.faq', arr.map((x, j) => (j === i ? { ...x, q: e.target.value } : x)))} />
+            <textarea rows={2} value={f.a} placeholder="Answer" onChange={(e) => set('seo.schema.faq', arr.map((x, j) => (j === i ? { ...x, a: e.target.value } : x)))} />
+            <button onClick={() => set('seo.schema.faq', arr.filter((_, j) => j !== i))}>×</button>
+          </div>
+        ))}
+        <button onClick={() => set('seo.schema.faq', [...((c['seo.schema.faq'] as object[] | undefined) ?? []), { q: '', a: '' }])}>+ schema FAQ</button>
         <p className="studio-muted">Structured data types (Review, AggregateRating, Product, Offer are blocked)</p>
         <div className="studio-chips">
           {SCHEMA_ALLOW_LIST.map((t) => (

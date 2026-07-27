@@ -4,7 +4,7 @@ import { reducer, initialState, type StudioState } from './state';
 import ProjectPicker from './ProjectPicker';
 import Canvas from './Canvas';
 import Inspector from './Inspector';
-import Outline from './Outline';
+import Rail from './Rail';
 import SeoTab from './SeoTab';
 import ExportDialog from './ExportDialog';
 import { PFProvider } from '../runtime/context';
@@ -134,7 +134,7 @@ export default function App() {
         {state.tab === 'edit' && (
           <PFProvider value={pf}>
             <div className="studio-edit-layout">
-              <Outline state={state} dispatch={dispatch} />
+              <Rail state={state} dispatch={dispatch} />
               <Canvas state={state} dispatch={dispatch} />
               <Inspector state={state} dispatch={dispatch} />
             </div>

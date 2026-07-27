@@ -47,6 +47,23 @@ export function createApiApp(getRender: () => Promise<RenderHtml>): express.Expr
     res.json({ ts: changeTs.get(req.params.id) ?? 0 });
   });
 
+  // List files in assets/ with sizes, for the Media rail panel (§8.1).
+  app.get('/api/projects/:id/assets', (req, res) => {
+    const dir = path.join(PROJECTS_DIR, req.params.id, 'assets');
+    const out: { path: string; bytes: number }[] = [];
+    const walk = (d: string) => {
+      if (!fs.existsSync(d)) return;
+      for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+        const f = path.join(d, e.name);
+        if (e.isDirectory()) walk(f);
+        else out.push({ path: '/assets/' + path.relative(dir, f).split(path.sep).join('/'), bytes: fs.statSync(f).size });
+      }
+    };
+    walk(dir);
+    out.sort((a, b) => a.path.localeCompare(b.path));
+    res.json(out);
+  });
+
   app.get('/api/projects/:id', (req, res) => {
     try {
       res.json(loadProject(req.params.id));

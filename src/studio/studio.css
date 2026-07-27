@@ -98,3 +98,10 @@ label input, label textarea { margin-top: 4px; }
 .studio-outline button.active { background: #dbeafe; color: #1d4ed8; }
 
 .studio-notice { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: #1c1e21; color: #fff; padding: 10px 16px; border-radius: 8px; display: flex; gap: 10px; align-items: center; z-index: 100; }
+
+.studio-rail-tabs { display: flex; gap: 4px; margin-bottom: 8px; }
+.studio-rail-tabs button { flex: 1; padding: 3px 4px; font-size: 11px; }
+.studio-content-preview { display: block; color: #888; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.studio-media-list li { padding: 2px 4px; font-size: 11px; word-break: break-all; }
+.studio-media-name { font-family: ui-monospace, Menlo, monospace; }
+.studio-schema-faq { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; border-left: 2px solid #e2e8f0; padding-left: 8px; }
