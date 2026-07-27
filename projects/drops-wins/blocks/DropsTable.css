@@ -1,0 +1,19 @@
+.dw-drops { background: var(--bg); padding: var(--space-10) var(--space-6); max-width: 760px; margin: 0 auto; }
+.dw-drops-table-intro { display: block; text-align: center; color: var(--grey-400); max-width: 620px; margin: 0 auto var(--space-6); }
+.dw-drops-table {
+  border: 1px solid rgba(255, 77, 46, 0.25); border-radius: var(--radius);
+  overflow: hidden; background: var(--surface);
+}
+.dw-drops-table-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--space-3) var(--space-6);
+}
+.dw-drops-table > *:nth-child(odd) { background: var(--surface-2); }
+.dw-drops-table > *:nth-child(-n + 2) {
+  background: linear-gradient(90deg, rgba(255, 77, 46, 0.18), rgba(255, 77, 46, 0.04));
+}
+.dw-drops-table-qty {
+  font-weight: 800; color: var(--cta); font-variant-numeric: tabular-nums;
+  min-width: 72px;
+}
+.dw-drops-table-prize { font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }

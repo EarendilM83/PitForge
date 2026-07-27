@@ -44,3 +44,13 @@ Running log of choices made where the spec left something open.
   restores the demo content via the API after mutating it during tests.
 - **Demo slug:** marked custom via `seo._custom: ["seo.slug"]` so the authored
   slug wins over derivation from the h1.
+- **Multi-project asset names must be unique:** the dev `/assets/*` middleware serves the
+  first project containing the file, so shared names (`hero-1600.jpg`, `icons/18plus.svg`)
+  collide across projects. drops-wins therefore prefixes (`drops-hero-*`, `dw-18plus.svg`).
+  Exports are unaffected (each copies from its own assets dir).
+- **Block CSS class names must be block-scoped:** all block stylesheets load together in the
+  Studio and are concatenated at export, so generic classes (`.dw-table`) leak across blocks.
+  drops-wins scopes them (`.dw-daily-table`, `.dw-drops-table`).
+- **Sections carry their own background:** `body { background }` from tokens only applies at
+  export; in the Studio canvas the page wrapper is white. Blocks set `background: var(--bg)`
+  on their section so Studio and export look identical.

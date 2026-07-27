@@ -1,0 +1,17 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+page.setDefaultTimeout(15000);
+page.on('pageerror', (e) => console.log('PAGE ERROR:', e.message));
+page.on('console', (m) => { if (m.type() === 'error') console.log('CONSOLE:', m.text().slice(0, 200)); });
+await page.goto('http://localhost:4321', { waitUntil: 'networkidle' });
+await page.click('text=Drops & Wins');
+await page.waitForSelector('.studio-canvas .pf-editable');
+await page.waitForTimeout(1000);
+const sections = await page.$$eval('.studio-page > *', (els) => els.map((e) => `${e.tagName}.${e.className} [${e.innerText.slice(0,40).replace(/\n/g,'|')}]`));
+console.log(sections.join('\n'));
+const tables = await page.$$('.dw-table-row');
+console.log('table rows:', tables.length);
+const games = await page.$$('.dw-game-card');
+console.log('game cards:', games.length);
+await browser.close();
