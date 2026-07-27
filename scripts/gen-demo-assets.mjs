@@ -25,9 +25,9 @@ async function makeSet(slug, width, height, color, label) {
     if (w > width) continue;
     const h = Math.round((height * w) / width);
     const resized = sharp(master).resize(w, h);
-    await resized.clone().avif({ quality: 50 }).toFile(path.join(OUT, `${slug}-${w}.avif`));
-    await resized.clone().webp({ quality: 75 }).toFile(path.join(OUT, `${slug}-${w}.webp`));
-    await resized.clone().jpeg({ quality: 82 }).toFile(path.join(OUT, `${slug}-${w}.jpg`));
+    await resized.clone().avif({ quality: 40 }).toFile(path.join(OUT, `${slug}-${w}.avif`));
+    await resized.clone().webp({ quality: 60 }).toFile(path.join(OUT, `${slug}-${w}.webp`));
+    await resized.clone().jpeg({ quality: 60 }).toFile(path.join(OUT, `${slug}-${w}.jpg`));
   }
 }
 

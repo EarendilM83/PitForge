@@ -155,3 +155,19 @@ export function emptyValueFor(field: Field): ContentValue {
 export function getField(manifest: Manifest, key: string): Field | undefined {
   return manifest.fields[key] as Field | undefined;
 }
+
+/** Resolve a possibly-nested key like "games.slides.0.thumb" against content. */
+export function resolveValue(content: Content, key: string): ContentValue | undefined {
+  if (key in content) return content[key];
+  const parts = key.split('.');
+  for (let i = parts.length - 1; i > 0; i--) {
+    const prefix = parts.slice(0, i).join('.');
+    const v = content[prefix];
+    if (Array.isArray(v)) {
+      let cur: unknown = v[Number(parts[i])];
+      for (let j = i + 1; j < parts.length; j++) cur = (cur as Record<string, unknown>)?.[parts[j]];
+      return cur as ContentValue;
+    }
+  }
+  return undefined;
+}

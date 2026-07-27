@@ -4,10 +4,14 @@ import path from 'node:path';
 import multer from 'multer';
 import { listProjects, loadProject, saveContent, PROJECTS_DIR } from './projects';
 import { processUpload } from './media';
+import { buildHead } from '../seo/head';
+import { runChecks, referencedAssetBytes } from '../seo/checks';
+import { exportProject } from './export';
+import type { RenderHtml } from './ssr-entry';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } });
 
-export function createApiApp(): express.Express {
+export function createApiApp(getRender: () => Promise<RenderHtml>): express.Express {
   const app = express();
   app.use(express.json({ limit: '10mb' }));
 
@@ -54,6 +58,42 @@ export function createApiApp(): express.Express {
       res.json(result);
     } catch (e) {
       res.status(400).json({ error: (e as Error).message });
+    }
+  });
+
+  app.get('/api/projects/:id/checks', async (req, res) => {
+    try {
+      const project = loadProject(req.params.id);
+      const domain = String(req.query.domain || project.config.domain || 'https://www.example.com');
+      const html = await (await getRender())(project);
+      if (req.query.debug) return res.type('text/plain').send(html);
+      const { total, images } = referencedAssetBytes(project.id, html);
+      res.json(runChecks({ project, content: project.content, html, domain, assetBytes: total, imageBytes: images }));
+    } catch (e) {
+      res.status(400).json({ error: (e as Error).message });
+    }
+  });
+
+  app.get('/api/projects/:id/head', (req, res) => {
+    try {
+      const project = loadProject(req.params.id);
+      const domain = String(req.query.domain || project.config.domain || 'https://www.example.com');
+      const parts = buildHead(project, project.content, domain, { cssHref: '/assets/styles.css' });
+      res.json(parts);
+    } catch (e) {
+      res.status(400).json({ error: (e as Error).message });
+    }
+  });
+
+  app.post('/api/projects/:id/export', async (req, res) => {
+    try {
+      const result = await exportProject(req.params.id, String(req.body?.domain || ""), await getRender());
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${path.basename(result.zipPath!)}"`);
+      fs.createReadStream(result.zipPath!).pipe(res);
+    } catch (e) {
+      const err = e as Error & { checks?: unknown };
+      res.status(400).json({ error: err.message, checks: err.checks });
     }
   });
 

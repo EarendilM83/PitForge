@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "export": "tsx src/cli/export.ts",
+    "export": "node --import ./scripts/register-tsx.mjs src/cli/export.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

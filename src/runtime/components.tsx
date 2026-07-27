@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, ReactNode } from 'react';
 import { usePF } from './context';
-import { getField, type ContentValue, type ImageValue, type LinkValue, type VideoValue } from './types';
+import { getField, resolveValue, type ContentValue, type ImageValue, type LinkValue, type VideoValue } from './types';
 
 // ---------- shared edit-mode helpers ----------
 
@@ -46,7 +46,7 @@ function cls(base: string | undefined, extra: (string | false | undefined)[]) {
 
 export function PFText({ field, className }: { field: string; className?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: true });
-  const value = String(pf.content[field] ?? '');
+  const value = String(resolveValue(pf.content, field) ?? '');
   if (pf.mode === 'static') return <span className={className}>{value}</span>;
   return (
     <span {...editProps} className={cls(className, ['pf-editable', selected && 'pf-selected'])}>
@@ -57,7 +57,7 @@ export function PFText({ field, className }: { field: string; className?: string
 
 export function PFHeading({ field, level = 2, className }: { field: string; level?: 1 | 2 | 3 | 4 | 5 | 6; className?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: true });
-  const value = String(pf.content[field] ?? '');
+  const value = String(resolveValue(pf.content, field) ?? '');
   const Tag = `h${level}` as 'h1';
   if (pf.mode === 'static') return <Tag className={className}>{value}</Tag>;
   return (
@@ -70,7 +70,7 @@ export function PFHeading({ field, level = 2, className }: { field: string; leve
 /** Minimal richtext: bold, italic, links only. Stored as a tiny HTML subset. */
 export function PFRichText({ field, className }: { field: string; className?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: true });
-  const html = String(pf.content[field] ?? '');
+  const html = String(resolveValue(pf.content, field) ?? '');
   if (pf.mode === 'static') return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />;
   return (
     <div
@@ -83,34 +83,39 @@ export function PFRichText({ field, className }: { field: string; className?: st
 
 const WIDTHS = [400, 800, 1200, 1600];
 
-function srcsetFor(src: string, ext: string) {
+function srcsetFor(src: string, ext: string, origWidth?: number) {
   if (!src) return '';
-  const base = src.replace(/\.[^.]+$/, '');
-  return WIDTHS.map((w) => `${base}-${w}.${ext} ${w}w`).join(', ');
+  // Convention (§11.3): files are named <slug>-<width>.<ext>; the stored src
+  // points at the largest width, so strip that suffix before re-appending.
+  const base = src.replace(/-\d+(\.[^.]+)$/, '$1').replace(/\.[^.]+$/, '');
+  // Derivatives never exceed the original width (§11.3) — don't reference files
+  // that were never generated.
+  const widths = origWidth ? WIDTHS.filter((w) => w <= origWidth) : WIDTHS;
+  return widths.map((w) => `${base}-${w}.${ext} ${w}w`).join(', ');
 }
 
 export function PFImage({ field, className, sizes = '100vw' }: { field: string; className?: string; sizes?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: false });
-  const value = (pf.content[field] ?? { src: '', alt: '' }) as ImageValue;
+  const value = (resolveValue(pf.content, field) ?? { src: '', alt: '' }) as ImageValue;
   const mf = getField(pf.manifest, field);
   const priority = mf?.type === 'image' && mf.priority === true;
   const img = (
     <img
       src={value.src}
-      srcSet={srcsetFor(value.src, value.src.split('.').pop() || 'jpg')}
+      srcSet={srcsetFor(value.src, value.src.split(".").pop() || "jpg", value.width)}
       sizes={sizes}
       alt={value.alt}
       width={value.width}
       height={value.height}
       loading={priority ? undefined : 'lazy'}
-      fetchPriority={priority ? 'high' : undefined}
+      {...(priority ? ({ fetchpriority: 'high' } as Record<string, string>) : {})}
       className={className}
     />
   );
   const picture = value.src ? (
     <picture>
-      <source type="image/avif" srcSet={srcsetFor(value.src, 'avif')} sizes={sizes} />
-      <source type="image/webp" srcSet={srcsetFor(value.src, 'webp')} sizes={sizes} />
+      <source type="image/avif" srcSet={srcsetFor(value.src, 'avif', value.width)} sizes={sizes} />
+      <source type="image/webp" srcSet={srcsetFor(value.src, 'webp', value.width)} sizes={sizes} />
       {img}
     </picture>
   ) : (
@@ -127,7 +132,7 @@ export function PFImage({ field, className, sizes = '100vw' }: { field: string; 
 /** Inline SVG icon, currentColor. Content value: image shape with src pointing at assets/icons/*.svg */
 export function PFIcon({ field, className }: { field: string; className?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: false });
-  const value = (pf.content[field] ?? { src: '', alt: '' }) as ImageValue;
+  const value = (resolveValue(pf.content, field) ?? { src: '', alt: '' }) as ImageValue;
   // SVG content is inlined at export; in the studio we render <img> for simplicity,
   // but static mode uses an inline <svg> via dangerouslySetInnerHTML is unsafe without the file.
   // Convention: icon srcs are served and embedded as <img> in studio; export pipeline inlines.
@@ -154,7 +159,7 @@ function linkProps(pf: ReturnType<typeof usePF>, field: string, value: LinkValue
 
 export function PFLink({ field, className }: { field: string; className?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: false });
-  const value = (pf.content[field] ?? { label: '', href: '' }) as LinkValue;
+  const value = (resolveValue(pf.content, field) ?? { label: '', href: '' }) as LinkValue;
   const props = linkProps(pf, field, value);
   if (pf.mode === 'static')
     return (
@@ -184,7 +189,7 @@ export function PFButton({ field, className, variant = 'primary' }: { field: str
 
 export function PFVideo({ field, className }: { field: string; className?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: false });
-  const value = (pf.content[field] ?? { url: '' }) as VideoValue;
+  const value = (resolveValue(pf.content, field) ?? { url: '' }) as VideoValue;
   const el = <video src={value.url} poster={value.poster} controls className={className} />;
   if (pf.mode === 'static') return el;
   return (
@@ -204,7 +209,7 @@ export function PFRepeat({
   children: (itemPrefix: string, index: number) => ReactNode;
 }) {
   const pf = usePF();
-  const items = (pf.content[field] ?? []) as Record<string, unknown>[];
+  const items = (resolveValue(pf.content, field) ?? []) as Record<string, unknown>[];
   const mf = getField(pf.manifest, field);
   const min = mf?.type === 'repeat' ? mf.min ?? 0 : 0;
   const max = mf?.type === 'repeat' ? mf.max ?? Infinity : Infinity;

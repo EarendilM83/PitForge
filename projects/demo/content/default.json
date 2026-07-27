@@ -54,5 +54,6 @@
     { "q": "Ist LuckyBet lizenziert?", "a": "Ja, LuckyBet besitzt eine gültige EU-Glücksspiellizenz." },
     { "q": "Gibt es eine App?", "a": "Die Webseite ist vollständig für mobile Geräte optimiert; eine separate App ist nicht nötig." }
   ],
-  "seo.breadcrumb": [{ "label": "Start", "href": "/" }]
+  "seo.breadcrumb": [{ "label": "Start", "href": "/" }],
+  "seo._custom": ["seo.slug"]
 }
