@@ -26,7 +26,9 @@ export function blocksFor(projectId: string): Record<string, BlockModule> {
 export default function App() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [exportOpen, setExportOpen] = React.useState(false);
+  const [externalChange, setExternalChange] = React.useState(false);
   const saveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const changeBaseline = React.useRef(0);
 
   // Autosave, debounced 800ms (§7).
   React.useEffect(() => {
@@ -40,6 +42,7 @@ export default function App() {
           body: JSON.stringify(state.content),
         });
         if (!r.ok) throw new Error((await r.json()).error || r.statusText);
+        changeBaseline.current = Date.now(); // our own save is not an external change
         dispatch({ type: 'save-status', status: 'saved' });
       } catch (e) {
         console.error(e);
@@ -50,6 +53,25 @@ export default function App() {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
   }, [state.content, state.project, state.saveStatus]);
+
+  // Poll for external edits to the project folder (chokidar on the server).
+  React.useEffect(() => {
+    if (!state.project) return;
+    const id = state.project.id;
+    const poll = async () => {
+      try {
+        const { ts } = await (await fetch(`/api/projects/${id}/version`)).json();
+        if (!changeBaseline.current) {
+          changeBaseline.current = Math.max(ts, 1);
+          return;
+        }
+        if (ts > changeBaseline.current + 500) setExternalChange(true);
+      } catch {}
+    };
+    poll();
+    const t = setInterval(poll, 3000);
+    return () => clearInterval(t);
+  }, [state.project?.id]);
 
   // Keyboard: Esc deselects, Cmd/Ctrl+Z undo, Shift+Cmd/Ctrl+Z redo (§8.2).
   React.useEffect(() => {
@@ -119,6 +141,23 @@ export default function App() {
         )}
       </div>
       {exportOpen && <ExportDialog projectId={state.project.id} onClose={() => setExportOpen(false)} />}
+      {externalChange && (
+        <div className="studio-notice">
+          The project changed on disk outside the Studio.
+          <button
+            onClick={async () => {
+              const r = await fetch(`/api/projects/${state.project!.id}`);
+              const data = await r.json();
+              changeBaseline.current = Date.now();
+              setExternalChange(false);
+              dispatch({ type: 'project-loaded', project: data });
+            }}
+          >
+            Reload
+          </button>
+          <button onClick={() => setExternalChange(false)}>Dismiss</button>
+        </div>
+      )}
     </div>
   );
 }

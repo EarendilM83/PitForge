@@ -12,6 +12,8 @@ export interface PFContextValue {
   onChange(field: string, value: ContentValue): void;
   /** true when the Studio chrome wants outlines hidden */
   outlinesVisible?: boolean;
+  /** field key → sanitised SVG source, pre-loaded server-side for static/export mode */
+  iconSvg?: Record<string, string>;
 }
 
 export const PFContext = createContext<PFContextValue>({

@@ -96,3 +96,5 @@ label input, label textarea { margin-top: 4px; }
 .studio-outline button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 3px 6px; border-radius: 4px; font-size: 12px; }
 .studio-outline button:hover { background: #f1f5f9; }
 .studio-outline button.active { background: #dbeafe; color: #1d4ed8; }
+
+.studio-notice { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: #1c1e21; color: #fff; padding: 10px 16px; border-radius: 8px; display: flex; gap: 10px; align-items: center; z-index: 100; }

@@ -129,14 +129,31 @@ export function PFImage({ field, className, sizes = '100vw' }: { field: string; 
   );
 }
 
-/** Inline SVG icon, currentColor. Content value: image shape with src pointing at assets/icons/*.svg */
+/** Inline SVG icon, currentColor. Content value: image shape with src pointing at assets/icons/*.svg.
+ *  Static/export mode inlines the SVG source pre-loaded into context by the server renderer;
+ *  edit mode fetches the same file in the browser so both modes render identically. */
 export function PFIcon({ field, className }: { field: string; className?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: false });
   const value = (resolveValue(pf.content, field) ?? { src: '', alt: '' }) as ImageValue;
-  // SVG content is inlined at export; in the studio we render <img> for simplicity,
-  // but static mode uses an inline <svg> via dangerouslySetInnerHTML is unsafe without the file.
-  // Convention: icon srcs are served and embedded as <img> in studio; export pipeline inlines.
-  const el = <img src={value.src} alt={value.alt} className={className} width={value.width} height={value.height} />;
+  const [fetched, setFetched] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    if (pf.mode !== 'edit' || !value.src) return;
+    let alive = true;
+    fetch(value.src)
+      .then((r) => (r.ok ? r.text() : null))
+      .then((t) => alive && setFetched(t))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [pf.mode, value.src]);
+
+  const svg = pf.mode === 'static' ? pf.iconSvg?.[field] : fetched;
+  const el = svg ? (
+    <span className={cls('pf-icon', [className])} role="img" aria-label={value.alt} dangerouslySetInnerHTML={{ __html: svg }} />
+  ) : (
+    <img src={value.src} alt={value.alt} className={className} width={value.width} height={value.height} />
+  );
   if (pf.mode === 'static') return el;
   return (
     <span {...editProps} className={cls(className, ['pf-editable', selected && 'pf-selected'])}>

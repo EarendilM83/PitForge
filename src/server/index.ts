@@ -8,8 +8,20 @@ import { buildHead } from '../seo/head';
 import { runChecks, referencedAssetBytes } from '../seo/checks';
 import { exportProject } from './export';
 import type { RenderHtml } from './ssr-entry';
+import chokidar from 'chokidar';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } });
+
+// Watch project folders for external changes (§3). The Studio polls /version and
+// offers a reload when the timestamp moves. Stupidly simple on purpose.
+const changeTs = new Map<string, number>();
+chokidar
+  .watch(PROJECTS_DIR, { ignoreInitial: true, ignored: [/(^|[/\\])\../, /[/\\]dist[/\\]/] })
+  .on('all', (_event, file) => {
+    const rel = path.relative(PROJECTS_DIR, file);
+    const id = rel.split(path.sep)[0];
+    if (id) changeTs.set(id, Date.now());
+  });
 
 export function createApiApp(getRender: () => Promise<RenderHtml>): express.Express {
   const app = express();
@@ -29,6 +41,10 @@ export function createApiApp(getRender: () => Promise<RenderHtml>): express.Expr
 
   app.get('/api/projects', (_req, res) => {
     res.json(listProjects());
+  });
+
+  app.get('/api/projects/:id/version', (req, res) => {
+    res.json({ ts: changeTs.get(req.params.id) ?? 0 });
   });
 
   app.get('/api/projects/:id', (req, res) => {
