@@ -1,7 +1,11 @@
 import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
+import multer from 'multer';
 import { listProjects, loadProject, saveContent, PROJECTS_DIR } from './projects';
+import { processUpload } from './media';
+
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } });
 
 export function createApiApp(): express.Express {
   const app = express();
@@ -35,6 +39,19 @@ export function createApiApp(): express.Express {
     try {
       saveContent(req.params.id, req.body);
       res.json({ ok: true });
+    } catch (e) {
+      res.status(400).json({ error: (e as Error).message });
+    }
+  });
+
+  app.post('/api/projects/:id/media', upload.single('file'), async (req, res) => {
+    try {
+      if (!req.file) return res.status(400).json({ error: 'No file uploaded (field name: file).' });
+      const result = await processUpload(req.params.id, req.file.originalname, req.file.buffer, {
+        ratio: req.body.ratio || undefined,
+        minWidth: req.body.minWidth ? Number(req.body.minWidth) : undefined,
+      });
+      res.json(result);
     } catch (e) {
       res.status(400).json({ error: (e as Error).message });
     }
