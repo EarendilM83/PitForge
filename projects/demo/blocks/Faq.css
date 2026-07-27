@@ -1,0 +1,5 @@
+.faq { padding: var(--space-8) var(--space-6); max-width: 760px; margin: 0 auto; }
+.faq-heading { font-size: var(--text-xl); text-align: center; margin: 0 0 var(--space-6); }
+.faq-item { border-bottom: 1px solid #e2e8f0; padding: var(--space-4) 0; }
+.faq-q { font-size: var(--text-lg); margin: 0 0 var(--space-2); }
+.faq-a { color: var(--grey-500); }

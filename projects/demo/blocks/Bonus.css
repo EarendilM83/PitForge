@@ -1,0 +1,10 @@
+.bonus { padding: var(--space-8) var(--space-6); background: #fff; }
+.bonus-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-4); max-width: 960px; margin: 0 auto; }
+.bonus-figure {
+  text-align: center; padding: var(--space-4); border: 1px solid #e2e8f0;
+  border-radius: var(--radius);
+}
+.bonus-value { font-size: var(--text-lg); font-weight: 700; color: var(--brand); }
+@media (max-width: 768px) {
+  .bonus-grid { grid-template-columns: repeat(2, 1fr); }
+}
