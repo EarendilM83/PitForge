@@ -1,0 +1,70 @@
+/* PitForge Studio chrome. All rules prefixed .studio-* so they never leak into the canvas (§9). */
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.5 -apple-system, 'Segoe UI', Roboto, sans-serif; color: #1c1e21; background: #f0f1f3; }
+code { font-family: ui-monospace, Menlo, monospace; font-size: 12px; background: #eee; padding: 1px 4px; border-radius: 3px; }
+button { font: inherit; cursor: pointer; border: 1px solid #c9ccd1; background: #fff; border-radius: 6px; padding: 4px 10px; }
+button:disabled { opacity: 0.45; cursor: default; }
+button.active { background: #1c1e21; color: #fff; border-color: #1c1e21; }
+input, textarea, select { font: inherit; width: 100%; padding: 6px 8px; border: 1px solid #c9ccd1; border-radius: 6px; }
+label { display: block; margin: 10px 0 4px; font-size: 13px; }
+label input, label textarea { margin-top: 4px; }
+
+.studio-shell { display: flex; flex-direction: column; height: 100vh; }
+.studio-topbar { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: #fff; border-bottom: 1px solid #ddd; }
+.studio-logo { font-weight: 700; }
+.studio-project-name { color: #555; }
+.studio-save { font-size: 12px; color: #777; }
+.studio-save-saving { color: #b7791f; }
+.studio-save-error { color: #c0392b; }
+.studio-tabs { display: flex; gap: 4px; margin-left: auto; }
+.studio-download { background: #2563eb; color: #fff; border-color: #2563eb; }
+
+.studio-body { flex: 1; overflow: hidden; }
+.studio-edit-layout { display: flex; height: 100%; }
+.studio-canvas-wrap { flex: 1; display: flex; flex-direction: column; }
+.studio-canvas-toolbar { display: flex; gap: 10px; align-items: center; padding: 6px 14px; background: #e7e9ec; border-bottom: 1px solid #ddd; }
+.studio-width-switcher { display: flex; gap: 4px; }
+.studio-canvas { flex: 1; overflow: auto; background: #e9ebee; padding: 24px; }
+.studio-page { margin: 0 auto; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.12); min-height: 60vh; }
+
+.studio-inspector { width: 320px; flex: none; background: #fff; border-left: 1px solid #ddd; padding: 14px; overflow: auto; }
+.studio-inspector-head { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.studio-muted { color: #777; font-size: 12px; }
+.studio-design-note { border-top: 1px solid #eee; padding-top: 10px; margin-top: 16px; }
+.studio-warning { color: #b45309; font-size: 12px; }
+.studio-error { color: #c0392b; white-space: pre-wrap; }
+
+.studio-meter { position: relative; height: 16px; background: #eee; border-radius: 4px; margin-top: 4px; font-size: 11px; }
+.studio-meter-bar { position: absolute; inset: 0 auto 0 0; background: #68d391; border-radius: 4px; }
+.studio-meter.over .studio-meter-bar { background: #e53e3e; }
+.studio-meter span { position: relative; float: right; padding-right: 6px; }
+
+.studio-chips { display: flex; gap: 6px; margin: 8px 0; flex-wrap: wrap; }
+.chip.active { background: #1c1e21; color: #fff; }
+.studio-badge { background: #e2e8f0; border-radius: 4px; padding: 1px 6px; font-size: 11px; }
+.studio-badge-sync { background: #c6f6d5; }
+.studio-inspector-preview { width: 100%; border-radius: 6px; margin-bottom: 8px; }
+.studio-repeat-list, .studio-repeat-fields { list-style: none; padding: 0; margin: 0; }
+.studio-repeat-row { display: flex; gap: 4px; align-items: center; margin: 4px 0; }
+.studio-repeat-title { flex: 1; text-align: left; }
+.studio-repeat-fields { margin: 4px 0 8px 12px; }
+.studio-richtext-bar { display: flex; gap: 4px; margin-bottom: 4px; }
+
+.studio-preview { width: 100%; height: 100%; border: 0; background: #fff; }
+.studio-seo { padding: 20px; overflow: auto; height: 100%; }
+
+.studio-picker { max-width: 520px; margin: 10vh auto; background: #fff; padding: 28px; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.studio-picker ul { list-style: none; padding: 0; }
+.studio-picker li button { width: 100%; text-align: left; padding: 10px 14px; margin: 4px 0; }
+
+.studio-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; }
+.studio-modal { background: #fff; border-radius: 10px; padding: 22px; width: 420px; }
+.studio-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+
+/* --- edit-mode overlays inside the canvas (§6, §8.2) --- */
+.pf-editable { outline: 1px dashed #94a3b8; outline-offset: 2px; cursor: pointer; }
+.studio-outlines-hidden .pf-editable { outline: none; }
+.pf-editable:hover { outline: 1px solid #2563eb; }
+.pf-selected { outline: 2px solid #2563eb !important; }
+.pf-repeat-remove { position: absolute; top: 4px; right: 4px; z-index: 5; background: #e53e3e; color: #fff; border: 0; border-radius: 4px; width: 22px; height: 22px; padding: 0; }
+.pf-repeat-add { display: block; margin: 8px auto; border-style: dashed; }
