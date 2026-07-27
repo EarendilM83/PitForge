@@ -68,3 +68,21 @@ label input, label textarea { margin-top: 4px; }
 .pf-selected { outline: 2px solid #2563eb !important; }
 .pf-repeat-remove { position: absolute; top: 4px; right: 4px; z-index: 5; background: #e53e3e; color: #fff; border: 0; border-radius: 4px; width: 22px; height: 22px; padding: 0; }
 .pf-repeat-add { display: block; margin: 8px auto; border-style: dashed; }
+
+/* --- SEO tab --- */
+.studio-seo-cols { display: flex; gap: 24px; height: 100%; }
+.studio-seo-left { flex: 1; max-width: 480px; }
+.studio-seo-right { flex: 1; }
+.studio-serp { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+.studio-serp-url { color: #4d5156; font-size: 12px; }
+.studio-serp-title { color: #1a0dab; font-size: 18px; }
+.studio-serp-desc { color: #4d5156; font-size: 13px; }
+.studio-social { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+.studio-social-title { font-weight: 700; }
+.studio-social-desc { color: #555; font-size: 13px; }
+.studio-social-url { color: #888; font-size: 11px; text-transform: uppercase; margin-top: 6px; }
+.studio-checks { list-style: none; padding: 0; }
+.studio-check { padding: 6px 8px; border-radius: 6px; margin: 4px 0; background: #f0fdf4; }
+.studio-check-warn { background: #fffbeb; }
+.studio-check-fail { background: #fef2f2; }
+.studio-advanced pre { background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 6px; overflow: auto; font-size: 11px; max-height: 240px; }

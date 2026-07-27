@@ -1,35 +1,32 @@
 # STATUS
 
 ## Done and committed
-- Phase 1 — skeleton: Vite 5 + React 18 + Express 4 middleware mode on :4321, `/api/projects`,
-  ProjectPicker. Verified: `curl /api/projects` → `[{"id":"demo","name":"LuckyBet DE","blockCount":5}]`.
-- Phase 2 — types/loading: zod schemas (`src/runtime/types.ts`), project loader with validation +
-  type-appropriate empties (`src/server/projects.ts`), `PFProvider`, `RenderPage`,
-  `import.meta.glob` block loading in `src/studio/App.tsx`.
-- Phase 3 — demo project: five blocks (Hero/Bonus/Games/Faq/Footer) + CSS, tokens.css,
-  manifest.json, content/default.json, sharp-generated placeholder images
-  (`scripts/gen-demo-assets.mjs`).
-- Phase 4 — edit mode (code complete): dual-mode components with `data-pf-field`, outlines,
-  selection, contentEditable in-place editing (150 ms debounce), reducer with 50-step undo,
-  800 ms autosave, Esc/Cmd+Z shortcuts.
-- Phase 5 — inspectors (code complete): text/heading/richtext, image (upload+alt), link (rel
-  chips), repeat (add/remove/reorder with min/max), video.
+- **Phase 1** — skeleton: Vite 5 + React 18 + Express 4 middleware mode on :4321, `/api/projects`, ProjectPicker. (commit 3a1b5da)
+- **Phase 2** — types/loading: zod schemas, project loader, `PFProvider`, `RenderPage`, `import.meta.glob` block loading. (commit 3a1b5da)
+- **Phase 3** — demo project: 5 blocks + CSS, tokens, manifest, content, sharp-generated images. (commit 386ccbc)
+- **Phase 4** — edit mode: dual-mode components, outlines, selection, contentEditable editing, undo (50), autosave (800 ms), Esc/Cmd+Z. Code complete; **browser verification of click/type interactions still pending**.
+- **Phase 5** — inspectors: text/heading/richtext, image, link, repeat (add/remove/reorder, min/max), video. Code complete; repeat interactions pending browser check.
+- **Phase 6** — media pipeline: multer upload, sharp derivatives (4 widths × AVIF/WebP/orig), SVG sanitise, ratio/minWidth warnings. Verified via curl. (commit 7f21cfa)
+- **Phase 7** — SEO: `src/seo/{fields,derive,head,schema}.ts`, SeoTab with keyword usage, meters, robots/hreflang/schema chips, SERP + social previews, checks list, Advanced drawer (live `/head`). Derivation sync via `seo._custom`. (commit 1bf22e1)
+- **Phase 8** — all 15 checks, run against rendered output via `vite.ssrLoadModule`. `no-hardcoded-content` verified: caught `Jetzt spielen` at `projects/demo/blocks/Hero.tsx:13`. (commit 1bf22e1)
+- **Phase 9** — export pipeline: CSS concat+minify+hash, referenced-assets-only copy, sitemap/robots/404/manifest, .htaccess/nginx/_redirects/README, prettified HTML, ZIP streamed + headless CLI. Verified: ZIP unzips, `python3 -m http.server` serves index/CSS/AVIF 200, no JS, no localhost, h1 literal. (commit 1bf22e1)
 
-## In progress
-- Phase 6 — media pipeline: server `media.ts` + `POST /api/projects/:id/media` NOT yet written.
-  ImageInspector already calls the endpoint.
+## In progress / remaining (Phase 10 polish)
+- Outline tree rail (blocks+fields, click-to-select) — NOT built.
+- README.md documenting all commands — NOT updated (still the pre-build one).
+- Browser-level verification of Edit tab interactions (click-select, contentEditable typing, undo) and Preview-tab fidelity — pending.
+- `chokidar` watch of project folder (§3 lists it; not wired — Studio re-fetches on load only).
+- PFIcon inlines SVG at export — currently `<img>` in both modes.
+- Font preload in head — skipped (demo has no fonts).
 
-## Not started
-- Phase 7 — SEO module (`src/seo/*` stubs only; SeoTab is a placeholder).
-- Phase 8 — checks.
-- Phase 9 — export pipeline (`src/server/export.ts`, `src/cli/export.ts` missing;
-  ExportDialog UI exists and posts to the endpoint).
-- Phase 10 — polish (width switcher and preview tab exist; outline tree, README pending).
+## Verified working
+- `npm install`, `npx tsc --noEmit` clean, `npm run dev`, all 7 API endpoints.
+- Checks endpoint: 14 pass + 1 deliberate `title-length` warn.
+- `npm run export -- --project demo --domain https://example.com` → valid ZIP.
+- `POST /api/projects/:id/export` streams ZIP; `/head` returns head/JSON-LD/robots/sitemap.
 
-## Works
-- `npm install`, `npx tsc --noEmit` clean, `npm run dev` serves Studio + API + `/assets/*`.
-
-## Known gaps / next
-- `/api/projects/:id/media`, `/checks`, `/export`, `/head` endpoints missing (404).
-- Static-mode rendering of preview not yet visually verified.
-- Verify Phase 4 checkpoint (edit h1 → reload → persisted) in a browser next run.
+## Key architectural note
+Server-side rendering of blocks in dev MUST go through `src/server/ssr-entry.ts`
+(loaded via `server.ssrLoadModule`) so blocks, `PFContext` and the renderer share
+one Vite SSR module graph — otherwise useContext splits across two React copies
+and the page renders empty. CLI uses tsx imports instead (single Node graph).

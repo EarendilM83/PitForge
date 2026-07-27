@@ -16,3 +16,23 @@ Running log of choices made where the spec left something open.
 - **Richtext storage:** tiny HTML subset string (`<b>`, `<i>`, `<a>`), rendered with
   `dangerouslySetInnerHTML`; inspector toolbar appends markup around the selection.
 - **Saves:** whole-content PUT, atomic temp-file + rename (§7), debounced 800 ms.
+- **SSR in dev:** block rendering for checks/export goes through `vite.ssrLoadModule`
+  (`src/server/ssr-entry.ts`) so blocks and `PFContext` share one module graph;
+  the CLI uses tsx imports (one Node graph). Two graphs = two React context
+  instances = silently empty render.
+- **`link-rel` check vs demo footer link:** §10.5 says every external link needs
+  `nofollow`/`sponsored`, but §13 requires a footer link with `rel="follow"`.
+  Resolution: an explicit `rel="follow"` token is honoured as a deliberate
+  editorial opt-out; anything else external without nofollow/sponsored fails.
+- **`byte-budget` measurement:** counts what a browser actually downloads — per
+  image slug, the largest AVIF candidate (plus non-image assets in full) — not
+  the sum of all 12 derivative files.
+- **Multipart uploads:** `multer` added (spec's fixed stack lists no multipart
+  parser; multer is the Express-standard choice).
+- **srcset convention:** stored `src` points at `<slug>-<largest>.<ext>`;
+  `srcsetFor` strips the width suffix and re-appends 400/800/1200/1600, filtered
+  to ≤ the original width so no missing files are referenced.
+- **Checks without a domain:** the `/checks` and `/head` endpoints use
+  `?domain=`, falling back to `pitforge.json.domain`, then `https://www.example.com`.
+- **Demo slug:** marked custom via `seo._custom: ["seo.slug"]` so the authored
+  slug wins over derivation from the h1.
