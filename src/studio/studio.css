@@ -366,3 +366,62 @@ label input, label textarea, label select { margin-top: var(--ads-space-1); font
   display: block; margin: 8px auto; border: 1px dashed #8a929a; background: rgba(63, 68, 73, 0.85);
   color: #e6e9ec; border-radius: 3px; font-size: 12px; padding: 4px 12px;
 }
+
+/* ---------- Admin shell (WP-admin style dark sidebar around the Sites screen) ---------- */
+.studio-shell { display: flex; min-height: 100vh; background: var(--ads-bg); }
+.studio-shell-nav {
+  width: 200px; flex: none; background: #1d2125; color: #e6e9ec;
+  display: flex; flex-direction: column; padding: 0 0 var(--ads-space-4);
+}
+.studio-shell-logo {
+  font-weight: 700; font-size: 15px; color: #fff; padding: 18px var(--ads-space-4);
+  border-bottom: 1px solid #2f3337; margin-bottom: var(--ads-space-2); letter-spacing: 0.2px;
+}
+.studio-shell-navitem {
+  background: none; border: 0; color: #a7afb6; text-align: left; font-size: 13px;
+  padding: 10px var(--ads-space-4); border-left: 3px solid transparent;
+}
+.studio-shell-navitem:hover { color: #fff; background: #2f3337; }
+.studio-shell-navitem.active { color: #fff; background: #2f3337; border-left-color: var(--ads-accent); }
+.studio-shell-main { flex: 1; min-width: 0; }
+
+/* Sites page inside the shell */
+.studio-shell-main .studio-pages { max-width: 960px; margin: 0; padding: var(--ads-space-6) var(--ads-space-6); }
+.studio-pages-head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--ads-space-4); }
+.studio-pages-head .studio-btn-primary { flex: none; margin-top: 4px; }
+
+/* How-it-works strip — the linear marketer flow, always visible on the Sites screen */
+.studio-steps-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--ads-space-3);
+  list-style: none; margin: 0 0 var(--ads-space-5); padding: 0;
+}
+.studio-steps-strip li {
+  background: var(--ads-surface); border: 1px solid var(--ads-border); border-radius: var(--ads-radius-card);
+  padding: var(--ads-space-3);
+}
+.studio-steps-strip strong { display: block; font-size: 13px; margin-bottom: 2px; }
+.studio-steps-strip span { font-size: 12px; color: var(--ads-text-subtlest); }
+
+/* Empty state */
+.studio-empty {
+  background: var(--ads-surface); border: 1px dashed var(--ads-border); border-radius: var(--ads-radius-card);
+  text-align: center; padding: calc(var(--ads-space-6) * 2) var(--ads-space-6);
+}
+.studio-empty-icon { font-size: 40px; color: var(--ads-text-subtlest); margin-bottom: var(--ads-space-3); }
+.studio-empty h2 { margin: 0 0 var(--ads-space-2); font-size: 18px; }
+.studio-empty p { max-width: 420px; margin: 0 auto var(--ads-space-4); font-size: 14px; }
+
+/* New site dialog */
+.studio-modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--ads-space-3); }
+.studio-modal-head h2 { margin: 0; }
+.studio-modal textarea[readonly] { font-family: ui-monospace, monospace; font-size: 12px; background: var(--ads-surface-sunken); }
+.studio-newsite-options { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ads-space-3); }
+.studio-newsite-card {
+  text-align: left; background: var(--ads-surface); border: 1px solid var(--ads-border);
+  border-radius: var(--ads-radius-card); padding: var(--ads-space-4); display: flex; flex-direction: column; gap: var(--ads-space-2);
+}
+.studio-newsite-card:hover { border-color: var(--ads-accent); box-shadow: 0 1px 4px rgba(9, 30, 66, 0.12); }
+.studio-newsite-card-title { font-weight: 600; font-size: 14px; }
+.studio-newsite-card-cta { color: var(--ads-accent); font-size: 12px; font-weight: 600; margin-top: auto; }
+.studio-steps-list { margin: 0 0 var(--ads-space-4); padding-left: var(--ads-space-5); font-size: 13px; }
+.studio-steps-list li { margin-bottom: var(--ads-space-1); }

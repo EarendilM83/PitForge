@@ -76,3 +76,11 @@ Running log of choices made where the spec left something open.
   `left/right: auto` to avoid offset-cascade stretching.
 - **Style tab is intentionally locked** ("controlled by the design") — PitForge's
   design-immutability rule expressed in Elementor's Content/Style/Advanced idiom.
+- **Studio shell:** the Sites screen lives in a WP-admin style dark sidebar shell; the editor
+  keeps the Elementor chrome. Two distinct contexts, two chromes, on purpose.
+- **New site flow:** "New site" dialog offers From Figma / Start blank. Figma conversion
+  cannot run in the browser (it's an agent + MCP job), so the dialog generates a copyable
+  handoff prompt for the user's AI tool instead of pretending to connect. Blank sites are
+  real: `POST /api/projects` scaffolds a Hero-only starter (`src/server/scaffold.ts`).
+- **New blocks at runtime:** a freshly scaffolded project's blocks are picked up by Vite's
+  `import.meta.glob` only after a full page reload — the dialog reloads after creation.

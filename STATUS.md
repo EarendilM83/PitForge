@@ -135,3 +135,12 @@ chokidar banner, ExportDialog) reused unchanged; Sites list stays light ADS.
 - Deleted: Sidebar.tsx, ListView.tsx, topbar/rail CSS. Canvas page rendering untouched.
 - Screenshots: shots/el-default.png, el-selected.png, el-page-tab.png, el-preview.png.
 - verify-ui.mjs updated to Elementor selectors: **21/21 pass**.
+
+## Marketer-facing shell (added 2026-07-28)
+- Sites screen now sits in a dark WP-admin shell (logo + nav), with a "New site" primary
+  action and a 4-step "how it works" strip (Create → Edit → SEO → Export).
+- Empty state for zero projects with a create CTA.
+- NewSiteDialog: From Figma (numbered handoff + copyable agent prompt) / Start blank
+  (real scaffold via `POST /api/projects`, Hero-only starter template).
+- Verified: blank project created + loaded via API (then removed), 21/21 UI checks pass,
+  screenshots: shots/sites-shell.png, sites-newsite.png, sites-figma.png.

@@ -1,0 +1,14 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const p = await b.newPage({ viewport: { width: 1600, height: 1000 } });
+await p.goto('http://localhost:4321', { waitUntil: 'networkidle' });
+await p.waitForTimeout(600);
+await p.screenshot({ path: 'shots/sites-shell.png' });
+await p.click('text=+ New site');
+await p.waitForTimeout(400);
+await p.screenshot({ path: 'shots/sites-newsite.png' });
+await p.click('.studio-newsite-card:first-child');
+await p.waitForTimeout(300);
+await p.screenshot({ path: 'shots/sites-figma.png' });
+await b.close();
+console.log('done');

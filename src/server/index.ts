@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import multer from 'multer';
 import { listProjects, loadProject, saveContent, PROJECTS_DIR } from './projects';
+import { createProject } from './scaffold';
 import { processUpload } from './media';
 import { buildHead } from '../seo/head';
 import { runChecks, referencedAssetBytes } from '../seo/checks';
@@ -41,6 +42,17 @@ export function createApiApp(getRender: () => Promise<RenderHtml>): express.Expr
 
   app.get('/api/projects', (_req, res) => {
     res.json(listProjects());
+  });
+
+  // Create a blank starter project (Studio "New site" → Blank).
+  app.post('/api/projects', (req, res) => {
+    try {
+      const name = String(req.body?.name || '').trim();
+      if (!name) return res.status(400).json({ error: 'A site name is required.' });
+      res.status(201).json(createProject(name));
+    } catch (e) {
+      res.status(400).json({ error: (e as Error).message });
+    }
   });
 
   app.get('/api/projects/:id/version', (req, res) => {
