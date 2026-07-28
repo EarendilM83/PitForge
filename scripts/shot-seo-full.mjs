@@ -1,0 +1,17 @@
+import { chromium } from 'playwright';
+const browser = await chromium.launch();
+const page = await browser.newPage({ viewport: { width: 1200, height: 1000 } });
+page.setDefaultTimeout(15000);
+await page.goto('http://localhost:4321', { waitUntil: 'networkidle' });
+await page.click('text=LuckyBet DE');
+await page.waitForSelector('.studio-canvas .pf-editable');
+await page.click('.studio-tabs button:text("SEO")');
+await page.waitForSelector('.studio-seo .studio-card');
+await page.waitForTimeout(1000);
+await page.locator('.studio-check-warn summary').first().click().catch(() => {});
+const h = await page.$eval('.studio-seo-inner', (e) => e.getBoundingClientRect().height);
+await page.setViewportSize({ width: 1200, height: Math.min(Math.ceil(h) + 120, 8000) });
+await page.waitForTimeout(400);
+await page.screenshot({ path: 'shots/admin-seo-full-after.png' });
+console.log('height', h);
+await browser.close();

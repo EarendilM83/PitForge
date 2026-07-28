@@ -54,3 +54,9 @@ Running log of choices made where the spec left something open.
 - **Sections carry their own background:** `body { background }` from tokens only applies at
   export; in the Studio canvas the page wrapper is white. Blocks set `background: var(--bg)`
   on their section so Studio and export look identical.
+- **Admin visual language:** Atlassian Design System tokens (CSS custom properties in
+  `studio.css`), Yoast SEO presentation model for the SEO tab (see
+  `docs/seo-ux-analysis.md`). Check IDs are mapped to plain-language headlines in the UI
+  (`CHECK_TITLES`); the check engine itself is unchanged.
+- **Collapsed groups keep their rows in the DOM** (`display: none`) so automated tests and
+  find-in-page still see all 15 checks.

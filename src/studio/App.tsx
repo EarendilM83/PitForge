@@ -113,7 +113,7 @@ export default function App() {
       <header className="studio-topbar">
         <span className="studio-logo">PitForge</span>
         <span className="studio-project-name">{state.project.config.name}</span>
-        <span className={`studio-save studio-save-${state.saveStatus}`}>
+        <span className={`studio-lozenge ${state.saveStatus === 'saving' ? 'studio-lozenge-warning' : state.saveStatus === 'saved' ? 'studio-lozenge-success' : 'studio-lozenge-danger'}`}>
           {state.saveStatus === 'saving' ? 'Saving…' : state.saveStatus === 'saved' ? 'Saved' : 'Save error'}
         </span>
         <nav className="studio-tabs">

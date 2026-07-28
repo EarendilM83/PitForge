@@ -74,3 +74,23 @@ Bugs found & fixed while building (project-side only, no runtime/server changes)
 - `.dw-table*` classes shared between DailyTable/DropsTable → red highlight leaked into the
   daily table; classes now block-scoped.
 - Sections needed own `background: var(--bg)` for Studio/export background parity.
+
+## Studio admin redesign (2026-07-28) — presentation layer only
+- `src/studio/studio.css` rewritten around an ADS token set (CSS custom properties):
+  palette #F7F8F9/#FFFFFF/#091E4224/#172B4D/#0C66E4 + status tints, 8px grid, 3px/8px
+  radii, underline tabs, segmented controls, lozenges, slim length meters.
+- `src/studio/SeoTab.tsx` restructured on the Yoast model: Focus keyword card with stat
+  pills → Google preview card (real-result SERP + snippet editor with meters + sync
+  badges) → SEO analysis (Problems/Improvements/Good results, traffic-light bullets,
+  count lozenges, expandable rows with "How to fix") → Social sharing → Indexing & robots
+  → Structured data → Links on this page → Advanced drawer. Plain-language headlines via
+  CHECK_TITLES; field keys demoted to small monospace. All §10.1 fields still editable,
+  derive/sync + reset, live previews, copyable Advanced output.
+- Save indicator is now a lozenge; ExportDialog uses the primary-button style.
+- `docs/seo-ux-analysis.md` documents the Yoast patterns and their mapping.
+- Screenshots: shots/admin-{seo,edit}-before.png vs admin-seo-full-after.png /
+  admin-edit-after2.png / admin-seo-narrow-after2.png — eyeballed and iterated
+  (meter slimming, group rows kept in DOM when collapsed).
+- `scripts/verify-ui.mjs`: 21/21 pass after the redesign (one fix: collapsed check group
+  keeps rows in DOM).
+- Runtime/server/checks logic/project content untouched.

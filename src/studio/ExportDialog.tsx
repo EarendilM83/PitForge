@@ -44,7 +44,7 @@ export default function ExportDialog({ projectId, onClose }: { projectId: string
         {error && <pre className="studio-error">{error}</pre>}
         <div className="studio-modal-actions">
           <button onClick={onClose}>Cancel</button>
-          <button disabled={busy || !domain.trim()} onClick={run}>
+          <button className="studio-btn-primary" disabled={busy || !domain.trim()} onClick={run}>
             {busy ? 'Exporting…' : 'Download ZIP'}
           </button>
         </div>

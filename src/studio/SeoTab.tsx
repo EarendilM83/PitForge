@@ -6,6 +6,25 @@ import { SCHEMA_ALLOW_LIST } from '../seo/schema';
 import type { CheckResult } from '../seo/checks';
 import type { LinkValue } from '../runtime/types';
 
+/** Plain-language headlines for each check — never the check ID (Yoast pattern). */
+const CHECK_TITLES: Record<string, string> = {
+  'single-h1': 'Single H1 heading',
+  'heading-order': 'Heading structure',
+  'title-length': 'SEO title length',
+  'desc-length': 'Meta description length',
+  'slug-valid': 'URL slug',
+  'alt-text': 'Image alt text',
+  'img-dimensions': 'Image dimensions',
+  'absolute-urls': 'Absolute URLs',
+  'schema-valid': 'Structured data validity',
+  'schema-matches': 'Structured data matches page content',
+  'link-rel': 'Outbound link attributes',
+  'no-hardcoded-content': 'All content stays editable',
+  'byte-budget': 'Page weight',
+  'no-localhost': 'No development URLs',
+  'renders-without-js': 'Works without JavaScript',
+};
+
 export default function SeoTab({ state, dispatch }: { state: StudioState; dispatch: React.Dispatch<Action> }) {
   const project = state.project!;
   const m = project.manifest;
@@ -42,221 +61,317 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
   const title = deriveString(c, m, 'seo.title');
   const desc = deriveString(c, m, 'seo.description');
   const slug = deriveString(c, m, 'seo.slug');
-  const kw = String(c['seo.focusKeyword'] ?? '').toLowerCase();
-  const h1 = String(c['hero.title'] ?? '').toLowerCase();
-  const bodyText = JSON.stringify(c).toLowerCase();
-  const kwCount = kw ? bodyText.split(kw).length - 1 : 0;
+  const kw = String(c['seo.focusKeyword'] ?? '').toLowerCase().trim();
+  const h1 = Object.entries(m.fields).find(([, f]) => f.type === 'heading' && f.level === 1)?.[0];
+  const h1Text = String(h1 ? c[h1] ?? '' : '').toLowerCase();
+  const kwCount = kw ? JSON.stringify(c).toLowerCase().split(kw).length - 1 : 0;
   const robots = robotsValue(c);
   const hreflang = (c['seo.hreflang'] as { lang: string; href: string }[] | undefined) ?? [];
   const schemaTypes = (c['seo.schema.types'] as string[] | undefined) ?? [];
   const author = (c['seo.author'] as { name?: string; url?: string; jobTitle?: string } | undefined) ?? {};
   const linkFields = Object.entries(m.fields).filter(([, f]) => f.type === 'link' || f.type === 'button');
+  const ogImg = (c['seo.og.image'] as { src?: string; alt?: string } | undefined) ?? {};
+  const breadcrumbs = (c['seo.breadcrumb'] as { label: string; href: string }[] | undefined) ?? [];
+  const schemaFaq = (c['seo.schema.faq'] as { q: string; a: string }[] | undefined) ?? [];
+
+  const problems = checks.filter((x) => x.level === 'fail');
+  const improvements = checks.filter((x) => x.level === 'warn');
+  const good = checks.filter((x) => x.level === 'pass');
 
   return (
-    <div className="studio-seo studio-seo-cols">
-      <div className="studio-seo-left">
-        <h2>SEO</h2>
-        <label>
-          Focus keyword
-          <input value={String(c['seo.focusKeyword'] ?? '')} onChange={(e) => set('seo.focusKeyword', e.target.value)} />
-        </label>
-        {kw && (
-          <p className="studio-muted">
-            usage: H1 {h1.includes(kw) ? '✓' : '✗'} · URL {slug.includes(slugify(kw)) ? '✓' : '✗'} · title{' '}
-            {title.toLowerCase().includes(kw) ? '✓' : '✗'} · meta {desc.toLowerCase().includes(kw) ? '✓' : '✗'} · body ×{kwCount}
-          </p>
-        )}
-        <SeoText label="SEO title" k="seo.title" max={60} state={state} set={set} dispatch={dispatch} />
-        <SeoText label="Meta description" k="seo.description" max={155} state={state} set={set} dispatch={dispatch} area />
-        <SeoText label="Slug" k="seo.slug" state={state} set={set} dispatch={dispatch} />
-        <label>
-          Canonical ("self" or absolute URL)
-          <input value={String(c['seo.canonical'] ?? 'self')} onChange={(e) => set('seo.canonical', e.target.value)} />
-        </label>
-        <label>
-          Language (BCP-47)
-          <input value={String(c['seo.lang'] ?? project.config.lang)} onChange={(e) => set('seo.lang', e.target.value)} />
-        </label>
-        <p className="studio-muted">Robots</p>
-        <div className="studio-chips">
-          {(['index', 'follow', 'noarchive'] as const).map((k) => (
-            <button key={k} className={`chip ${robots[k] ? 'active' : ''}`} onClick={() => set('seo.robots', { ...robots, [k]: !robots[k] } satisfies RobotsValue)}>
-              {k}
-            </button>
-          ))}
-          <select
-            value={robots.maxImagePreview}
-            onChange={(e) => set('seo.robots', { ...robots, maxImagePreview: e.target.value as RobotsValue['maxImagePreview'] })}
-            style={{ width: 'auto' }}
-          >
-            {['large', 'standard', 'none'].map((v) => (
-              <option key={v} value={v}>max-image-preview:{v}</option>
-            ))}
-          </select>
-        </div>
-        <p className="studio-muted">Hreflang</p>
-        {hreflang.map((h, i) => (
-          <div key={i} className="studio-repeat-row">
-            <input value={h.lang} onChange={(e) => set('seo.hreflang', hreflang.map((x, j) => (j === i ? { ...x, lang: e.target.value } : x)))} />
-            <input value={h.href} onChange={(e) => set('seo.hreflang', hreflang.map((x, j) => (j === i ? { ...x, href: e.target.value } : x)))} />
-            <button onClick={() => set('seo.hreflang', hreflang.filter((_, j) => j !== i))}>×</button>
-          </div>
-        ))}
-        <button onClick={() => set('seo.hreflang', [...hreflang, { lang: '', href: '/' }])}>+ hreflang</button>
-        <label>
-          OG title (falls back to SEO title)
-          <input value={String(c['seo.og.title'] ?? '')} onChange={(e) => set('seo.og.title', e.target.value)} />
-        </label>
-        <label>
-          OG description (falls back to meta description)
-          <textarea rows={2} value={String(c['seo.og.description'] ?? '')} onChange={(e) => set('seo.og.description', e.target.value)} />
-        </label>
-        <label>
-          OG image URL
-          <input value={String((c['seo.og.image'] as { src?: string } | undefined)?.src ?? '')} onChange={(e) => set('seo.og.image', { ...((c['seo.og.image'] as object) ?? {}), src: e.target.value })} />
-        </label>
-        <label>
-          OG type
-          <select value={String(c['seo.og.type'] ?? 'website')} onChange={(e) => set('seo.og.type', e.target.value)}>
-            <option value="website">website</option>
-            <option value="article">article</option>
-          </select>
-        </label>
-        <label>
-          Twitter card
-          <select value={String(c['seo.twitter.card'] ?? 'summary_large_image')} onChange={(e) => set('seo.twitter.card', e.target.value)}>
-            <option value="summary_large_image">summary_large_image</option>
-            <option value="summary">summary</option>
-          </select>
-        </label>
-        <label>
-          Secondary keywords (comma separated)
+    <div className="studio-seo">
+      <div className="studio-seo-inner">
+        {/* 1 — Focus keyphrase */}
+        <section className="studio-card">
+          <h3 className="studio-card-title">Focus keyword</h3>
+          <p className="studio-card-sub">The search term this page should rank for. The analysis below reacts to it.</p>
           <input
-            value={((c['seo.secondaryKeywords'] as string[] | undefined) ?? []).join(', ')}
-            onChange={(e) => set('seo.secondaryKeywords', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
+            aria-label="Focus keyword"
+            value={String(c['seo.focusKeyword'] ?? '')}
+            onChange={(e) => set('seo.focusKeyword', e.target.value)}
+            placeholder="e.g. casino bonus"
           />
-        </label>
-        <label>
-          Date published (ISO)
-          <input value={String(c['seo.datePublished'] ?? '')} onChange={(e) => set('seo.datePublished', e.target.value)} placeholder="2026-01-15" />
-        </label>
-        <p className="studio-muted">Date modified is set automatically at export.</p>
-        <p className="studio-muted">Breadcrumb</p>
-        {((c['seo.breadcrumb'] as { label: string; href: string }[] | undefined) ?? []).map((b, i, arr) => (
-          <div key={i} className="studio-repeat-row">
-            <input value={b.label} placeholder="Label" onChange={(e) => set('seo.breadcrumb', arr.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} />
-            <input value={b.href} placeholder="/" onChange={(e) => set('seo.breadcrumb', arr.map((x, j) => (j === i ? { ...x, href: e.target.value } : x)))} />
-            <button onClick={() => set('seo.breadcrumb', arr.filter((_, j) => j !== i))}>×</button>
+          {kw && (
+            <div className="studio-kw-stats">
+              <span className={`studio-kw-stat ${h1Text.includes(kw) ? 'on' : ''}`}>H1 {h1Text.includes(kw) ? '✓' : '✗'}</span>
+              <span className={`studio-kw-stat ${slug.includes(slugify(kw)) ? 'on' : ''}`}>URL {slug.includes(slugify(kw)) ? '✓' : '✗'}</span>
+              <span className={`studio-kw-stat ${title.toLowerCase().includes(kw) ? 'on' : ''}`}>Title {title.toLowerCase().includes(kw) ? '✓' : '✗'}</span>
+              <span className={`studio-kw-stat ${desc.toLowerCase().includes(kw) ? 'on' : ''}`}>Meta {desc.toLowerCase().includes(kw) ? '✓' : '✗'}</span>
+              <span className={`studio-kw-stat ${kwCount > 2 ? 'on' : ''}`}>Body ×{kwCount}</span>
+            </div>
+          )}
+        </section>
+
+        {/* 2 — Google preview + snippet editor */}
+        <section className="studio-card">
+          <h3 className="studio-card-title">Google preview</h3>
+          <p className="studio-card-sub">How this page will look in Google search results. Edit the snippet below the preview.</p>
+          <div className="studio-serp">
+            <div className="studio-serp-site">
+              <span className="studio-serp-favicon">◎</span>
+              <span>
+                <div className="studio-serp-sitename">{project.config.name}</div>
+                <div className="studio-serp-url">{domain.replace(/^https?:\/\//, '').replace(/\/+$/, '')} › {slug}</div>
+              </span>
+            </div>
+            <div className="studio-serp-title">{title || 'Page title'}</div>
+            <div className="studio-serp-desc">{desc || 'Add a meta description so searchers know what this page offers.'}</div>
           </div>
-        ))}
-        <button onClick={() => set('seo.breadcrumb', [...((c['seo.breadcrumb'] as object[] | undefined) ?? []), { label: '', href: '/' }])}>+ breadcrumb</button>
-        <p className="studio-muted">Schema FAQ (feeds FAQPage JSON-LD)</p>
-        {((c['seo.schema.faq'] as { q: string; a: string }[] | undefined) ?? []).map((f, i, arr) => (
-          <div key={i} className="studio-schema-faq">
-            <input value={f.q} placeholder="Question" onChange={(e) => set('seo.schema.faq', arr.map((x, j) => (j === i ? { ...x, q: e.target.value } : x)))} />
-            <textarea rows={2} value={f.a} placeholder="Answer" onChange={(e) => set('seo.schema.faq', arr.map((x, j) => (j === i ? { ...x, a: e.target.value } : x)))} />
-            <button onClick={() => set('seo.schema.faq', arr.filter((_, j) => j !== i))}>×</button>
+          <div className="studio-snippet-editor">
+            <SnippetField label="SEO title" k="seo.title" max={60} state={state} set={set} dispatch={dispatch} />
+            <SnippetField label="Slug" k="seo.slug" state={state} set={set} dispatch={dispatch} hint="The web address of this page. Short, lowercase, with dashes." />
+            <SnippetField label="Meta description" k="seo.description" max={155} area state={state} set={set} dispatch={dispatch} hint="One or two sentences that make people click." />
+            <label>
+              Domain used for previews
+              <input value={domain} onChange={(e) => setDomain(e.target.value)} />
+            </label>
           </div>
-        ))}
-        <button onClick={() => set('seo.schema.faq', [...((c['seo.schema.faq'] as object[] | undefined) ?? []), { q: '', a: '' }])}>+ schema FAQ</button>
-        <p className="studio-muted">Structured data types (Review, AggregateRating, Product, Offer are blocked)</p>
-        <div className="studio-chips">
-          {SCHEMA_ALLOW_LIST.map((t) => (
-            <button
-              key={t}
-              className={`chip ${schemaTypes.includes(t) ? 'active' : ''}`}
-              onClick={() => set('seo.schema.types', schemaTypes.includes(t) ? schemaTypes.filter((x) => x !== t) : [...schemaTypes, t])}
+        </section>
+
+        {/* 3 — Analysis */}
+        <section className="studio-card">
+          <h3 className="studio-card-title">SEO analysis</h3>
+          <p className="studio-card-sub">What’s working and what needs attention before this page ships.</p>
+          <CheckGroup title="Problems" items={problems} tone="danger" defaultOpen />
+          <CheckGroup title="Improvements" items={improvements} tone="warning" defaultOpen />
+          <CheckGroup title="Good results" items={good} tone="success" />
+        </section>
+
+        {/* 4 — Social sharing */}
+        <section className="studio-card">
+          <h3 className="studio-card-title">Social sharing</h3>
+          <p className="studio-card-sub">How the page looks when shared on social networks. Leave blank to reuse the Google snippet.</p>
+          <div className="studio-social">
+            <div className="studio-social-img">{ogImg.src ? <img src={ogImg.src} alt={ogImg.alt ?? ''} /> : 'No social image set'}</div>
+            <div className="studio-social-body">
+              <div className="studio-social-url">{domain.replace(/^https?:\/\//, '').replace(/\/+$/, '')}</div>
+              <div className="studio-social-title">{String(c['seo.og.title'] ?? '') || title}</div>
+              <div className="studio-social-desc">{String(c['seo.og.description'] ?? '') || desc}</div>
+            </div>
+          </div>
+          <label>
+            Social title <code>seo.og.title</code>
+            <input value={String(c['seo.og.title'] ?? '')} onChange={(e) => set('seo.og.title', e.target.value)} />
+          </label>
+          <label>
+            Social description <code>seo.og.description</code>
+            <textarea rows={2} value={String(c['seo.og.description'] ?? '')} onChange={(e) => set('seo.og.description', e.target.value)} />
+          </label>
+          <label>
+            Social image URL <code>seo.og.image</code>
+            <input value={ogImg.src ?? ''} onChange={(e) => set('seo.og.image', { ...ogImg, src: e.target.value })} />
+          </label>
+          <label>
+            Card type
+            <select value={String(c['seo.twitter.card'] ?? 'summary_large_image')} onChange={(e) => set('seo.twitter.card', e.target.value)}>
+              <option value="summary_large_image">Large image</option>
+              <option value="summary">Small image</option>
+            </select>
+          </label>
+          <label>
+            Page type
+            <select value={String(c['seo.og.type'] ?? 'website')} onChange={(e) => set('seo.og.type', e.target.value)}>
+              <option value="website">Website</option>
+              <option value="article">Article</option>
+            </select>
+          </label>
+        </section>
+
+        {/* 5 — Indexing & robots */}
+        <section className="studio-card">
+          <h3 className="studio-card-title">Indexing &amp; robots</h3>
+          <p className="studio-card-sub">Whether and how search engines may index this page.</p>
+          <label>
+            Canonical URL <code>seo.canonical</code>
+            <input value={String(c['seo.canonical'] ?? 'self')} onChange={(e) => set('seo.canonical', e.target.value)} />
+          </label>
+          <p className="studio-muted">Use “self” unless this page duplicates another page’s content.</p>
+          <label>
+            Content language <code>seo.lang</code>
+            <input value={String(c['seo.lang'] ?? project.config.lang)} onChange={(e) => set('seo.lang', e.target.value)} />
+          </label>
+          <p className="studio-muted" style={{ marginTop: 16 }}>Search engine instructions</p>
+          <div className="studio-chips">
+            {(['index', 'follow', 'noarchive'] as const).map((k) => (
+              <button key={k} className={`chip ${robots[k] ? 'active' : ''}`} onClick={() => set('seo.robots', { ...robots, [k]: !robots[k] } satisfies RobotsValue)}>
+                {k}
+              </button>
+            ))}
+            <select
+              value={robots.maxImagePreview}
+              onChange={(e) => set('seo.robots', { ...robots, maxImagePreview: e.target.value as RobotsValue['maxImagePreview'] })}
+              style={{ width: 'auto' }}
             >
-              {t}
-            </button>
+              {['large', 'standard', 'none'].map((v) => (
+                <option key={v} value={v}>image preview: {v}</option>
+              ))}
+            </select>
+          </div>
+          <p className="studio-muted" style={{ marginTop: 16 }}>Language alternates (hreflang)</p>
+          {hreflang.map((h, i) => (
+            <div key={i} className="studio-repeat-row">
+              <input value={h.lang} placeholder="lang" onChange={(e) => set('seo.hreflang', hreflang.map((x, j) => (j === i ? { ...x, lang: e.target.value } : x)))} />
+              <input value={h.href} placeholder="/" onChange={(e) => set('seo.hreflang', hreflang.map((x, j) => (j === i ? { ...x, href: e.target.value } : x)))} />
+              <button className="studio-btn-danger" onClick={() => set('seo.hreflang', hreflang.filter((_, j) => j !== i))}>×</button>
+            </div>
           ))}
-        </div>
-        <label>
-          Author name
-          <input value={author.name ?? ''} onChange={(e) => set('seo.author', { ...author, name: e.target.value })} />
-        </label>
-        <label>
-          Author URL
-          <input value={author.url ?? ''} onChange={(e) => set('seo.author', { ...author, url: e.target.value })} />
-        </label>
-        <label>
-          Author job title
-          <input value={author.jobTitle ?? ''} onChange={(e) => set('seo.author', { ...author, jobTitle: e.target.value })} />
-        </label>
-        <p className="studio-muted">Links on the page (rel editable)</p>
-        <ul className="studio-repeat-list">
-          {linkFields.map(([key, f]) => {
-            const v = (c[key] as LinkValue | undefined) ?? { label: '', href: '' };
-            return (
-              <li key={key} className="studio-repeat-row">
-                <code>{key}</code>
-                <span className="studio-muted">{v.href}</span>
-                <input
-                  style={{ width: 160 }}
-                  value={v.rel ?? ''}
-                  placeholder={f.defaultRel}
-                  onChange={(e) => set(key, { ...v, rel: e.target.value })}
-                />
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <div className="studio-seo-right">
-        <label>
-          Domain (for previews)
-          <input value={domain} onChange={(e) => setDomain(e.target.value)} />
-        </label>
-        <h3>Google preview</h3>
-        <div className="studio-serp">
-          <div className="studio-serp-url">{domain.replace(/\/+$/, '')}/{slug}</div>
-          <div className="studio-serp-title">{title}</div>
-          <div className="studio-serp-desc">{desc}</div>
-        </div>
-        <h3>Social card</h3>
-        <div className="studio-social">
-          <div className="studio-social-title">{String(c['seo.og.title'] ?? '') || title}</div>
-          <div className="studio-social-desc">{String(c['seo.og.description'] ?? '') || desc}</div>
-          <div className="studio-social-url">{domain.replace(/^https?:\/\//, '').replace(/\/+$/, '')}</div>
-        </div>
-        <h3>Checks</h3>
-        <ul className="studio-checks">
-          {checks.map((ch) => (
-            <li key={ch.id} className={`studio-check studio-check-${ch.level}`}>
-              <strong>{ch.level.toUpperCase()}</strong> {ch.title}
-              {ch.level !== 'pass' && (
-                <div className="studio-muted">
-                  {ch.detail} <em>Fix: {ch.fix}</em>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-        <h3>
-          <button onClick={() => setAdvancedOpen(!advancedOpen)}>{advancedOpen ? '▾' : '▸'} Advanced</button>
-        </h3>
-        {advancedOpen && head && (
-          <div className="studio-advanced">
-            {(['head', 'jsonLd', 'robotsTxt', 'sitemapXml'] as const).map((part) => (
-              <details key={part}>
-                <summary>
-                  {part} <button onClick={(e) => { e.preventDefault(); navigator.clipboard.writeText(head[part]); }}>copy</button>
-                </summary>
-                <pre>{head[part]}</pre>
-              </details>
+          <button onClick={() => set('seo.hreflang', [...hreflang, { lang: '', href: '/' }])}>+ Add language</button>
+          <label>
+            Date published <code>seo.datePublished</code>
+            <input value={String(c['seo.datePublished'] ?? '')} onChange={(e) => set('seo.datePublished', e.target.value)} placeholder="2026-01-15" />
+          </label>
+          <p className="studio-muted">Date modified is set automatically at export.</p>
+        </section>
+
+        {/* 6 — Structured data */}
+        <section className="studio-card">
+          <h3 className="studio-card-title">Structured data</h3>
+          <p className="studio-card-sub">Machine-readable facts about this page that can unlock rich results in Google.</p>
+          <p className="studio-muted">Content types (rating and product types are blocked — self-assigned ratings on affiliate pages draw manual penalties)</p>
+          <div className="studio-chips">
+            {SCHEMA_ALLOW_LIST.map((t) => (
+              <button
+                key={t}
+                className={`chip ${schemaTypes.includes(t) ? 'active' : ''}`}
+                onClick={() => set('seo.schema.types', schemaTypes.includes(t) ? schemaTypes.filter((x) => x !== t) : [...schemaTypes, t])}
+              >
+                {t}
+              </button>
             ))}
           </div>
-        )}
+          <label>
+            Author name
+            <input value={author.name ?? ''} onChange={(e) => set('seo.author', { ...author, name: e.target.value })} />
+          </label>
+          <label>
+            Author link
+            <input value={author.url ?? ''} onChange={(e) => set('seo.author', { ...author, url: e.target.value })} />
+          </label>
+          <label>
+            Author role
+            <input value={author.jobTitle ?? ''} onChange={(e) => set('seo.author', { ...author, jobTitle: e.target.value })} />
+          </label>
+          <label>
+            Secondary keywords (comma separated)
+            <input
+              value={((c['seo.secondaryKeywords'] as string[] | undefined) ?? []).join(', ')}
+              onChange={(e) => set('seo.secondaryKeywords', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
+            />
+          </label>
+          <p className="studio-muted" style={{ marginTop: 16 }}>Breadcrumb trail</p>
+          {breadcrumbs.map((b, i) => (
+            <div key={i} className="studio-repeat-row">
+              <input value={b.label} placeholder="Label" onChange={(e) => set('seo.breadcrumb', breadcrumbs.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)))} />
+              <input value={b.href} placeholder="/" onChange={(e) => set('seo.breadcrumb', breadcrumbs.map((x, j) => (j === i ? { ...x, href: e.target.value } : x)))} />
+              <button className="studio-btn-danger" onClick={() => set('seo.breadcrumb', breadcrumbs.filter((_, j) => j !== i))}>×</button>
+            </div>
+          ))}
+          <button onClick={() => set('seo.breadcrumb', [...breadcrumbs, { label: '', href: '/' }])}>+ Add breadcrumb</button>
+          <p className="studio-muted" style={{ marginTop: 16 }}>FAQ structured data (must match the FAQ on the page)</p>
+          {schemaFaq.map((f, i) => (
+            <div key={i} className="studio-schema-faq">
+              <input value={f.q} placeholder="Question" onChange={(e) => set('seo.schema.faq', schemaFaq.map((x, j) => (j === i ? { ...x, q: e.target.value } : x)))} />
+              <textarea rows={2} value={f.a} placeholder="Answer" onChange={(e) => set('seo.schema.faq', schemaFaq.map((x, j) => (j === i ? { ...x, a: e.target.value } : x)))} />
+              <button className="studio-btn-danger" onClick={() => set('seo.schema.faq', schemaFaq.filter((_, j) => j !== i))}>Remove</button>
+            </div>
+          ))}
+          <button onClick={() => set('seo.schema.faq', [...schemaFaq, { q: '', a: '' }])}>+ Add FAQ entry</button>
+        </section>
+
+        {/* 7 — Links on this page */}
+        <section className="studio-card">
+          <h3 className="studio-card-title">Links on this page</h3>
+          <p className="studio-card-sub">Affiliate and external links and their rel attributes. Affiliate links should carry “nofollow sponsored”.</p>
+          <ul className="studio-repeat-list">
+            {linkFields.map(([key, f]) => {
+              const v = (c[key] as LinkValue | undefined) ?? { label: '', href: '' };
+              return (
+                <li key={key} className="studio-repeat-row">
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <strong style={{ fontSize: 13 }}>{v.label || f.label}</strong>
+                    <span className="studio-muted" style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis' }}>{v.href}</span>
+                  </span>
+                  <input
+                    style={{ width: 180 }}
+                    value={v.rel ?? ''}
+                    placeholder={f.defaultRel}
+                    aria-label={`rel for ${key}`}
+                    onChange={(e) => set(key, { ...v, rel: e.target.value })}
+                  />
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        {/* 8 — Advanced */}
+        <section className="studio-card">
+          <h3 className="studio-card-title">
+            <button className="studio-btn-link" style={{ fontSize: 14, fontWeight: 600 }} onClick={() => setAdvancedOpen(!advancedOpen)}>
+              {advancedOpen ? '▾' : '▸'} Advanced — exact output
+            </button>
+          </h3>
+          <p className="studio-card-sub">The literal HTML head, structured data, robots.txt and sitemap this page will ship with.</p>
+          {advancedOpen && head && (
+            <div className="studio-advanced">
+              {(['head', 'jsonLd', 'robotsTxt', 'sitemapXml'] as const).map((part) => (
+                <details key={part}>
+                  <summary>
+                    {part}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        navigator.clipboard.writeText(head[part]);
+                      }}
+                    >
+                      Copy
+                    </button>
+                  </summary>
+                  <pre>{head[part]}</pre>
+                </details>
+              ))}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );
 }
 
-function SeoText({
+function CheckGroup({ title, items, tone, defaultOpen }: { title: string; items: CheckResult[]; tone: 'danger' | 'warning' | 'success'; defaultOpen?: boolean }) {
+  const [open, setOpen] = React.useState(defaultOpen ?? false);
+  if (!items.length && tone !== 'success') return null;
+  return (
+    <div className="studio-analysis-group">
+      <button className="studio-analysis-header" onClick={() => setOpen(!open)}>
+        <span>{open ? '▾' : '▸'}</span>
+        {title}
+        <span className={`studio-lozenge studio-lozenge-${tone}`}>{items.length}</span>
+      </button>
+      <ul className="studio-checks" style={open ? undefined : { display: 'none' }}>
+        {items.map((ch) => (
+          <li key={ch.id}>
+            <details className={`studio-check studio-check-${ch.level}`}>
+              <summary>{CHECK_TITLES[ch.id] ?? ch.title}</summary>
+              <div className="studio-check-detail">
+                {ch.detail}
+                {ch.fix && <em>{ch.fix}</em>}
+              </div>
+            </details>
+          </li>
+        ))}
+        {!items.length && <li className="studio-muted" style={{ padding: '4px 0' }}>Nothing here — nice work.</li>}
+      </ul>
+    </div>
+  );
+}
+
+function SnippetField({
   label,
   k,
   max,
   area,
+  hint,
   state,
   set,
   dispatch,
@@ -265,6 +380,7 @@ function SeoText({
   k: string;
   max?: number;
   area?: boolean;
+  hint?: string;
   state: StudioState;
   set: (k: string, v: unknown) => void;
   dispatch: React.Dispatch<Action>;
@@ -273,30 +389,38 @@ function SeoText({
   const custom = isCustom(state.content, k);
   const source = state.project!.manifest.fields[k]?.derivedFrom;
   const len = value.length;
+  const over = max !== undefined && len > max;
   return (
     <div className="studio-field">
       <label>
-        {label} {max ? `(${len}/${max})` : ''}
+        {label} <code>{k}</code>
         {area ? <textarea rows={3} value={value} onChange={(e) => set(k, e.target.value)} /> : <input value={value} onChange={(e) => set(k, e.target.value)} />}
       </label>
+      {max !== undefined && (
+        <div className={`studio-meter ${over ? 'over' : ''}`}>
+          <div className="studio-meter-bar" style={{ width: `${Math.min(100, (len / max) * 100)}%` }} />
+          <span>{len}/{max}</span>
+        </div>
+      )}
+      {hint && <p className="studio-muted" style={{ margin: '2px 0 0' }}>{hint}</p>}
       {source && (
         <p className="studio-sync-note">
           {custom ? (
             <>
-              <span className="studio-badge">custom</span>{' '}
+              <span className="studio-badge">custom</span>
               <button
+                className="studio-btn-link"
                 onClick={() => {
                   dispatch({ type: 'change', field: 'seo._custom', value: customKeys(state.content).filter((x) => x !== k) as never });
                   const src = state.content[source];
                   set(k, k === 'seo.slug' ? slugify(String(src ?? '')) : String(src ?? ''));
-                  dispatch({ type: 'change', field: 'seo._custom', value: customKeys(state.content).filter((x) => x !== k) as never });
                 }}
               >
-                reset to synced
+                Reset to follow the page content
               </button>
             </>
           ) : (
-            <span className="studio-badge studio-badge-sync">synced from {source}</span>
+            <span className="studio-badge studio-badge-sync">follows the page content</span>
           )}
         </p>
       )}
