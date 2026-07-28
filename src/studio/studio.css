@@ -285,14 +285,15 @@ label input, label textarea, label select { margin-top: var(--ads-space-1); font
 
 /* bottom bar */
 .studio-el-bottom {
-  flex: none; display: flex; align-items: center; gap: 2px; padding: 6px 8px;
-  background: #383c42; border-top: 1px solid #2f3337;
+  flex: none; display: flex; align-items: center; gap: 1px; padding: 6px 6px;
+  background: #383c42; border-top: 1px solid #2f3337; overflow: hidden;
 }
 .studio-el-bottom .studio-width-switcher { display: flex; background: none; padding: 0; }
-.studio-el-bottom .studio-width-switcher button { background: none; color: #a7afb6; padding: 3px 4px; font-size: 10px; font-weight: 600; }
+.studio-el-bottom .studio-width-switcher button { background: none; color: #a7afb6; padding: 3px 3px; font-size: 10px; font-weight: 600; }
 .studio-el-bottom .studio-width-switcher button.active { color: #71d7f7; }
-.studio-el-save { font-size: 10px; color: #8a929a; margin-left: auto; margin-right: 4px; white-space: nowrap; }
-.studio-el-export { background: #39b54a; color: #fff; font-weight: 700; border-radius: 3px; padding: 5px 12px; font-size: 12px; }
+.studio-el-bottom .studio-el-iconbtn { padding: 3px 4px; }
+.studio-el-save { font-size: 10px; color: #8a929a; margin-left: auto; margin-right: 3px; white-space: nowrap; }
+.studio-el-export { flex: none; background: #39b54a; color: #fff; font-weight: 700; border-radius: 3px; padding: 5px 9px; font-size: 12px; }
 .studio-el-export:hover:not(:disabled) { background: #2fa03f; }
 
 /* canvas */
