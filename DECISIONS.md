@@ -68,3 +68,11 @@ Running log of choices made where the spec left something open.
 - **Back-to-sites** is a plain reload (project state is in-memory only).
 - **Advanced SEO output** moved from an inline drawer to a modal — the sidebar is
   too narrow for raw head output to be readable.
+- **Editor chrome:** Elementor, not Gutenberg (user decision after rejecting the WP/ADS
+  pass). Dark panel + canvas, no top bar. Light ADS survives on the Sites list and
+  ExportDialog only.
+- **Canvas handle labels are CSS-only** (`::after` with `attr(data-pf-field)`) so the
+  runtime components stay untouched; hover and selected rules must set explicit
+  `left/right: auto` to avoid offset-cascade stretching.
+- **Style tab is intentionally locked** ("controlled by the design") — PitForge's
+  design-immutability rule expressed in Elementor's Content/Style/Advanced idiom.

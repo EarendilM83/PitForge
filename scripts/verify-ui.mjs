@@ -27,15 +27,15 @@ ok('project opens, editable elements outlined', (await page.$$('.studio-canvas .
 const origContent = await (await fetch(`${BASE}/api/projects/demo`)).json().then((p) => p.content);
 
 // --- outline toggle ---
-await page.click('.studio-canvas-toolbar button:text("Outlines")');
+await page.click('.studio-el-iconbtn[title="Toggle edit outlines"]');
 const outlineAfterToggle = await page.$eval('.studio-canvas .pf-editable', (el) => getComputedStyle(el).outlineStyle);
 ok('outline toggle hides outlines', outlineAfterToggle === 'none');
-await page.click('.studio-canvas-toolbar button:text("Outlines")');
+await page.click('.studio-el-iconbtn[title="Toggle edit outlines"]');
 
 // --- click-select picks innermost field ---
 await page.click('.game-card >> nth=0 >> .game-name');
-await page.waitForSelector('.studio-inspector code');
-const selectedKey = await page.textContent('.studio-inspector-head code');
+await page.waitForSelector('.studio-el-key');
+const selectedKey = await page.textContent('.studio-el-key');
 ok('click selects innermost field', selectedKey === 'games.slides.0.name', `got ${selectedKey}`);
 const hasSelectedClass = await page.$eval('.game-card >> nth=0 >> .game-name', (el) => el.classList.contains('pf-selected'));
 ok('selected element gets pf-selected', hasSelectedClass);
@@ -61,8 +61,8 @@ ok('character counter shown', /\d+\/70/.test(meter ?? ''), `meter: ${meter}`);
 // --- Esc deselects ---
 await page.click('.game-card >> nth=1 >> .game-name');
 await page.keyboard.press('Escape');
-const emptyState = await page.textContent('.studio-inspector');
-ok('Esc deselects', (emptyState ?? '').includes('Select anything on the page'));
+await page.waitForSelector('.studio-el-elements');
+ok('Esc deselects (back to Elements panel)', true);
 
 // --- undo across 20+ steps (topbar Undo button) ---
 await page.click('h1.hero-title');
@@ -71,7 +71,7 @@ for (let i = 1; i <= 22; i++) {
   await page.waitForTimeout(60);
 }
 ok('22 edits applied', (await page.textContent('h1.hero-title')) === 'Title step 22');
-for (let i = 0; i < 22; i++) await page.click('.studio-topbar button:text("Undo")');
+for (let i = 0; i < 22; i++) await page.click('.studio-el-iconbtn[title="Undo"]');
 await page.waitForTimeout(300);
 const afterUndo = await page.textContent('h1.hero-title');
 ok('undo works across 22 steps', afterUndo === 'Inspector Driven Title', `got: ${afterUndo}`);
@@ -80,9 +80,9 @@ await page.fill('.studio-inspector textarea', origContent['hero.title']);
 
 // --- reorder persists ---
 // select the repeat field via the List view panel
-await page.click('.studio-topbar button:text("☰ List view")');
-await page.waitForSelector('.studio-listview');
-await page.click('.studio-outline button:text("Game slides")');
+await page.keyboard.press('Escape');
+await page.click('.studio-el-blockrow:text("Games")');
+await page.click('.studio-el-fieldrow:text("Game slides")');
 await page.waitForSelector('.studio-repeat-list .studio-repeat-row');
 const firstNameBefore = await page.textContent('.studio-repeat-row >> nth=0 >> .studio-repeat-title');
 await page.click('.studio-repeat-row >> nth=0 >> button[title="Move down"]');
@@ -90,9 +90,9 @@ await page.waitForTimeout(1500); // autosave 800ms
 await page.reload({ waitUntil: 'networkidle' });
 await page.click('.studio-pages-table tbody tr:has-text("LuckyBet DE")');
 await page.waitForSelector('.studio-canvas .pf-editable');
-await page.click('.studio-topbar button:text("☰ List view")');
-await page.waitForSelector('.studio-listview');
-await page.click('.studio-outline button:text("Game slides")');
+await page.keyboard.press('Escape');
+await page.click('.studio-el-blockrow:text("Games")');
+await page.click('.studio-el-fieldrow:text("Game slides")');
 await page.waitForSelector('.studio-repeat-list .studio-repeat-row');
 const firstNameAfter = await page.textContent('.studio-repeat-row >> nth=0 >> .studio-repeat-title');
 ok('reorder persists after reload', firstNameBefore !== firstNameAfter, `before=${firstNameBefore} after=${firstNameAfter}`);
@@ -123,13 +123,13 @@ await page.waitForSelector('.studio-canvas .pf-editable');
 fs.mkdirSync('shots', { recursive: true });
 for (const w of [360, 768, 1280]) {
   await page.click(`.studio-width-switcher button:text("${w}")`);
-  await page.click('.studio-canvas-toolbar button:text("Outlines")'); // hide outlines for clean shot
+  await page.click('.studio-el-iconbtn[title="Toggle edit outlines"]'); // hide outlines for clean shot
   await page.waitForTimeout(300);
   const editText = await page.$eval('.studio-page', (el) => el.innerText.replace(/\s+/g, ' ').trim());
   await page.screenshot({ path: `shots/edit-${w}.png`, clip: await page.locator('.studio-page').boundingBox() });
-  await page.click('.studio-canvas-toolbar button:text("Outlines")');
+  await page.click('.studio-el-iconbtn[title="Toggle edit outlines"]');
 
-  await page.click('.studio-topbar button:text("Preview")');
+  await page.click('.studio-el-iconbtn[title="Preview"]');
   const frame = page.frames().find((f) => f !== page.mainFrame());
   await page.waitForTimeout(500);
   const previewText = frame ? (await frame.$eval('body', (el) => el.innerText.replace(/\s+/g, ' ').trim())) : '';
@@ -141,11 +141,12 @@ for (const w of [360, 768, 1280]) {
     await page.waitForTimeout(200);
   }
   await page.screenshot({ path: `shots/preview-${w}.png`, clip: iframeBox });
-  await page.click('.studio-topbar button:text("Exit preview")');
+  await page.click('.studio-el-exit-preview');
   await page.waitForSelector('.studio-canvas .pf-editable');
 }
 
-// --- SEO sidebar (Page tab) smoke — default view, no navigation needed ---
+// --- SEO sidebar (Page tab) smoke ---
+await page.click('.studio-el-tabs button:text("Page")');
 await page.waitForSelector('.studio-seo');
 ok('SEO tab renders fields', (await page.textContent('.studio-seo'))?.includes('Focus keyword'));
 await page.waitForTimeout(800);

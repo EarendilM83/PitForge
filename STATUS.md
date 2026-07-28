@@ -113,3 +113,25 @@ Replaces the Edit/Preview/SEO tab model with a WP/Gutenberg flow:
 - Screenshots: shots/wp-pages.png, wp-editor-page-tab.png, wp-editor-field-tab.png,
   wp-listview.png, wp-preview.png — eyeballed, one CSS fix (outline list-style).
 - verify-ui.mjs updated to the new flow: **21/21 pass**.
+
+## Elementor editor chrome (2026-07-28, commit 7319f2f)
+User rejected the Gutenberg/ADS editor ("nothing looks like WordPress"); editor chrome
+rebuilt to Elementor anatomy. Plumbing (reducer, inspectors, SeoPanel, preview iframe,
+chokidar banner, ExportDialog) reused unchanged; Sites list stays light ADS.
+- **Layout**: no top bar. Dark 320px left panel (#3f4449, cyan #71d7f7 accent) + independent
+  scrolling canvas on light gray.
+- **Panel default**: header (← back, page name), Elements tab (block navigator tree with
+  icons, expandable field rows, click selects + scrolls) / Page tab (Yoast SEO panels,
+  dark-restyled via scoped overrides). Docked bottom bar: settings, navigator, undo,
+  outlines toggle, device widths (360/768/1280/Full), preview eye, save-state text, green
+  Export (#39b54a).
+- **Element selected** (`ElementEdit.tsx`): back arrow, label + monospace key, Content
+  (existing inspector) | Style (locked — design-controlled) | Advanced (field meta: block,
+  type, constraints, sync state).
+- **Canvas handles** (CSS-only, no runtime change): hover = cyan outline + pencil chip,
+  selected = solid cyan + field-key chip. Fixed a real CSS bug: hover+selected cascades
+  combined left/right offsets and stretched the chip full-width (explicit auto offsets).
+- **Preview**: eye button hides the panel; floating dark "Back to editor".
+- Deleted: Sidebar.tsx, ListView.tsx, topbar/rail CSS. Canvas page rendering untouched.
+- Screenshots: shots/el-default.png, el-selected.png, el-page-tab.png, el-preview.png.
+- verify-ui.mjs updated to Elementor selectors: **21/21 pass**.
