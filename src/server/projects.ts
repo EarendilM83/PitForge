@@ -4,17 +4,20 @@ import { projectConfigSchema, manifestSchema, contentSchema, emptyValueFor, type
 
 export const PROJECTS_DIR = path.resolve(process.cwd(), 'projects');
 
-export function listProjects(): { id: string; name: string; blockCount: number }[] {
+export function listProjects(): { id: string; name: string; blockCount: number; modified: number }[] {
   if (!fs.existsSync(PROJECTS_DIR)) return [];
   return fs
     .readdirSync(PROJECTS_DIR, { withFileTypes: true })
     .filter((d) => d.isDirectory() && fs.existsSync(path.join(PROJECTS_DIR, d.name, 'pitforge.json')))
     .map((d) => {
+      const dir = path.join(PROJECTS_DIR, d.name);
+      const contentFile = path.join(dir, 'content', 'default.json');
+      const modified = fs.existsSync(contentFile) ? fs.statSync(contentFile).mtimeMs : fs.statSync(dir).mtimeMs;
       try {
-        const cfg = projectConfigSchema.parse(JSON.parse(fs.readFileSync(path.join(PROJECTS_DIR, d.name, 'pitforge.json'), 'utf8')));
-        return { id: d.name, name: cfg.name, blockCount: cfg.blocks.length };
+        const cfg = projectConfigSchema.parse(JSON.parse(fs.readFileSync(path.join(dir, 'pitforge.json'), 'utf8')));
+        return { id: d.name, name: cfg.name, blockCount: cfg.blocks.length, modified };
       } catch {
-        return { id: d.name, name: d.name, blockCount: 0 };
+        return { id: d.name, name: d.name, blockCount: 0, modified };
       }
     });
 }
