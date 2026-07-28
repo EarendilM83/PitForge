@@ -19,7 +19,7 @@ page.on('pageerror', (e) => console.log('PAGE ERROR:', e.message));
 
 // --- open project ---
 await page.goto(BASE, { waitUntil: 'networkidle' });
-await page.click('text=LuckyBet DE');
+await page.click('.studio-pages-table tbody tr:has-text("LuckyBet DE")');
 await page.waitForSelector('.studio-canvas .pf-editable');
 ok('project opens, editable elements outlined', (await page.$$('.studio-canvas .pf-editable')).length > 10);
 
@@ -79,15 +79,19 @@ ok('undo works across 22 steps', afterUndo === 'Inspector Driven Title', `got: $
 await page.fill('.studio-inspector textarea', origContent['hero.title']);
 
 // --- reorder persists ---
-// select the repeat field via outline rail
+// select the repeat field via the List view panel
+await page.click('.studio-topbar button:text("☰ List view")');
+await page.waitForSelector('.studio-listview');
 await page.click('.studio-outline button:text("Game slides")');
 await page.waitForSelector('.studio-repeat-list .studio-repeat-row');
 const firstNameBefore = await page.textContent('.studio-repeat-row >> nth=0 >> .studio-repeat-title');
 await page.click('.studio-repeat-row >> nth=0 >> button[title="Move down"]');
 await page.waitForTimeout(1500); // autosave 800ms
 await page.reload({ waitUntil: 'networkidle' });
-await page.click('text=LuckyBet DE');
+await page.click('.studio-pages-table tbody tr:has-text("LuckyBet DE")');
 await page.waitForSelector('.studio-canvas .pf-editable');
+await page.click('.studio-topbar button:text("☰ List view")');
+await page.waitForSelector('.studio-listview');
 await page.click('.studio-outline button:text("Game slides")');
 await page.waitForSelector('.studio-repeat-list .studio-repeat-row');
 const firstNameAfter = await page.textContent('.studio-repeat-row >> nth=0 >> .studio-repeat-title');
@@ -112,7 +116,7 @@ await fetch(`${BASE}/api/projects/demo/content`, {
   body: JSON.stringify(origContent),
 });
 await page.reload({ waitUntil: 'networkidle' });
-await page.click('text=LuckyBet DE');
+await page.click('.studio-pages-table tbody tr:has-text("LuckyBet DE")');
 await page.waitForSelector('.studio-canvas .pf-editable');
 
 // --- Preview tab fidelity at 360/768/1280 ---
@@ -125,7 +129,7 @@ for (const w of [360, 768, 1280]) {
   await page.screenshot({ path: `shots/edit-${w}.png`, clip: await page.locator('.studio-page').boundingBox() });
   await page.click('.studio-canvas-toolbar button:text("Outlines")');
 
-  await page.click('.studio-tabs button:text("Preview")');
+  await page.click('.studio-topbar button:text("Preview")');
   const frame = page.frames().find((f) => f !== page.mainFrame());
   await page.waitForTimeout(500);
   const previewText = frame ? (await frame.$eval('body', (el) => el.innerText.replace(/\s+/g, ' ').trim())) : '';
@@ -137,12 +141,11 @@ for (const w of [360, 768, 1280]) {
     await page.waitForTimeout(200);
   }
   await page.screenshot({ path: `shots/preview-${w}.png`, clip: iframeBox });
-  await page.click('.studio-tabs button:text("Edit")');
+  await page.click('.studio-topbar button:text("Exit preview")');
   await page.waitForSelector('.studio-canvas .pf-editable');
 }
 
-// --- SEO tab smoke ---
-await page.click('.studio-tabs button:text-matches("SEO", "i")');
+// --- SEO sidebar (Page tab) smoke — default view, no navigation needed ---
 await page.waitForSelector('.studio-seo');
 ok('SEO tab renders fields', (await page.textContent('.studio-seo'))?.includes('Focus keyword'));
 await page.waitForTimeout(800);

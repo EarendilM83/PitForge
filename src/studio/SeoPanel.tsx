@@ -25,7 +25,7 @@ const CHECK_TITLES: Record<string, string> = {
   'renders-without-js': 'Works without JavaScript',
 };
 
-export default function SeoTab({ state, dispatch }: { state: StudioState; dispatch: React.Dispatch<Action> }) {
+export default function SeoPanel({ state, dispatch }: { state: StudioState; dispatch: React.Dispatch<Action> }) {
   const project = state.project!;
   const m = project.manifest;
   const c = state.content;
@@ -80,11 +80,8 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
 
   return (
     <div className="studio-seo">
-      <div className="studio-seo-inner">
-        {/* 1 — Focus keyphrase */}
-        <section className="studio-card">
-          <h3 className="studio-card-title">Focus keyword</h3>
-          <p className="studio-card-sub">The search term this page should rank for. The analysis below reacts to it.</p>
+      {/* 1 — Focus keyphrase */}
+      <Panel title="Focus keyword" sub="The search term this page should rank for. The analysis below reacts to it.">
           <input
             aria-label="Focus keyword"
             value={String(c['seo.focusKeyword'] ?? '')}
@@ -100,12 +97,10 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
               <span className={`studio-kw-stat ${kwCount > 2 ? 'on' : ''}`}>Body ×{kwCount}</span>
             </div>
           )}
-        </section>
+        </Panel>
 
         {/* 2 — Google preview + snippet editor */}
-        <section className="studio-card">
-          <h3 className="studio-card-title">Google preview</h3>
-          <p className="studio-card-sub">How this page will look in Google search results. Edit the snippet below the preview.</p>
+        <Panel title="Google preview" sub="How this page will look in Google search results. Edit the snippet below the preview." defaultOpen>
           <div className="studio-serp">
             <div className="studio-serp-site">
               <span className="studio-serp-favicon">◎</span>
@@ -126,21 +121,17 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
               <input value={domain} onChange={(e) => setDomain(e.target.value)} />
             </label>
           </div>
-        </section>
+        </Panel>
 
         {/* 3 — Analysis */}
-        <section className="studio-card">
-          <h3 className="studio-card-title">SEO analysis</h3>
-          <p className="studio-card-sub">What’s working and what needs attention before this page ships.</p>
+        <Panel title="SEO analysis" sub="What’s working and what needs attention before this page ships." defaultOpen badge={<AnalysisBadge checks={checks} />}>
           <CheckGroup title="Problems" items={problems} tone="danger" defaultOpen />
           <CheckGroup title="Improvements" items={improvements} tone="warning" defaultOpen />
           <CheckGroup title="Good results" items={good} tone="success" />
-        </section>
+        </Panel>
 
         {/* 4 — Social sharing */}
-        <section className="studio-card">
-          <h3 className="studio-card-title">Social sharing</h3>
-          <p className="studio-card-sub">How the page looks when shared on social networks. Leave blank to reuse the Google snippet.</p>
+        <Panel title="Social sharing" sub="How the page looks when shared on social networks. Leave blank to reuse the Google snippet.">
           <div className="studio-social">
             <div className="studio-social-img">{ogImg.src ? <img src={ogImg.src} alt={ogImg.alt ?? ''} /> : 'No social image set'}</div>
             <div className="studio-social-body">
@@ -175,12 +166,10 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
               <option value="article">Article</option>
             </select>
           </label>
-        </section>
+        </Panel>
 
         {/* 5 — Indexing & robots */}
-        <section className="studio-card">
-          <h3 className="studio-card-title">Indexing &amp; robots</h3>
-          <p className="studio-card-sub">Whether and how search engines may index this page.</p>
+        <Panel title="Indexing & robots" sub="Whether and how search engines may index this page.">
           <label>
             Canonical URL <code>seo.canonical</code>
             <input value={String(c['seo.canonical'] ?? 'self')} onChange={(e) => set('seo.canonical', e.target.value)} />
@@ -221,12 +210,10 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
             <input value={String(c['seo.datePublished'] ?? '')} onChange={(e) => set('seo.datePublished', e.target.value)} placeholder="2026-01-15" />
           </label>
           <p className="studio-muted">Date modified is set automatically at export.</p>
-        </section>
+        </Panel>
 
         {/* 6 — Structured data */}
-        <section className="studio-card">
-          <h3 className="studio-card-title">Structured data</h3>
-          <p className="studio-card-sub">Machine-readable facts about this page that can unlock rich results in Google.</p>
+        <Panel title="Structured data" sub="Machine-readable facts about this page that can unlock rich results in Google.">
           <p className="studio-muted">Content types (rating and product types are blocked — self-assigned ratings on affiliate pages draw manual penalties)</p>
           <div className="studio-chips">
             {SCHEMA_ALLOW_LIST.map((t) => (
@@ -276,12 +263,10 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
             </div>
           ))}
           <button onClick={() => set('seo.schema.faq', [...schemaFaq, { q: '', a: '' }])}>+ Add FAQ entry</button>
-        </section>
+        </Panel>
 
         {/* 7 — Links on this page */}
-        <section className="studio-card">
-          <h3 className="studio-card-title">Links on this page</h3>
-          <p className="studio-card-sub">Affiliate and external links and their rel attributes. Affiliate links should carry “nofollow sponsored”.</p>
+        <Panel title="Links on this page" sub="Affiliate and external links and their rel attributes. Affiliate links should carry “nofollow sponsored”.">
           <ul className="studio-repeat-list">
             {linkFields.map(([key, f]) => {
               const v = (c[key] as LinkValue | undefined) ?? { label: '', href: '' };
@@ -302,38 +287,45 @@ export default function SeoTab({ state, dispatch }: { state: StudioState; dispat
               );
             })}
           </ul>
-        </section>
+        </Panel>
 
-        {/* 8 — Advanced */}
-        <section className="studio-card">
-          <h3 className="studio-card-title">
-            <button className="studio-btn-link" style={{ fontSize: 14, fontWeight: 600 }} onClick={() => setAdvancedOpen(!advancedOpen)}>
-              {advancedOpen ? '▾' : '▸'} Advanced — exact output
-            </button>
-          </h3>
-          <p className="studio-card-sub">The literal HTML head, structured data, robots.txt and sitemap this page will ship with.</p>
-          {advancedOpen && head && (
-            <div className="studio-advanced">
-              {(['head', 'jsonLd', 'robotsTxt', 'sitemapXml'] as const).map((part) => (
-                <details key={part}>
-                  <summary>
-                    {part}
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        navigator.clipboard.writeText(head[part]);
-                      }}
-                    >
-                      Copy
-                    </button>
-                  </summary>
-                  <pre>{head[part]}</pre>
-                </details>
-              ))}
+      {/* 8 — Advanced (modal overlay) */}
+      <button className="studio-advanced-open" onClick={() => setAdvancedOpen(true)}>
+        ▸ Advanced — exact output
+      </button>
+      {advancedOpen && (
+        <div className="studio-modal-backdrop" onClick={() => setAdvancedOpen(false)}>
+          <div className="studio-modal studio-advanced-modal" onClick={(e) => e.stopPropagation()}>
+            <h2>Advanced — exact output</h2>
+            <p className="studio-muted">The literal HTML head, structured data, robots.txt and sitemap this page will ship with.</p>
+            {head ? (
+              <div className="studio-advanced">
+                {(['head', 'jsonLd', 'robotsTxt', 'sitemapXml'] as const).map((part) => (
+                  <details key={part}>
+                    <summary>
+                      {part}
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigator.clipboard.writeText(head[part]);
+                        }}
+                      >
+                        Copy
+                      </button>
+                    </summary>
+                    <pre>{head[part]}</pre>
+                  </details>
+                ))}
+              </div>
+            ) : (
+              <p className="studio-muted">Loading…</p>
+            )}
+            <div className="studio-modal-actions">
+              <button onClick={() => setAdvancedOpen(false)}>Close</button>
             </div>
-          )}
-        </section>
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -426,4 +418,42 @@ function SnippetField({
       )}
     </div>
   );
+}
+
+/** Accordion panel — Yoast-in-sidebar pattern. Children stay in the DOM when collapsed. */
+function Panel({
+  title,
+  sub,
+  badge,
+  defaultOpen,
+  children,
+}: {
+  title: string;
+  sub: string;
+  badge?: React.ReactNode;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = React.useState(defaultOpen ?? false);
+  return (
+    <section className={`studio-panel ${open ? 'open' : ''}`}>
+      <button className="studio-panel-head" onClick={() => setOpen(!open)}>
+        <span className="studio-panel-chevron">{open ? '▾' : '▸'}</span>
+        <span className="studio-panel-title">{title}</span>
+        {badge}
+      </button>
+      <div className="studio-panel-body" style={open ? undefined : { display: 'none' }}>
+        <p className="studio-card-sub">{sub}</p>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function AnalysisBadge({ checks }: { checks: CheckResult[] }) {
+  const fails = checks.filter((c) => c.level === 'fail').length;
+  const warns = checks.filter((c) => c.level === 'warn').length;
+  if (fails) return <span className="studio-lozenge studio-lozenge-danger">{fails} problem{fails > 1 ? 's' : ''}</span>;
+  if (warns) return <span className="studio-lozenge studio-lozenge-warning">{warns} improvement{warns > 1 ? 's' : ''}</span>;
+  return <span className="studio-lozenge studio-lozenge-success">All good</span>;
 }

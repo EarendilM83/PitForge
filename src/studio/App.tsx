@@ -1,11 +1,10 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { reducer, initialState, type StudioState } from './state';
-import ProjectPicker from './ProjectPicker';
+import PagesList from './PagesList';
 import Canvas from './Canvas';
-import Inspector from './Inspector';
-import Rail from './Rail';
-import SeoTab from './SeoTab';
+import Sidebar from './Sidebar';
+import ListView from './ListView';
 import ExportDialog from './ExportDialog';
 import { PFProvider } from '../runtime/context';
 import { RenderPage, type BlockModule } from '../runtime/renderPage';
@@ -34,6 +33,9 @@ export default function App() {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [exportOpen, setExportOpen] = React.useState(false);
   const [externalChange, setExternalChange] = React.useState(false);
+  const [previewMode, setPreviewMode] = React.useState(false);
+  const [listViewOpen, setListViewOpen] = React.useState(false);
+  const [sidebarTab, setSidebarTab] = React.useState<'page' | 'field'>('page');
   const saveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const changeBaseline = React.useRef(0);
 
@@ -96,56 +98,56 @@ export default function App() {
   }, []);
 
   if (!state.project) {
-    return <ProjectPicker onOpen={(project: Project) => dispatch({ type: 'project-loaded', project })} />;
+    return <PagesList onOpen={(project: Project) => dispatch({ type: 'project-loaded', project })} />;
   }
+
+  // Selecting a field auto-switches the sidebar to the Field tab (Gutenberg pattern).
+  const onSelect = (field: string | null) => {
+    dispatch({ type: 'select', field });
+    if (field) setSidebarTab('field');
+  };
 
   const pf = {
     mode: 'edit' as const,
     content: state.content,
     manifest: state.project.manifest,
     selected: state.selected,
-    onSelect: (field: string) => dispatch({ type: 'select', field }),
+    onSelect,
     onChange: (field: string, value: ContentValue) => dispatch({ type: 'change', field, value }),
   };
 
   return (
     <div className="studio-shell">
       <header className="studio-topbar">
-        <span className="studio-logo">PitForge</span>
+        <button className="studio-btn-link studio-back" title="Back to sites" onClick={() => window.location.reload()}>
+          ←
+        </button>
         <span className="studio-project-name">{state.project.config.name}</span>
         <span className={`studio-lozenge ${state.saveStatus === 'saving' ? 'studio-lozenge-warning' : state.saveStatus === 'saved' ? 'studio-lozenge-success' : 'studio-lozenge-danger'}`}>
           {state.saveStatus === 'saving' ? 'Saving…' : state.saveStatus === 'saved' ? 'Saved' : 'Save error'}
         </span>
-        <nav className="studio-tabs">
-          {(['edit', 'preview', 'seo'] as const).map((t) => (
-            <button key={t} className={state.tab === t ? 'active' : ''} onClick={() => dispatch({ type: 'tab', tab: t })}>
-              {t === 'seo' ? 'SEO' : t[0].toUpperCase() + t.slice(1)}
-            </button>
-          ))}
-        </nav>
         <button onClick={() => dispatch({ type: 'undo' })} disabled={!state.undoStack.length}>
           Undo
         </button>
-        <button className="studio-download" onClick={() => setExportOpen(true)}>
-          Download ZIP
+        <span className="studio-topbar-spacer" />
+        <button className={listViewOpen ? 'active' : ''} title="List view" onClick={() => setListViewOpen(!listViewOpen)}>
+          ☰ List view
+        </button>
+        <button className={previewMode ? 'active' : ''} onClick={() => setPreviewMode(!previewMode)}>
+          {previewMode ? 'Exit preview' : 'Preview'}
+        </button>
+        <button className="studio-btn-primary" onClick={() => setExportOpen(true)}>
+          Export ZIP
         </button>
       </header>
       <div className="studio-body">
-        {state.tab === 'edit' && (
-          <PFProvider value={pf}>
-            <div className="studio-edit-layout">
-              <Rail state={state} dispatch={dispatch} />
-              <Canvas state={state} dispatch={dispatch} />
-              <Inspector state={state} dispatch={dispatch} />
-            </div>
-          </PFProvider>
-        )}
-        {state.tab === 'preview' && (
-          <PreviewTab state={state} />
-        )}
-        {state.tab === 'seo' && (
-          <SeoTab state={state} dispatch={dispatch} />
-        )}
+        <PFProvider value={pf}>
+          <div className="studio-edit-layout">
+            {listViewOpen && <ListView state={state} onSelect={onSelect} onClose={() => setListViewOpen(false)} />}
+            {previewMode ? <PreviewCanvas state={state} /> : <Canvas state={state} dispatch={dispatch} onSelect={onSelect} />}
+            <Sidebar state={state} dispatch={dispatch} tab={sidebarTab} onTab={setSidebarTab} />
+          </div>
+        </PFProvider>
       </div>
       {exportOpen && <ExportDialog projectId={state.project.id} onClose={() => setExportOpen(false)} />}
       {externalChange && (
@@ -169,7 +171,8 @@ export default function App() {
   );
 }
 
-function PreviewTab({ state }: { state: StudioState }) {
+/** Preview mode: the honest static render in an iframe (§8.3) — a mode, not a tab. */
+function PreviewCanvas({ state }: { state: StudioState }) {
   // Prefetch icon SVGs so the static render can inline them exactly like the export does.
   const [iconSvg, setIconSvg] = React.useState<Record<string, string>>({});
   React.useEffect(() => {
@@ -212,5 +215,11 @@ function PreviewTab({ state }: { state: StudioState }) {
     );
   }, [pf, state.project]);
   const srcDoc = `<!doctype html><html><head><meta charset="utf-8"><style>${state.project!.tokensCss}\n${blockCssFor(state.project!.id, state.project!.config.blocks)}</style></head><body>${html}</body></html>`;
-  return <iframe className="studio-preview" title="Preview" srcDoc={srcDoc} />;
+  return (
+    <main className="studio-canvas-wrap">
+      <div className="studio-canvas studio-preview-wrap">
+        <iframe className="studio-preview" title="Preview" srcDoc={srcDoc} />
+      </div>
+    </main>
+  );
 }

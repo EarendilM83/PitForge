@@ -4,10 +4,19 @@ import { RenderPage } from '../runtime/renderPage';
 import { blocksFor } from './App';
 import type { StudioState, Action } from './state';
 
-export default function Canvas({ state, dispatch }: { state: StudioState; dispatch: React.Dispatch<Action> }) {
+export default function Canvas({
+  state,
+  dispatch,
+  onSelect,
+}: {
+  state: StudioState;
+  dispatch: React.Dispatch<Action>;
+  onSelect?: (field: string) => void;
+}) {
   const project = state.project!;
   const blocks = blocksFor(project.id);
   const width = state.canvasWidth === 'full' ? '100%' : `${state.canvasWidth}px`;
+  const select = onSelect ?? ((field: string) => dispatch({ type: 'select', field }));
 
   return (
     <main className="studio-canvas-wrap">
@@ -40,7 +49,7 @@ export default function Canvas({ state, dispatch }: { state: StudioState; dispat
               content: state.content,
               manifest: project.manifest,
               selected: state.selected,
-              onSelect: (field) => dispatch({ type: 'select', field }),
+              onSelect: select,
               onChange: (field, value) => dispatch({ type: 'change', field, value }),
             }}
           >

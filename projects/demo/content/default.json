@@ -20,16 +20,6 @@
   "games.slides": [
     {
       "thumb": {
-        "src": "/assets/game-book-of-ra-1600.jpg",
-        "alt": "Book of Ra Slot",
-        "width": 1600,
-        "height": 1600
-      },
-      "name": "Book of Ra",
-      "desc": "Der Klassiker unter den ägyptischen Slots."
-    },
-    {
-      "thumb": {
         "src": "/assets/game-starburst-1600.jpg",
         "alt": "Starburst Slot",
         "width": 1600,
@@ -37,6 +27,16 @@
       },
       "name": "Starburst",
       "desc": "Farbenfroher Slot mit Expanding Wilds."
+    },
+    {
+      "thumb": {
+        "src": "/assets/game-book-of-ra-1600.jpg",
+        "alt": "Book of Ra Slot",
+        "width": 1600,
+        "height": 1600
+      },
+      "name": "Book of Ra",
+      "desc": "Der Klassiker unter den ägyptischen Slots."
     },
     {
       "thumb": {
