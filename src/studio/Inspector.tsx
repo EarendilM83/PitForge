@@ -27,7 +27,17 @@ export function resolveField(state: StudioState, key: string): Field | undefined
   return undefined;
 }
 
-export default function Inspector({ state, dispatch }: { state: StudioState; dispatch: React.Dispatch<Action> }) {
+export default function Inspector({
+  state,
+  dispatch,
+  hideHead,
+  hideDesignNote,
+}: {
+  state: StudioState;
+  dispatch: React.Dispatch<Action>;
+  hideHead?: boolean;
+  hideDesignNote?: boolean;
+}) {
   const key = state.selected;
   if (!key) {
     return (
@@ -49,16 +59,20 @@ export default function Inspector({ state, dispatch }: { state: StudioState; dis
   const common = { state, dispatch, fieldKey: key, field };
   return (
     <aside className="studio-inspector">
-      <div className="studio-inspector-head">
-        <strong>{field.label}</strong>
-        <code>{key}</code>
-      </div>
+      {!hideHead && (
+        <div className="studio-inspector-head">
+          <strong>{field.label}</strong>
+          <code>{key}</code>
+        </div>
+      )}
       {(field.type === 'text' || field.type === 'heading' || field.type === 'richtext') && <TextInspector {...common} />}
       {(field.type === 'image' || field.type === 'icon') && <ImageInspector {...common} />}
       {(field.type === 'link' || field.type === 'button') && <LinkInspector {...common} />}
       {field.type === 'repeat' && <RepeatInspector {...common} />}
       {field.type === 'video' && <VideoInspector {...common} />}
-      <p className="studio-muted studio-design-note">Layout, colour, spacing and typography come from the design and are not editable.</p>
+      {!hideDesignNote && (
+        <p className="studio-muted studio-design-note">Layout, colour, spacing and typography come from the design and are not editable.</p>
+      )}
     </aside>
   );
 }

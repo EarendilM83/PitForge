@@ -20,26 +20,6 @@ export default function Canvas({
 
   return (
     <main className="studio-canvas-wrap">
-      <div className="studio-canvas-toolbar">
-        <button
-          className={state.outlinesVisible ? 'active' : ''}
-          title="Toggle edit outlines"
-          onClick={() => dispatch({ type: 'toggle-outlines' })}
-        >
-          Outlines
-        </button>
-        <span className="studio-width-switcher">
-          {([360, 768, 1280, 'full'] as const).map((w) => (
-            <button
-              key={String(w)}
-              className={state.canvasWidth === w ? 'active' : ''}
-              onClick={() => dispatch({ type: 'canvas-width', width: w })}
-            >
-              {w === 'full' ? 'Full' : w}
-            </button>
-          ))}
-        </span>
-      </div>
       <div className={`studio-canvas ${state.outlinesVisible ? '' : 'studio-outlines-hidden'}`}>
         <div className="studio-page" style={{ maxWidth: width }}>
           <style>{project.tokensCss}</style>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { reducer, initialState, type StudioState } from './state';
+import { reducer, initialState, type StudioState, type Action } from './state';
 import PagesList from './PagesList';
 import Canvas from './Canvas';
-import Sidebar from './Sidebar';
-import ListView from './ListView';
+import ElementEdit from './ElementEdit';
+import ElementsPanel from './ElementsPanel';
+import SeoPanel from './SeoPanel';
 import ExportDialog from './ExportDialog';
 import { PFProvider } from '../runtime/context';
 import { RenderPage, type BlockModule } from '../runtime/renderPage';
@@ -34,8 +35,7 @@ export default function App() {
   const [exportOpen, setExportOpen] = React.useState(false);
   const [externalChange, setExternalChange] = React.useState(false);
   const [previewMode, setPreviewMode] = React.useState(false);
-  const [listViewOpen, setListViewOpen] = React.useState(false);
-  const [sidebarTab, setSidebarTab] = React.useState<'page' | 'field'>('page');
+  const [panelTab, setPanelTab] = React.useState<'elements' | 'page'>('elements');
   const saveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const changeBaseline = React.useRef(0);
 
@@ -101,11 +101,7 @@ export default function App() {
     return <PagesList onOpen={(project: Project) => dispatch({ type: 'project-loaded', project })} />;
   }
 
-  // Selecting a field auto-switches the sidebar to the Field tab (Gutenberg pattern).
-  const onSelect = (field: string | null) => {
-    dispatch({ type: 'select', field });
-    if (field) setSidebarTab('field');
-  };
+  const onSelect = (field: string | null) => dispatch({ type: 'select', field });
 
   const pf = {
     mode: 'edit' as const,
@@ -117,38 +113,61 @@ export default function App() {
   };
 
   return (
-    <div className="studio-shell">
-      <header className="studio-topbar">
-        <button className="studio-btn-link studio-back" title="Back to sites" onClick={() => window.location.reload()}>
-          ←
-        </button>
-        <span className="studio-project-name">{state.project.config.name}</span>
-        <span className={`studio-lozenge ${state.saveStatus === 'saving' ? 'studio-lozenge-warning' : state.saveStatus === 'saved' ? 'studio-lozenge-success' : 'studio-lozenge-danger'}`}>
-          {state.saveStatus === 'saving' ? 'Saving…' : state.saveStatus === 'saved' ? 'Saved' : 'Save error'}
-        </span>
-        <button onClick={() => dispatch({ type: 'undo' })} disabled={!state.undoStack.length}>
-          Undo
-        </button>
-        <span className="studio-topbar-spacer" />
-        <button className={listViewOpen ? 'active' : ''} title="List view" onClick={() => setListViewOpen(!listViewOpen)}>
-          ☰ List view
-        </button>
-        <button className={previewMode ? 'active' : ''} onClick={() => setPreviewMode(!previewMode)}>
-          {previewMode ? 'Exit preview' : 'Preview'}
-        </button>
-        <button className="studio-btn-primary" onClick={() => setExportOpen(true)}>
-          Export ZIP
-        </button>
-      </header>
-      <div className="studio-body">
+    <div className="studio-el">
+      {!previewMode && (
+        <aside className="studio-el-panel">
+          {state.selected ? (
+            <ElementEdit state={state} dispatch={dispatch} onBack={() => onSelect(null)} />
+          ) : (
+            <>
+              <div className="studio-el-head">
+                <button className="studio-el-iconbtn" title="Back to sites" onClick={() => window.location.reload()}>
+                  ←
+                </button>
+                <span className="studio-el-title">{state.project.config.name}</span>
+              </div>
+              <div className="studio-el-tabs">
+                {(['elements', 'page'] as const).map((t) => (
+                  <button key={t} className={panelTab === t ? 'active' : ''} onClick={() => setPanelTab(t)}>
+                    {t === 'elements' ? 'Elements' : 'Page'}
+                  </button>
+                ))}
+              </div>
+              <div className="studio-el-body">
+                {panelTab === 'elements' ? <ElementsPanel state={state} onSelect={onSelect} /> : <SeoPanel state={state} dispatch={dispatch} />}
+              </div>
+            </>
+          )}
+          <PanelBottom
+            state={state}
+            dispatch={dispatch}
+            onSettings={() => {
+              onSelect(null);
+              setPanelTab('page');
+            }}
+            onNavigator={() => {
+              onSelect(null);
+              setPanelTab('elements');
+            }}
+            onPreview={() => setPreviewMode(true)}
+            onExport={() => setExportOpen(true)}
+          />
+        </aside>
+      )}
+      <main className="studio-el-main">
         <PFProvider value={pf}>
-          <div className="studio-edit-layout">
-            {listViewOpen && <ListView state={state} onSelect={onSelect} onClose={() => setListViewOpen(false)} />}
-            {previewMode ? <PreviewCanvas state={state} /> : <Canvas state={state} dispatch={dispatch} onSelect={onSelect} />}
-            <Sidebar state={state} dispatch={dispatch} tab={sidebarTab} onTab={setSidebarTab} />
-          </div>
+          {previewMode ? (
+            <>
+              <PreviewCanvas state={state} />
+              <button className="studio-el-exit-preview" onClick={() => setPreviewMode(false)}>
+                ← Back to editor
+              </button>
+            </>
+          ) : (
+            <Canvas state={state} dispatch={dispatch} onSelect={onSelect} />
+          )}
         </PFProvider>
-      </div>
+      </main>
       {exportOpen && <ExportDialog projectId={state.project.id} onClose={() => setExportOpen(false)} />}
       {externalChange && (
         <div className="studio-notice">
@@ -167,6 +186,65 @@ export default function App() {
           <button onClick={() => setExternalChange(false)}>Dismiss</button>
         </div>
       )}
+    </div>
+  );
+}
+
+/** Elementor's docked bottom bar: settings, navigator, undo, outlines, devices, preview, save state, Export. */
+function PanelBottom({
+  state,
+  dispatch,
+  onSettings,
+  onNavigator,
+  onPreview,
+  onExport,
+}: {
+  state: StudioState;
+  dispatch: React.Dispatch<Action>;
+  onSettings: () => void;
+  onNavigator: () => void;
+  onPreview: () => void;
+  onExport: () => void;
+}) {
+  return (
+    <div className="studio-el-bottom">
+      <button className="studio-el-iconbtn" title="Page settings" onClick={onSettings}>
+        ⚙
+      </button>
+      <button className="studio-el-iconbtn" title="Navigator" onClick={onNavigator}>
+        ▤
+      </button>
+      <button className="studio-el-iconbtn" title="Undo" onClick={() => dispatch({ type: 'undo' })} disabled={!state.undoStack.length}>
+        ↩
+      </button>
+      <button
+        className={`studio-el-iconbtn ${state.outlinesVisible ? 'active' : ''}`}
+        title="Toggle edit outlines"
+        onClick={() => dispatch({ type: 'toggle-outlines' })}
+      >
+        ◻
+      </button>
+      <span className="studio-width-switcher">
+        {([360, 768, 1280, 'full'] as const).map((w) => (
+          <button
+            key={String(w)}
+            title={w === 'full' ? 'Full width' : `${w}px`}
+            className={state.canvasWidth === w ? 'active' : ''}
+            onClick={() => dispatch({ type: 'canvas-width', width: w })}
+          >
+            {w === 'full' ? 'Full' : w}
+          </button>
+        ))}
+      </span>
+      <button className="studio-el-iconbtn" title="Preview" onClick={onPreview}>
+        👁
+      </button>
+      <span className="studio-el-save">
+        {state.saveStatus === 'saving' ? 'Saving…' : state.saveStatus === 'saved' ? 'Saved' : 'Save error'}
+      </span>
+      <button className="studio-el-export" onClick={onExport}>
+        Export
+      </button>
     </div>
   );
 }
@@ -215,11 +293,5 @@ function PreviewCanvas({ state }: { state: StudioState }) {
     );
   }, [pf, state.project]);
   const srcDoc = `<!doctype html><html><head><meta charset="utf-8"><style>${state.project!.tokensCss}\n${blockCssFor(state.project!.id, state.project!.config.blocks)}</style></head><body>${html}</body></html>`;
-  return (
-    <main className="studio-canvas-wrap">
-      <div className="studio-canvas studio-preview-wrap">
-        <iframe className="studio-preview" title="Preview" srcDoc={srcDoc} />
-      </div>
-    </main>
-  );
+  return <iframe className="studio-preview" title="Preview" srcDoc={srcDoc} />;
 }
