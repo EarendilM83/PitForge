@@ -31,3 +31,17 @@ Reference: Yoast SEO (WordPress), plus the Atlassian Design System for the overa
 
 Screenshots in `shots/`: `admin-seo-before.png` vs `admin-seo-full-after.png` (full tab),
 `admin-edit-before.png` vs `admin-edit-after2.png` (edit tab + inspector).
+
+## WordPress flow (follow-up)
+
+The tabs were a developer model; the Studio now follows WordPress:
+
+- **Sites list** = WP "Pages" screen: a table of sites with Edit/Export actions.
+- **Editor** = Gutenberg: the canvas is the default view, no mode tabs. The right
+  sidebar has "Page" (the Yoast panels from above, now as collapsible accordions)
+  and "Field" (the inspector for the selected element). Like Gutenberg's Post/Block
+  tabs, selecting an element on the canvas switches the sidebar to "Field"
+  automatically.
+- **List view** = Gutenberg's document outline, as a left overlay.
+- **Preview** = WP Preview: a canvas mode with an explicit exit, not a separate tab.
+The SEO panels themselves are unchanged — same Yoast patterns, narrower frame.

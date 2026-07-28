@@ -94,3 +94,22 @@ Bugs found & fixed while building (project-side only, no runtime/server changes)
 - `scripts/verify-ui.mjs`: 21/21 pass after the redesign (one fix: collapsed check group
   keeps rows in DOM).
 - Runtime/server/checks logic/project content untouched.
+
+## WordPress editor flow (2026-07-28, commits d8e7c43 + a5c7b9e)
+Replaces the Edit/Preview/SEO tab model with a WP/Gutenberg flow:
+- **Sites list** (`PagesList.tsx`, home): WP "Pages"-style table — Name, Blocks,
+  Last modified (new `modified` field from `/api/projects`), Edit/Export row actions.
+- **Editor shell**: top bar = ← back, project name, save lozenge, Undo, List view
+  toggle, Preview, primary Export ZIP. No tabs; the edit canvas is the main view.
+- **Right sidebar** (`Sidebar.tsx`): Page / Field tabs. Page = `SeoPanel.tsx`
+  (SeoTab dismantled into accordion panels: Focus keyword, Google preview+snippet
+  editor, SEO analysis w/ summary lozenge, Social sharing, Indexing & robots,
+  Structured data, Links, Advanced as modal). Field = inspector; sidebar
+  auto-switches to Field when a field is selected (Canvas + ListView route
+  selection through App's onSelect wrapper).
+- **List view** (`ListView.tsx`): the old Outline as a left overlay panel;
+  left rail (Content/Media) removed — media stays in the image inspector.
+- **Preview** is a canvas mode (iframe static render) with an Exit preview state.
+- Screenshots: shots/wp-pages.png, wp-editor-page-tab.png, wp-editor-field-tab.png,
+  wp-listview.png, wp-preview.png — eyeballed, one CSS fix (outline list-style).
+- verify-ui.mjs updated to the new flow: **21/21 pass**.

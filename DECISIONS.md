@@ -60,3 +60,11 @@ Running log of choices made where the spec left something open.
   (`CHECK_TITLES`); the check engine itself is unchanged.
 - **Collapsed groups keep their rows in the DOM** (`display: none`) so automated tests and
   find-in-page still see all 15 checks.
+- **Editor flow:** WordPress/Gutenberg model instead of tabs — Sites list home,
+  edit canvas as the only main view, Page/Field sidebar (SEO vs inspector),
+  List view overlay for the outline, preview as a mode. Sidebar auto-switches to
+  Field on selection; all selection paths (canvas, list view) route through one
+  onSelect wrapper in App.
+- **Back-to-sites** is a plain reload (project state is in-memory only).
+- **Advanced SEO output** moved from an inline drawer to a modal — the sidebar is
+  too narrow for raw head output to be readable.
