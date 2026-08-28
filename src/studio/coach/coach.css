@@ -1,0 +1,95 @@
+/* ============================================================
+   Zippy the hummingbird + the non-modal coach tour.
+   Self-contained (does not touch studio.css).
+   ============================================================ */
+
+/* ---------- the character ---------- */
+.hb { display: block; overflow: visible; transform-origin: 60px 70px; animation: hb-bob 2.6s ease-in-out infinite; }
+@keyframes hb-bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-7px) rotate(3deg); } }
+
+/* sprite-style 3-frame wing flap */
+.hb .wf { opacity: 0; }
+.hb .wf1 { animation: hb-wf1 .16s steps(1) infinite; }
+.hb .wf2 { animation: hb-wf2 .16s steps(1) infinite; }
+.hb .wf3 { animation: hb-wf3 .16s steps(1) infinite; }
+@keyframes hb-wf1 { 0%, 33% { opacity: .6; } 33.01%, 100% { opacity: 0; } }
+@keyframes hb-wf2 { 0%, 33% { opacity: 0; } 33.01%, 66% { opacity: .6; } 66.01%, 100% { opacity: 0; } }
+@keyframes hb-wf3 { 0%, 66% { opacity: 0; } 66.01%, 100% { opacity: .55; } }
+
+/* blink */
+.hb-eye { transform-box: fill-box; transform-origin: center; animation: hb-blink 4.2s infinite; }
+@keyframes hb-blink { 0%, 92%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.12); } }
+
+/* tail sway */
+.hb-tail { transform-box: fill-box; transform-origin: top center; animation: hb-tail 2.6s ease-in-out infinite; }
+@keyframes hb-tail { 0%, 100% { transform: rotate(3deg); } 50% { transform: rotate(-3deg); } }
+
+/* sparkles */
+.hb-spark { transform-box: fill-box; transform-origin: center; opacity: 0; }
+.hb-spark.s1 { animation: hb-spark 2.8s ease-in-out infinite; }
+.hb-spark.s2 { animation: hb-spark 2.8s ease-in-out .9s infinite; }
+.hb-spark.s3 { animation: hb-spark 2.8s ease-in-out 1.7s infinite; }
+@keyframes hb-spark { 0%, 100% { opacity: 0; transform: scale(.4); } 45% { opacity: .95; transform: scale(1); } }
+
+/* moods */
+.hb--wave { animation: hb-wave 1.4s ease-in-out infinite; }
+@keyframes hb-wave { 0%, 100% { transform: translateY(-2px) rotate(-8deg); } 50% { transform: translateY(-8px) rotate(8deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .hb, .hb .wf1, .hb .wf2, .hb .wf3, .hb-eye, .hb-tail, .hb-spark, .hb--wave { animation: none; }
+  .hb .wf2 { opacity: .6; }
+}
+
+/* ---------- the tour ---------- */
+.coach { position: fixed; inset: 0; z-index: 9000; pointer-events: none; font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; }
+.coach-catch { position: absolute; inset: 0; pointer-events: auto; cursor: pointer; }
+.coach-dim { position: absolute; inset: 0; background: rgba(9, 19, 33, .58); backdrop-filter: blur(1px); }
+.coach-spot {
+  position: absolute; border-radius: 12px; pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(9, 19, 33, .58), 0 0 0 2px #3ff0d0, 0 0 22px 3px rgba(63, 240, 208, .55);
+  transition: left .5s cubic-bezier(.4,0,.2,1), top .5s cubic-bezier(.4,0,.2,1), width .5s cubic-bezier(.4,0,.2,1), height .5s cubic-bezier(.4,0,.2,1);
+  animation: coach-pulse 2s ease-in-out infinite;
+}
+@keyframes coach-pulse {
+  0%, 100% { box-shadow: 0 0 0 9999px rgba(9,19,33,.58), 0 0 0 2px #3ff0d0, 0 0 0 2px rgba(63,240,208,.4); }
+  50% { box-shadow: 0 0 0 9999px rgba(9,19,33,.58), 0 0 0 2px #3ff0d0, 0 0 0 9px rgba(63,240,208,.18); }
+}
+
+.coach-card {
+  position: absolute; pointer-events: auto; background: #fff; border: 1px solid rgba(9,30,66,.12);
+  border-radius: 18px; padding: 18px 18px 14px; box-shadow: 0 24px 60px rgba(9,19,33,.4);
+  transition: left .55s cubic-bezier(.4,0,.2,1), top .55s cubic-bezier(.4,0,.2,1);
+  animation: coach-pop .4s cubic-bezier(.2,1.3,.4,1);
+}
+@keyframes coach-pop { from { opacity: 0; transform: translateY(8px) scale(.96); } to { opacity: 1; transform: none; } }
+.coach-bird { position: absolute; top: -58px; left: 12px; width: 94px; height: 94px; filter: drop-shadow(0 8px 14px rgba(9,19,33,.28)); }
+.coach-badge { display: inline-block; margin-left: 92px; font: 800 11px/1 var(--mono, ui-monospace); letter-spacing: .08em;
+  text-transform: uppercase; color: #0c8f7e; background: #dbfff5; border: 1px solid #9fe9d8; padding: 5px 9px; border-radius: 999px; }
+.coach-title { margin: 14px 0 5px; font-size: 18px; font-weight: 800; letter-spacing: -.01em; color: #172b4d; }
+.coach-text { margin: 0 0 14px; font-size: 14px; line-height: 1.55; color: #44546f; }
+.coach-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.coach-dots { display: flex; gap: 6px; }
+.coach-dots span { width: 7px; height: 7px; border-radius: 50%; background: #d5dbe4; transition: .25s; }
+.coach-dots span.done { background: #9bd8cc; }
+.coach-dots span.on { background: linear-gradient(135deg, #3ff0d0, #2aa9e6); transform: scale(1.35); }
+.coach-btns { display: flex; gap: 8px; }
+.coach-ghost { border: 1px solid rgba(9,30,66,.16); background: #fff; color: #44546f; font: 600 13px sans-serif; padding: 8px 14px; border-radius: 9px; cursor: pointer; transition: .15s; }
+.coach-ghost:hover { background: #f1f2f4; }
+.coach-primary { border: 0; background: linear-gradient(135deg, #0c66e4, #6b5cff); color: #fff; font: 700 13px sans-serif; padding: 9px 18px; border-radius: 9px; cursor: pointer; box-shadow: 0 6px 16px rgba(12,102,228,.4); transition: transform .15s, box-shadow .15s; }
+.coach-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 24px rgba(12,102,228,.5); }
+.coach-skip { position: absolute; top: 12px; right: 14px; border: 0; background: transparent; color: #8a97ab; font: 600 12px sans-serif; cursor: pointer; }
+.coach-skip:hover { color: #44546f; text-decoration: underline; }
+
+/* a little tail-pointer toward the target */
+.coach-card.place-below::before,
+.coach-card.place-above::before {
+  content: ""; position: absolute; left: 46px; width: 16px; height: 16px; background: #fff; transform: rotate(45deg);
+}
+.coach-card.place-below::before { top: -8px; border-left: 1px solid rgba(9,30,66,.12); border-top: 1px solid rgba(9,30,66,.12); }
+.coach-card.place-above::before { bottom: -8px; border-right: 1px solid rgba(9,30,66,.12); border-bottom: 1px solid rgba(9,30,66,.12); }
+
+/* mute toggle — lives in the footer next to the step dots */
+.coach-foot-l { display: flex; align-items: center; gap: 10px; }
+.coach-mute { width: 26px; height: 26px; display: grid; place-items: center; border: 0; background: transparent;
+  color: #8a97ab; cursor: pointer; border-radius: 7px; transition: .15s; }
+.coach-mute:hover { color: #0c66e4; background: #eef4ff; }

@@ -66,13 +66,15 @@ export default function SeoPanel({ state, dispatch }: { state: StudioState; disp
   const h1Text = String(h1 ? c[h1] ?? '' : '').toLowerCase();
   const kwCount = kw ? JSON.stringify(c).toLowerCase().split(kw).length - 1 : 0;
   const robots = robotsValue(c);
-  const hreflang = (c['seo.hreflang'] as { lang: string; href: string }[] | undefined) ?? [];
-  const schemaTypes = (c['seo.schema.types'] as string[] | undefined) ?? [];
+  // Defensive: content may hold "" (from scaffolds/linters) where an array is expected — never crash the panel.
+  const asArr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
+  const hreflang = asArr<{ lang: string; href: string }>(c['seo.hreflang']);
+  const schemaTypes = asArr<string>(c['seo.schema.types']);
   const author = (c['seo.author'] as { name?: string; url?: string; jobTitle?: string } | undefined) ?? {};
   const linkFields = Object.entries(m.fields).filter(([, f]) => f.type === 'link' || f.type === 'button');
   const ogImg = (c['seo.og.image'] as { src?: string; alt?: string } | undefined) ?? {};
-  const breadcrumbs = (c['seo.breadcrumb'] as { label: string; href: string }[] | undefined) ?? [];
-  const schemaFaq = (c['seo.schema.faq'] as { q: string; a: string }[] | undefined) ?? [];
+  const breadcrumbs = asArr<{ label: string; href: string }>(c['seo.breadcrumb']);
+  const schemaFaq = asArr<{ q: string; a: string }>(c['seo.schema.faq']);
 
   const problems = checks.filter((x) => x.level === 'fail');
   const improvements = checks.filter((x) => x.level === 'warn');
@@ -241,7 +243,7 @@ export default function SeoPanel({ state, dispatch }: { state: StudioState; disp
           <label>
             Secondary keywords (comma separated)
             <input
-              value={((c['seo.secondaryKeywords'] as string[] | undefined) ?? []).join(', ')}
+              value={asArr<string>(c['seo.secondaryKeywords']).join(', ')}
               onChange={(e) => set('seo.secondaryKeywords', e.target.value.split(',').map((s) => s.trim()).filter(Boolean))}
             />
           </label>

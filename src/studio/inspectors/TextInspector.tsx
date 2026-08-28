@@ -9,7 +9,7 @@ export interface InspectorProps {
   field: Field;
 }
 
-/** Get the current value for a (possibly nested) key. */
+/** Get the base (English source) value for a (possibly nested) key. */
 export function getValue(state: StudioState, key: string): unknown {
   if (key in state.content) return state.content[key];
   const parts = key.split('.');
@@ -25,8 +25,17 @@ export function getValue(state: StudioState, key: string): unknown {
   return state.content[key];
 }
 
+/** Translation for the active language, if any (content._t[lang][key]). */
+function getTranslation(state: StudioState, key: string): string | undefined {
+  const t = (state.content['_t'] as Record<string, Record<string, unknown>> | undefined)?.[state.activeLang];
+  return t && key in t ? String(t[key] ?? '') : undefined;
+}
+
 export default function TextInspector({ state, dispatch, fieldKey, field }: InspectorProps) {
-  const value = String(getValue(state, fieldKey) ?? '');
+  const source = String(getValue(state, fieldKey) ?? '');
+  const translating = state.activeLang !== 'en';
+  // When translating, the box shows this language's value; the English source is the placeholder.
+  const value = translating ? getTranslation(state, fieldKey) ?? '' : source;
   const max = field.maxLength;
   const len = value.length;
   const pct = max ? Math.min(100, (len / max) * 100) : 0;
@@ -34,6 +43,12 @@ export default function TextInspector({ state, dispatch, fieldKey, field }: Insp
 
   return (
     <div className="studio-field">
+      {translating && (
+        <div className="studio-i18n-hint">
+          Translating to <b>{state.activeLang.toUpperCase()}</b> — leave blank to use English.
+          {source && <div className="studio-i18n-src">🇬🇧 {source}</div>}
+        </div>
+      )}
       {field.type === 'richtext' && (
         <div className="studio-richtext-bar">
           <button onClick={() => wrap('b')}>B</button>
@@ -44,6 +59,7 @@ export default function TextInspector({ state, dispatch, fieldKey, field }: Insp
       <textarea
         rows={field.type === 'heading' ? 2 : 4}
         value={value}
+        placeholder={translating ? source : undefined}
         onChange={(e) => dispatch({ type: 'change', field: fieldKey, value: e.target.value })}
       />
       {max !== undefined && (

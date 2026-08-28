@@ -8,6 +8,23 @@ import RepeatInspector from './inspectors/RepeatInspector';
 import VideoInspector from './inspectors/VideoInspector';
 
 /** Resolve a possibly-nested key like "games.slides.0.thumb" to its manifest field. */
+// Walk the remaining path segments (simple keys + numeric indices) through a repeat
+// item's field map, descending into nested repeats as they're encountered. This is what
+// makes doubly-nested repeats editable, e.g. footer.columns.1.links.3.link.
+function walkItem(itemFields: Record<string, Field>, segs: string[]): Field | undefined {
+  let cur: Record<string, Field> | undefined = itemFields;
+  let field: Field | undefined;
+  for (const seg of segs) {
+    if (/^\d+$/.test(seg)) continue; // repeat index — skip
+    if (!cur) return undefined;
+    field = cur[seg];
+    if (!field) return undefined;
+    // a nested repeat's children live under its `item`
+    cur = field.type === 'repeat' ? (field.item as Record<string, Field>) : undefined;
+  }
+  return field;
+}
+
 export function resolveField(state: StudioState, key: string): Field | undefined {
   const fields = state.project!.manifest.fields;
   if (fields[key]) return fields[key] as Field;
@@ -15,13 +32,12 @@ export function resolveField(state: StudioState, key: string): Field | undefined
   // walk down: strip numeric segments
   const norm = parts.filter((p) => !/^\d+$/.test(p)).join('.');
   if (fields[norm]) return fields[norm] as Field;
-  // repeat item field: find nearest repeat prefix
+  // repeat item field: find nearest repeat prefix, then walk the rest (handles nesting)
   for (let i = parts.length; i > 0; i--) {
     const prefix = parts.slice(0, i).join('.');
     const f = fields[prefix] as Field | undefined;
     if (f?.type === 'repeat' && f.item) {
-      const itemKey = parts.slice(i).filter((p) => !/^\d+$/.test(p)).join('.');
-      return f.item[itemKey] as Field | undefined;
+      return walkItem(f.item as Record<string, Field>, parts.slice(i));
     }
   }
   return undefined;

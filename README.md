@@ -1,53 +1,90 @@
 # PitForge
 
-A locally-run, SEO-first CMS Studio for one-page landing sites. Open a project,
-edit the page visually, set its SEO, and download a deploy-ready ZIP of static code.
+**Turn Figma designs into fast, SEO-clean landing pages — and edit them yourself, no code.**
 
-## Commands
+PitForge is a locally-run CMS Studio. An AI coding assistant (Claude Code) builds a site from your
+Figma file; you edit the words, images, and SEO visually in the Studio, then export a deploy-ready
+static site that works on **every screen size**.
+
+> New here? After `npm run dev`, open the Studio and click **“? How it works”** for a one-minute
+> interactive tour — or read the full [**Guide**](docs/GUIDE.md).
+
+---
+
+## Quickstart
+
+**You'll need:** Node.js 20+, [Claude Code](https://docs.claude.com/claude-code), and the Figma
+desktop app with *Preferences → Enable Dev Mode MCP Server* turned on.
 
 ```sh
-npm install          # install dependencies (Node 20+)
-npm run dev          # start the Studio at http://localhost:4321
-npm run export -- --project demo --domain https://example.com   # headless ZIP export
-npm run typecheck    # tsc --noEmit
-node scripts/gen-demo-assets.mjs   # regenerate the demo's placeholder images
+git clone <this-repo>
+cd pitforge
+npm install
+npm run dev            # Studio at http://localhost:4321
 ```
 
-## How it works
+Then, in the Studio: **+ New site → From Figma → paste your Figma link → copy the instruction into
+Claude Code.** Claude builds the site and it appears in your Sites list. Open it, edit, and publish.
 
-- **Projects are folders** in `./projects/` — no database. Each has `pitforge.json`
-  (config + block order), `manifest.json` (field types/constraints, zod-validated),
-  `content/default.json` (every editable value), `tokens.css`, `blocks/*.tsx` and `assets/`.
-- **Blocks are React components** rendered twice by the same tree: interactive in the
-  Studio (`edit` mode) and static at export (`renderToStaticMarkup`). What ships is
-  clean semantic HTML with zero JavaScript.
-- **The Studio** opens on a Sites list; each site opens in an Elementor-style editor:
-  dark left panel (Elements navigator / Page SEO panels / Content-Style-Advanced when
-  an element is selected), the page canvas beside it, device-width switching, preview
-  mode, and Export ZIP producing the static site.
-- **The export** (UI button or CLI) builds `<head>` with absolute URLs, minifies CSS,
-  copies only referenced assets, writes sitemap/robots/404/manifest plus
-  `.htaccess` / `nginx.conf.example` / `_redirects` / `README.md`, runs all 15 SEO
-  checks (any `fail` aborts), and streams `<project>-<yyyymmdd-hhmm>.zip`.
+---
 
-## API (dev server, all under `/api`)
+## The loop
 
-| Method | Path | Does |
-|---|---|---|
-| GET | `/api/projects` | list projects |
-| GET | `/api/projects/:id` | config + manifest + content + tokens + block paths |
-| PUT | `/api/projects/:id/content` | save content (atomic) |
-| POST | `/api/projects/:id/media` | upload image → sharp pipeline (AVIF/WebP/original × 400/800/1200/1600) |
-| GET | `/api/projects/:id/checks` | run all SEO checks |
-| GET | `/api/projects/:id/head` | emitted head, JSON-LD, robots.txt, sitemap.xml |
-| POST | `/api/projects/:id/export` | body `{ domain }` → streams ZIP |
+1. **Design** in Figma (desktop + mobile frames).
+2. **Build** — paste your Figma link; Claude Code converts it into a PitForge project, guided by the
+   bundled skills so it matches the design and works on every screen.
+3. **Edit** — click any text/image in the Studio; set SEO on the Page tab.
+4. **Ship** — Preview, then Export a deploy-ready static site (Cloudflare Pages or Worker).
 
-## Demo project
+---
 
-`projects/demo` ("LuckyBet DE") exercises every field type: hero (priority image,
-h1, CTA with `nofollow sponsored`), bonus figures, games repeater (min 2 / max 8),
-FAQ repeater feeding `FAQPage` schema, footer (richtext, `rel="follow"` link, 18+
-icon). It deliberately ships a 71-char SEO title so the `title-length` warning is
-visible; every other check passes.
+## Why it's different
 
-See `STATUS.md` for build state and `DECISIONS.md` for implementation choices.
+- **No code for the operator.** The whole edit → SEO → publish flow is visual.
+- **Faithful to the design.** Bundled Claude skills (`.claude/skills/`) enforce a pixel-faithful,
+  proportional build — no AI guesswork.
+- **Works on every screen, not just two.** Designers draw ~1920 and ~490; PitForge's fluid system
+  fills the gaps, and a gate proves it: `npm run verify -- --project <id>` (renders 320→2200px).
+- **SEO-first.** 16 checks gate every export; canonical, structured data, sitemap handled for you.
+- **Zero-JavaScript output.** Clean, fast, semantic HTML that loads instantly and ranks well.
+
+---
+
+## The skills (what makes the AI reliable)
+
+`.claude/skills/` ships with the repo, so Claude behaves the same on every clone:
+
+| Skill | Role |
+|---|---|
+| `figma-to-pitforge` | Figma → a faithful, responsive PitForge project |
+| `pitforge-responsive-fluid` | the fluid system; the responsive gate |
+| `pitforge-seo` | headings, canonical, structured data, the checks |
+| `pitforge-accessibility` | semantic HTML, zero-JS accordions, focus/contrast |
+| `pitforge-export-deploy` | Pages vs Worker export, sub-path deploys |
+
+`CLAUDE.md` ties them together and applies them automatically whenever Figma work starts.
+
+---
+
+## For developers
+
+- **Projects are folders** in `./projects/` (no database): `pitforge.json` (config + block order),
+  `manifest.json` (field types, zod-validated), `content/default.json`, `tokens.css`, `blocks/*.tsx`,
+  `assets/`. The shipped `demo` project exercises every field type.
+- **Blocks are React components** rendered twice by the same tree — interactive in the Studio,
+  static at export (`renderToStaticMarkup`) → zero-JS HTML.
+- **The Studio** uses the Atlassian Design System (token-driven, in `src/studio/studio.css`).
+
+```sh
+npm run dev                                   # Studio
+npm run verify -- --project <id>              # responsive gate (320→2200px)
+npm run export -- --project <id> --domain https://example.com   # headless ZIP export
+npm run typecheck
+```
+
+See [`docs/GUIDE.md`](docs/GUIDE.md) for the full walkthrough, `CLAUDE.md` for how the AI is guided,
+and `STATUS.md` / `DECISIONS.md` for build state and design choices.
+
+## License
+
+[MIT](LICENSE).

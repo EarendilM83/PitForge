@@ -4,8 +4,11 @@ import type { Field } from '../runtime/types';
 
 const BLOCK_ICONS = ['▦', '▣', '▤', '▥', '▧', '▨', '▩'];
 
+/** "SiteNav" → "Site Nav", "FeatureCasino" → "Feature Casino" — friendly section names. */
+const humanize = (s: string) => s.replace(/([a-z0-9])([A-Z])/g, '$1 $2').replace(/^./, (c) => c.toUpperCase());
+
 /** Elementor "Elements" tab — the page's blocks as a widget/navigator tree. */
-export default function ElementsPanel({ state, onSelect }: { state: StudioState; onSelect: (field: string | null) => void }) {
+export default function ElementsPanel({ state, onSelect, simple = false }: { state: StudioState; onSelect: (field: string | null) => void; simple?: boolean }) {
   const project = state.project!;
   const [openBlock, setOpenBlock] = React.useState<string | null>(project.config.blocks[0] ?? null);
 
@@ -30,15 +33,15 @@ export default function ElementsPanel({ state, onSelect }: { state: StudioState;
           <li key={block}>
             <button className={`studio-el-blockrow ${open ? 'open' : ''}`} onClick={() => setOpenBlock(open ? null : block)}>
               <span className="studio-el-blockicon">{BLOCK_ICONS[i % BLOCK_ICONS.length]}</span>
-              {block}
+              {simple ? humanize(block) : block}
               <span className="studio-el-chevron">{open ? '▾' : '▸'}</span>
             </button>
             <ul style={open ? undefined : { display: 'none' }}>
               {(byBlock.get(block) ?? []).map(([key, f]) => (
                 <li key={key}>
-                  <button className={`studio-el-fieldrow ${state.selected === key ? 'active' : ''}`} onClick={() => select(key)} title={key}>
+                  <button className={`studio-el-fieldrow ${state.selected === key ? 'active' : ''}`} onClick={() => select(key)} title={simple ? f.label : key}>
                     {f.label}
-                    <span className="studio-el-fieldtype">{f.type}</span>
+                    {!simple && <span className="studio-el-fieldtype">{f.type}</span>}
                   </button>
                 </li>
               ))}

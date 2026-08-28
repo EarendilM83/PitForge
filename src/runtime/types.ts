@@ -171,3 +171,19 @@ export function resolveValue(content: Content, key: string): ContentValue | unde
   }
   return undefined;
 }
+
+/** i18n: English is the source (base content). Other languages hold per-key overrides in
+ *  content._t[lang]; a missing translation falls back to English. Keys are the project's field ids. */
+export function localizedValue(content: Content, key: string, lang?: string): ContentValue | undefined {
+  if (lang && lang !== 'en') {
+    const t = (content['_t'] as Record<string, Record<string, ContentValue>> | undefined)?.[lang];
+    if (t && key in t) return t[key];
+  }
+  return resolveValue(content, key);
+}
+
+/** Extra languages a project has beyond English (content._langs), plus 'en' as the base. */
+export function projectLangs(content: Content): string[] {
+  const extra = (content['_langs'] as string[] | undefined) ?? [];
+  return ['en', ...extra.filter((l) => l && l !== 'en')];
+}

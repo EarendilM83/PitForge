@@ -5,3 +5,16 @@ projects/*/dist/
 .DS_Store
 
 shots/
+.pitforge-ai-key
+
+# Public repo ships only the neutral demo project. A user's own sites (and any
+# client work) live in ./projects/ locally but are never committed.
+projects/*
+!projects/demo
+!projects/demo/**
+
+# local Claude / MCP config and scratch — not part of the product
+.claude/
+.mcp.json
+demo-*.html
+projects/demo/dist/

@@ -1,8 +1,0 @@
-.dw-faq { background: var(--bg); padding: var(--space-10) var(--space-6); max-width: 760px; margin: 0 auto; }
-.dw-faq-item {
-  background: var(--surface); border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: var(--radius); padding: var(--space-4) var(--space-6);
-  margin-bottom: var(--space-3);
-}
-.dw-faq-q { font-size: var(--text-md); color: var(--gold-soft); margin: 0 0 var(--space-2); }
-.dw-faq-a { font-size: var(--text-sm); color: var(--grey-400); }

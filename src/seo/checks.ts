@@ -130,13 +130,18 @@ export function runChecks(input: CheckInput): CheckResult[] {
   const { dropped } = requestedTypes(content);
   let schemaOk = true;
   let schemaDetail = '';
+  const rawSchema = String(content['seo.schema.raw'] ?? '').trim();
   try {
     if (head.jsonLd) JSON.parse(head.jsonLd.replace(/<\/?script[^>]*>/g, ''));
-    const types = [...head.jsonLd.matchAll(/"@type":\s*"([^"]+)"/g)].map((x) => x[1]);
-    const bad = types.filter((t) => !(SCHEMA_ALLOW_LIST as readonly string[]).includes(t) && !['Question', 'Answer', 'ListItem', 'Person'].includes(t));
-    if (bad.length) {
-      schemaOk = false;
-      schemaDetail = `Types outside the allow-list: ${bad.join(', ')}.`;
+    // A hand-authored raw JSON-LD (seo.schema.raw) is trusted for type composition — we only
+    // require it to be valid JSON. The allow-list applies to PitForge-generated schema.
+    if (!rawSchema) {
+      const types = [...head.jsonLd.matchAll(/"@type":\s*"([^"]+)"/g)].map((x) => x[1]);
+      const bad = types.filter((t) => !(SCHEMA_ALLOW_LIST as readonly string[]).includes(t) && !['Question', 'Answer', 'ListItem', 'Person'].includes(t));
+      if (bad.length) {
+        schemaOk = false;
+        schemaDetail = `Types outside the allow-list: ${bad.join(', ')}.`;
+      }
     }
   } catch (e) {
     schemaOk = false;
@@ -221,9 +226,12 @@ export function runChecks(input: CheckInput): CheckResult[] {
   );
 
   // renders-without-js
-  const h1Text = /<h1[^>]*>([^<]+)<\/h1>/i.exec(html)?.[1]?.trim() ?? '';
+  // Extract the h1's text content — it may contain inner spans (two-tone headline), so strip
+  // inner tags before checking the literal text renders statically.
+  const h1Inner = /<h1[^>]*>([\s\S]*?)<\/h1>/i.exec(html)?.[1] ?? '';
+  const h1Text = h1Inner.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
   results.push(
-    h1Text && html.includes(h1Text)
+    h1Text
       ? pass('renders-without-js', 'Renders without JS', `H1 present as literal text: "${h1Text.slice(0, 50)}"`)
       : r('renders-without-js', 'fail', 'Renders without JS', 'The h1 text is not present as literal text in the HTML.', 'Ensure the h1 field has content and renders statically.')
   );

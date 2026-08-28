@@ -13,6 +13,7 @@ export interface StudioState {
   redoStack: Content[];
   outlinesVisible: boolean;
   canvasWidth: number | 'full';
+  activeLang: string; // 'en' = source language; others edit into content._t[lang]
   error: string | null;
 }
 
@@ -24,8 +25,9 @@ export const initialState: StudioState = {
   saveStatus: 'saved',
   undoStack: [],
   redoStack: [],
-  outlinesVisible: true,
+  outlinesVisible: false,
   canvasWidth: 'full',
+  activeLang: 'en',
   error: null,
 };
 
@@ -40,7 +42,17 @@ export type Action =
   | { type: 'save-status'; status: SaveStatus }
   | { type: 'toggle-outlines' }
   | { type: 'canvas-width'; width: number | 'full' }
+  | { type: 'set-lang'; lang: string }
   | { type: 'error'; error: string | null };
+
+// Write a value for the active language. English (or reserved `_`-keys like _tags/_style) writes to
+// the base content; other languages write a flat per-key override into content._t[lang].
+function applyChange(content: Content, field: string, value: ContentValue, lang: string): Content {
+  if (lang === 'en' || field.startsWith('_')) return setDeep(content, field, value);
+  const t = { ...((content['_t'] as Record<string, Record<string, ContentValue>>) || {}) };
+  t[lang] = { ...(t[lang] || {}), [field]: value };
+  return { ...content, _t: t };
+}
 
 function setDeep(content: Content, key: string, value: ContentValue): Content {
   // Direct top-level keys (including whole-array replacements like "games.slides")
@@ -77,8 +89,10 @@ export function reducer(state: StudioState, action: Action): StudioState {
       return { ...state, selected: action.field };
     case 'change': {
       const undoStack = [...state.undoStack, state.content].slice(-UNDO_LIMIT);
-      return { ...state, content: setDeep(state.content, action.field, action.value), undoStack, redoStack: [], saveStatus: 'saving' };
+      return { ...state, content: applyChange(state.content, action.field, action.value, state.activeLang), undoStack, redoStack: [], saveStatus: 'saving' };
     }
+    case 'set-lang':
+      return { ...state, activeLang: action.lang };
     case 'set-content':
       return { ...state, content: action.content };
     case 'undo': {

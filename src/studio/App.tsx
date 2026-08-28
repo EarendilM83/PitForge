@@ -3,13 +3,14 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { reducer, initialState, type StudioState, type Action } from './state';
 import PagesList from './PagesList';
 import Canvas from './Canvas';
-import ElementEdit from './ElementEdit';
-import ElementsPanel from './ElementsPanel';
-import SeoPanel from './SeoPanel';
+import BuilderLeftRail from './BuilderLeftRail';
+import BuilderInspector from './BuilderInspector';
+import TestPanel from './TestPanel';
 import ExportDialog from './ExportDialog';
 import { PFProvider } from '../runtime/context';
 import { RenderPage, type BlockModule } from '../runtime/renderPage';
-import type { ContentValue, Project } from '../runtime/types';
+import { PF_UTILITIES_CSS } from '../runtime/pfUtilities';
+import { projectLangs, type ContentValue, type Project } from '../runtime/types';
 
 // Blocks are loaded by Vite as modules, not through the API (§7).
 const blockModules = import.meta.glob('/projects/*/blocks/*.tsx', { eager: true }) as Record<string, BlockModule>;
@@ -35,7 +36,9 @@ export default function App() {
   const [exportOpen, setExportOpen] = React.useState(false);
   const [externalChange, setExternalChange] = React.useState(false);
   const [previewMode, setPreviewMode] = React.useState(false);
-  const [panelTab, setPanelTab] = React.useState<'elements' | 'page'>('elements');
+  const [publishing, setPublishing] = React.useState(false);
+  const [builderMode, setBuilderMode] = React.useState(false); // Marketer (bounded) vs Builder (free-form)
+  const [testOpen, setTestOpen] = React.useState(false);
   const saveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const changeBaseline = React.useRef(0);
 
@@ -112,62 +115,113 @@ export default function App() {
     onChange: (field: string, value: ContentValue) => dispatch({ type: 'change', field, value }),
   };
 
-  return (
-    <div className="studio-el">
-      {!previewMode && (
-        <aside className="studio-el-panel">
-          {state.selected ? (
-            <ElementEdit state={state} dispatch={dispatch} onBack={() => onSelect(null)} />
-          ) : (
-            <>
-              <div className="studio-el-head">
-                <button className="studio-el-iconbtn" title="Back to sites" onClick={() => window.location.reload()}>
-                  ←
-                </button>
-                <span className="studio-el-title">{state.project.config.name}</span>
-              </div>
-              <div className="studio-el-tabs">
-                {(['elements', 'page'] as const).map((t) => (
-                  <button key={t} className={panelTab === t ? 'active' : ''} onClick={() => setPanelTab(t)}>
-                    {t === 'elements' ? 'Elements' : 'Page'}
-                  </button>
-                ))}
-              </div>
-              <div className="studio-el-body">
-                {panelTab === 'elements' ? <ElementsPanel state={state} onSelect={onSelect} /> : <SeoPanel state={state} dispatch={dispatch} />}
-              </div>
-            </>
-          )}
-          <PanelBottom
-            state={state}
-            dispatch={dispatch}
-            onSettings={() => {
-              onSelect(null);
-              setPanelTab('page');
-            }}
-            onNavigator={() => {
-              onSelect(null);
-              setPanelTab('elements');
-            }}
-            onPreview={() => setPreviewMode(true)}
-            onExport={() => setExportOpen(true)}
-          />
-        </aside>
-      )}
-      <main className="studio-el-main">
+  // One-click publish: build the live site and open it in a new tab.
+  const publish = async () => {
+    if (!state.project || publishing) return;
+    setPublishing(true);
+    try {
+      const r = await fetch(`/api/projects/${state.project.id}/publish`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      });
+      const j = await r.json();
+      if (j.url) window.open(j.url, '_blank', 'noopener');
+      else alert(`Publish failed: ${j.error || 'unknown error'}`);
+    } catch {
+      alert('Publish failed — is the server running?');
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  if (previewMode) {
+    return (
+      <div className="studio-el studio-el-preview">
         <PFProvider value={pf}>
-          {previewMode ? (
-            <>
-              <PreviewCanvas state={state} />
-              <button className="studio-el-exit-preview" onClick={() => setPreviewMode(false)}>
-                ← Back to editor
-              </button>
-            </>
-          ) : (
-            <Canvas state={state} dispatch={dispatch} onSelect={onSelect} />
-          )}
+          <main className="studio-el-main">
+            <PreviewCanvas state={state} />
+            <button className="studio-el-exit-preview" onClick={() => setPreviewMode(false)}>← Back to editor</button>
+          </main>
         </PFProvider>
+      </div>
+    );
+  }
+
+  const selectedLabel = state.selected
+    ? document.querySelector(`.studio-page [data-pf-el="${CSS.escape(state.selected)}"]`)?.getAttribute('data-pf-label') ?? null
+    : null;
+  const devices: [string, string, number | 'full'][] = [['🖥', 'Desktop', 'full'], ['▭', 'Tablet', 768], ['▯', 'Mobile', 390]];
+
+  return (
+    <div className="studio-el builder pro">
+      <header className="pro-topbar">
+        <button className="pro-brand" title="Back to sites" onClick={() => window.location.reload()}>
+          <span className="pro-mark">◆</span> PitForge
+        </button>
+        <span className="pro-tb-div" />
+        <div className="pro-crumb"><b>{state.project.config.name}</b><span className="sep">/</span>Home
+          {selectedLabel && <><span className="sep">/</span><span className="cur">{selectedLabel}</span></>}
+        </div>
+        <span className={`pro-saved ${state.saveStatus}`}>{state.saveStatus === 'saving' ? 'Saving…' : state.saveStatus === 'error' ? 'Save error' : 'Saved'}</span>
+
+        <select
+          className={`pro-lang ${state.activeLang !== 'en' ? 'on' : ''}`}
+          title="Language — English is the source; other languages translate per key"
+          value={state.activeLang}
+          onChange={(e) => {
+            if (e.target.value === '__add') {
+              const code = window.prompt('New language code (e.g. de, es, fr, ka):')?.trim().toLowerCase();
+              if (code && !projectLangs(state.content).includes(code)) {
+                const cur = (state.content['_langs'] as string[] | undefined) ?? [];
+                dispatch({ type: 'change', field: '_langs', value: [...cur, code] });
+                dispatch({ type: 'set-lang', lang: code });
+              }
+            } else dispatch({ type: 'set-lang', lang: e.target.value });
+          }}
+        >
+          {projectLangs(state.content).map((l) => <option key={l} value={l}>{l === 'en' ? '🌐 English · source' : `🌐 ${l.toUpperCase()}`}</option>)}
+          <option value="__add">＋ Add language…</option>
+        </select>
+
+        <div className="pro-tb-center">
+          <div className="pro-seg">
+            {devices.map(([ico, label, w]) => (
+              <button key={label} className={state.canvasWidth === w ? 'on' : ''} onClick={() => dispatch({ type: 'canvas-width', width: w })}>{ico} {label}</button>
+            ))}
+          </div>
+        </div>
+
+        <div className="pro-tb-right">
+          <button className={`pro-mode ${builderMode ? 'on' : ''}`} title={builderMode ? 'Builder mode — free-form editing unlocked. Click for Marketer (safe) mode.' : 'Marketer mode — safe, bounded edits. Click to unlock Builder mode.'} onClick={() => setBuilderMode((m) => !m)}>
+            {builderMode ? '🔧 Builder' : '🔒 Marketer'}
+          </button>
+          <span className="pro-tb-div" />
+          <button className="pro-icobtn" title="Undo" onClick={() => dispatch({ type: 'undo' })} disabled={!state.undoStack.length}>↩</button>
+          <button className="pro-icobtn" title="Redo" onClick={() => dispatch({ type: 'redo' })} disabled={!state.redoStack.length}>↪</button>
+          <span className="pro-tb-div" />
+          <button className="pro-btn ghost" onClick={() => setTestOpen(true)} title="Run the responsive test & scan">▶ Test</button>
+          <button className="pro-btn ghost" onClick={() => setPreviewMode(true)}>Preview</button>
+          <button className="pro-btn ghost" onClick={() => setExportOpen(true)}>Export</button>
+          <button className="pro-btn primary" onClick={publish} disabled={publishing}>{publishing ? 'Publishing…' : 'Publish →'}</button>
+        </div>
+      </header>
+
+      <BuilderLeftRail state={state} dispatch={dispatch} />
+
+      <main className="studio-el-main">
+        {state.canvasWidth === 'full' ? (
+          <PFProvider value={pf}>
+            <Canvas state={state} dispatch={dispatch} onSelect={onSelect} />
+          </PFProvider>
+        ) : (
+          <DeviceFrame state={state} width={state.canvasWidth} />
+        )}
       </main>
+
+      <BuilderInspector state={state} dispatch={dispatch} builderMode={builderMode} />
+
+      {testOpen && <TestPanel state={state} onClose={() => setTestOpen(false)} />}
       {exportOpen && <ExportDialog projectId={state.project.id} onClose={() => setExportOpen(false)} />}
       {externalChange && (
         <div className="studio-notice">
@@ -190,61 +244,26 @@ export default function App() {
   );
 }
 
-/** Elementor's docked bottom bar: settings, navigator, undo, outlines, devices, preview, save state, Export. */
-function PanelBottom({
-  state,
-  dispatch,
-  onSettings,
-  onNavigator,
-  onPreview,
-  onExport,
-}: {
-  state: StudioState;
-  dispatch: React.Dispatch<Action>;
-  onSettings: () => void;
-  onNavigator: () => void;
-  onPreview: () => void;
-  onExport: () => void;
-}) {
+
+/** Device preview — the EXACT static render (what publishes) inside an iframe sized to the device,
+ *  so media queries fire at the real width. This is why the editor === preview at Tablet/Mobile:
+ *  it is literally the same render, not the inline canvas squished into a narrow box. */
+function DeviceFrame({ state, width }: { state: StudioState; width: number }) {
+  const project = state.project!;
+  const html = React.useMemo(
+    () =>
+      renderToStaticMarkup(
+        <PFProvider value={{ mode: 'static', content: state.content, manifest: project.manifest, selected: null, lang: state.activeLang, onSelect: () => {}, onChange: () => {} }}>
+          <RenderPage config={project.config} blocks={blocksFor(project.id)} />
+        </PFProvider>
+      ),
+    [state.content, state.activeLang, project]
+  );
+  const srcDoc = `<!doctype html><html lang="${state.activeLang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>${project.tokensCss}\n${PF_UTILITIES_CSS}\n${blockCssFor(project.id, project.config.blocks)}</style></head><body>${html}</body></html>`;
   return (
-    <div className="studio-el-bottom">
-      <button className="studio-el-iconbtn" title="Page settings" onClick={onSettings}>
-        ⚙
-      </button>
-      <button className="studio-el-iconbtn" title="Navigator" onClick={onNavigator}>
-        ▤
-      </button>
-      <button className="studio-el-iconbtn" title="Undo" onClick={() => dispatch({ type: 'undo' })} disabled={!state.undoStack.length}>
-        ↩
-      </button>
-      <button
-        className={`studio-el-iconbtn ${state.outlinesVisible ? 'active' : ''}`}
-        title="Toggle edit outlines"
-        onClick={() => dispatch({ type: 'toggle-outlines' })}
-      >
-        ◻
-      </button>
-      <span className="studio-width-switcher">
-        {([360, 768, 1280, 'full'] as const).map((w) => (
-          <button
-            key={String(w)}
-            title={w === 'full' ? 'Full width' : `${w}px`}
-            className={state.canvasWidth === w ? 'active' : ''}
-            onClick={() => dispatch({ type: 'canvas-width', width: w })}
-          >
-            {w === 'full' ? 'Full' : w}
-          </button>
-        ))}
-      </span>
-      <button className="studio-el-iconbtn" title="Preview" onClick={onPreview}>
-        👁
-      </button>
-      <span className="studio-el-save">
-        {state.saveStatus === 'saving' ? 'Saving…' : state.saveStatus === 'saved' ? 'Saved' : 'Save error'}
-      </span>
-      <button className="studio-el-export" onClick={onExport}>
-        Export
-      </button>
+    <div className="pf-device-wrap">
+      <iframe className="pf-device-frame" style={{ width }} srcDoc={srcDoc} title={`Device preview ${width}px`} />
+      <div className="pf-device-note">📱 {width}px — exact preview with real media queries (identical to publish). Switch to Desktop to edit.</div>
     </div>
   );
 }

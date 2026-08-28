@@ -6,7 +6,12 @@
   "scripts": {
     "dev": "vite",
     "export": "node --import ./scripts/register-tsx.mjs src/cli/export.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify": "node scripts/verify-responsive.mjs",
+    "test:ui": "node scripts/test-pipeline.mjs",
+    "test:sites": "node scripts/test-pipeline.mjs --sites-only",
+    "test:editor": "node scripts/test-pipeline.mjs --editor-only",
+    "gate": "npm run typecheck && npm run test:ui"
   },
   "dependencies": {
     "archiver": "^7.0.1",

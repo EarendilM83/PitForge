@@ -1,3 +1,6 @@
+/* box-sizing reset (mandatory — padding never overflows width) */
+*, *::before, *::after { box-sizing: border-box; }
+
 /* Design tokens for the demo project (§13): brand colour, two greys,
    a five-step type scale, a 4px spacing scale, one radius. */
 :root {

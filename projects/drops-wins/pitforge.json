@@ -1,7 +1,0 @@
-{
-  "name": "Drops & Wins",
-  "lang": "en",
-  "blocks": ["Hero", "Steps", "DailyTable", "DropsTable", "Games", "Faq", "Footer"],
-  "domain": "",
-  "createdBy": "figma-to-pitforge v1"
-}

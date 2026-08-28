@@ -10,6 +10,8 @@ export interface PFContextValue {
   selected: string | null;
   onSelect(field: string): void;
   onChange(field: string, value: ContentValue): void;
+  /** active language for i18n; 'en' (default/undefined) renders the source content */
+  lang?: string;
   /** true when the Studio chrome wants outlines hidden */
   outlinesVisible?: boolean;
   /** field key → sanitised SVG source, pre-loaded server-side for static/export mode */

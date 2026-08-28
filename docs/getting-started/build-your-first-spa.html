@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PitForge — Build Your First SPA</title>
+<style>
+  :root{
+    --bg:#0b1620; --bg2:#0d1923; --panel:#0e1c27; --panel2:#10202d; --line:#1d3547;
+    --text:#e7eef5; --muted:#8ca2b4; --dim:#5f7d94;
+    --gold:#f5b638; --gold2:#ffd479; --accent:#3da5ff; --green:#2ecc71; --violet:#7b5cff;
+    --mono:ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'Manrope',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:44px 44px;background-position:center;}
+  body::before{content:"";position:fixed;inset:0;background:var(--bg);opacity:.965;z-index:-1}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  code,kbd{font-family:var(--mono);font-size:.86em}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+  /* hero */
+  .hero{position:relative;text-align:center;padding:78px 24px 54px;overflow:hidden}
+  .hero .eyebrow{display:inline-block;letter-spacing:.24em;text-transform:uppercase;font-size:12px;
+    font-weight:800;color:var(--gold);border:1px solid #4a3a12;background:#2a2008;border-radius:999px;padding:6px 14px}
+  .hero h1{font-size:clamp(34px,6vw,58px);line-height:1.05;margin:20px 0 12px;font-weight:800;letter-spacing:-.02em}
+  .hero h1 span{color:var(--gold)}
+  .hero p{max-width:660px;margin:0 auto;color:#b9c8d6;font-size:18px}
+  .hero .meta{margin-top:22px;font:600 12px/1 var(--mono);color:var(--dim);display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+  .hero .meta b{color:var(--gold2)}
+
+  /* layout */
+  .shell{display:grid;grid-template-columns:230px 1fr;gap:38px;align-items:start;padding:20px 0 90px}
+  nav.toc{position:sticky;top:20px;font-size:13px;border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:16px 14px}
+  nav.toc .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);margin:0 8px 10px}
+  nav.toc a{display:block;color:var(--muted);padding:6px 8px;border-radius:7px;font-weight:600}
+  nav.toc a:hover{background:var(--panel2);color:var(--text);text-decoration:none}
+  nav.toc a .n{display:inline-block;width:20px;color:var(--gold);font-family:var(--mono);font-size:11px}
+
+  section{scroll-margin-top:20px}
+  h2.sec{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin:46px 0 4px}
+  .lead{font-size:26px;font-weight:800;letter-spacing:-.01em;margin:0 0 18px}
+
+  /* two-tools cards */
+  .tools{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:8px 0 8px}
+  .tool{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:20px}
+  .tool h3{margin:0 0 4px;font-size:17px}
+  .tool .who{font:700 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+  .tool.claude .who{color:var(--violet)} .tool.studio .who{color:var(--gold)}
+  .tool ul{margin:0;padding-left:18px;color:#c3d1de;font-size:14.5px} .tool li{margin:5px 0}
+
+  /* diagram cards */
+  .diagram{border:1px solid var(--line);border-radius:16px;background:var(--panel2);padding:24px;margin:14px 0;overflow:auto}
+  .diagram .cap{font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:600}
+  .mermaid{display:flex;justify-content:center}
+
+  /* step */
+  .step{border:1px solid var(--line);border-radius:16px;background:var(--panel);margin:18px 0;overflow:hidden}
+  .step-head{display:flex;align-items:center;gap:14px;padding:18px 22px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--panel2),var(--panel))}
+  .badge{flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font:800 17px var(--mono);
+    color:#0b1620;background:linear-gradient(180deg,var(--gold2),var(--gold));box-shadow:0 6px 18px #f5b63833}
+  .step-head h3{margin:0;font-size:19px;letter-spacing:-.01em}
+  .step-head .tag{margin-left:auto;font:700 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;
+    padding:6px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+  .tag.you{color:var(--gold2);border-color:#4a3a12;background:#2a2008}
+  .tag.claude{color:#c3b4ff;border-color:#33285e;background:#1a1330}
+  .tag.mkt{color:#a9e6c4;border-color:#1d5136;background:#0f2a1c}
+  .step-body{display:grid;grid-template-columns:1.05fr 1fr;gap:0}
+  @media(max-width:820px){.step-body{grid-template-columns:1fr}.shell{grid-template-columns:1fr}nav.toc{display:none}.tools{grid-template-columns:1fr}}
+  .step-copy{padding:20px 22px}
+  .step-copy p{margin:0 0 12px;color:#c9d6e2;font-size:15px}
+  .step-shot{border-left:1px solid var(--line);background:var(--bg2);padding:14px;display:flex;align-items:center;justify-content:center}
+  .step-shot img{width:100%;border-radius:9px;border:1px solid var(--line);cursor:zoom-in;box-shadow:0 10px 30px #0006;transition:transform .15s}
+  .step-shot img:hover{transform:scale(1.01)}
+  .step-shot .noimg{color:var(--dim);font:600 12px var(--mono);text-align:center;padding:40px}
+
+  ul.do{list-style:none;margin:0 0 8px;padding:0}
+  ul.do li{position:relative;padding:5px 0 5px 26px;font-size:14.5px;color:#c9d6e2}
+  ul.do li::before{content:"→";position:absolute;left:2px;color:var(--gold);font-weight:800}
+
+  .callout{border-radius:11px;padding:12px 14px;margin:12px 0 2px;font-size:13.5px;border:1px solid}
+  .callout b{font-weight:800}
+  .callout.gate{background:#0f2a1c;border-color:#1d5136;color:#c6f0d8}
+  .callout.tip{background:#0c2436;border-color:#1e4a6b;color:#cfe6f7}
+  .callout.warn{background:#2a2008;border-color:#5e470f;color:#ffe4a8}
+  .callout .k{font-family:var(--mono);color:#fff}
+  .cmd{display:block;font-family:var(--mono);font-size:13px;background:#08111a;border:1px solid var(--line);
+    border-radius:9px;padding:11px 13px;margin:10px 0;color:#bfe3ff;overflow:auto;white-space:pre}
+  .cmd .c{color:var(--dim)}
+
+  /* who-owns-what */
+  table.own{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  table.own th,table.own td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  table.own th{background:var(--panel2);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  table.own td:first-child{font-weight:700;white-space:nowrap}
+  .pill{display:inline-block;font:700 10px/1 var(--mono);padding:4px 8px;border-radius:999px}
+  .pill.c{color:#c3b4ff;background:#1a1330;border:1px solid #33285e}
+  .pill.y{color:var(--gold2);background:#2a2008;border:1px solid #4a3a12}
+  .pill.m{color:#a9e6c4;background:#0f2a1c;border:1px solid #1d5136}
+
+  footer{border-top:1px solid var(--line);padding:26px 0 60px;color:var(--dim);font-size:12.5px;text-align:center}
+
+  /* lightbox */
+  #lb{position:fixed;inset:0;background:#04090ee6;display:none;align-items:center;justify-content:center;z-index:99;padding:30px;cursor:zoom-out}
+  #lb img{max-width:100%;max-height:100%;border-radius:12px;border:1px solid var(--line);box-shadow:0 30px 80px #000}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <span class="eyebrow">PitForge · Getting Started</span>
+  <h1>Build your first <span>landing page</span><br>without writing code</h1>
+  <p>A design becomes a real, fast, SEO-clean single-page site. Claude Code builds and edits it; you preview, export, and ship. Here is the exact path, step by step.</p>
+  <div class="meta">
+    <span>⏱ <b>~15 min</b> first run</span>
+    <span>🧩 <b>2 tools</b> — Claude Code + Studio</span>
+    <span>🚀 output: <b>zero-JS static site</b></span>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="shell">
+
+  <nav class="toc">
+    <div class="lbl">The journey</div>
+    <a href="#tools"><span class="n">·</span>Two tools</a>
+    <a href="#map"><span class="n">·</span>The big picture</a>
+    <a href="#s0"><span class="n">0</span>Set up (once)</a>
+    <a href="#s1"><span class="n">1</span>Start the Studio</a>
+    <a href="#s2"><span class="n">2</span>Create a site</a>
+    <a href="#s3"><span class="n">3</span>Claude builds it</a>
+    <a href="#s4"><span class="n">4</span>Open the editor</a>
+    <a href="#s5"><span class="n">5</span>Edit content</a>
+    <a href="#s6"><span class="n">6</span>Set the SEO</a>
+    <a href="#s7"><span class="n">7</span>Preview</a>
+    <a href="#s8"><span class="n">8</span>Export</a>
+    <a href="#s9"><span class="n">9</span>Deploy</a>
+    <a href="#own"><span class="n">·</span>Who owns what</a>
+  </nav>
+
+  <main>
+
+  <!-- TWO TOOLS -->
+  <section id="tools">
+    <h2 class="sec">Before you start</h2>
+    <div class="lead">Two tools, working together</div>
+    <p style="color:#b9c8d6;margin-top:-6px">PitForge is not one app — it is a <b>build engine</b> and an <b>editing studio</b>. Knowing which does what makes everything else obvious.</p>
+    <div class="tools">
+      <div class="tool claude">
+        <div class="who">Claude Code — the builder</div>
+        <h3>Turns designs & words into the site</h3>
+        <ul>
+          <li>Converts a Figma design into a real project</li>
+          <li>Makes structural / design edits you ask for in plain language</li>
+          <li>Runs the responsive + SEO gates before calling anything done</li>
+          <li>Produces the deployable export bundle</li>
+        </ul>
+      </div>
+      <div class="tool studio">
+        <div class="who">PitForge Studio — the editor</div>
+        <h3>Where you see and tweak the site</h3>
+        <ul>
+          <li>Lists your sites; opens each in a live editor</li>
+          <li>Click any text or image to change the words / picture</li>
+          <li>Set the SEO — title, slug, meta, Google preview</li>
+          <li>Preview at every screen size, then export a ZIP</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- MINDMAP + PIPELINE -->
+  <section id="map">
+    <h2 class="sec">The big picture</h2>
+    <div class="lead">One design in, one deployable site out</div>
+
+    <div class="diagram">
+      <div class="cap">MINDMAP — everything that happens on the way to your first SPA</div>
+      <pre class="mermaid">
+mindmap
+  root((Your first<br/>SPA))
+    Set up once
+      Install PitForge
+      Install Claude Code
+      Safety fence
+    Build with Claude
+      Figma design
+      Claude converts it
+      Responsive gate
+      SEO gate
+    Edit in Studio
+      Click a field
+      Change words
+      Swap images
+      Set the SEO
+    Ship it
+      Preview live
+      Export a ZIP
+      You deploy
+      Cloudflare Pages
+      </pre>
+    </div>
+
+    <div class="diagram">
+      <div class="cap">PIPELINE — who touches what, in order</div>
+      <pre class="mermaid">
+flowchart LR
+  F[Figma design]:::in --> C
+  subgraph CLAUDE[Claude Code · the build engine]
+    C[Convert to a<br/>PitForge project]:::claude --> G1{Responsive<br/>gate}:::gate
+    G1 -->|pass| G2{SEO<br/>gate}:::gate
+    G1 -->|fail| C
+    G2 -->|fail| C
+  end
+  G2 -->|pass| S
+  subgraph STUDIO[PitForge Studio · you]
+    S[Edit content<br/>&amp; SEO]:::studio --> P[Preview<br/>every width]:::studio --> X[Export ZIP]:::studio
+  end
+  X --> Y[You upload<br/>to GitLab]:::you --> D[Cloudflare Pages<br/>· live]:::live
+  classDef in fill:#10202d,stroke:#3da5ff,color:#e7eef5;
+  classDef claude fill:#1a1330,stroke:#7b5cff,color:#e7eef5;
+  classDef gate fill:#0f2a1c,stroke:#2ecc71,color:#c6f0d8;
+  classDef studio fill:#241a00,stroke:#f5b638,color:#ffe4a8;
+  classDef you fill:#10202d,stroke:#f5b638,color:#ffd479;
+  classDef live fill:#0f2a1c,stroke:#2ecc71,color:#c6f0d8;
+      </pre>
+    </div>
+  </section>
+
+  <!-- STEP 0 -->
+  <section id="s0" class="step">
+    <div class="step-head"><div class="badge">0</div><h3>Set up — one time only</h3><span class="tag you">Developer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>A developer does this once per machine. Marketers skip straight to step&nbsp;1.</p>
+        <ul class="do">
+          <li>Clone the PitForge repo and install dependencies</li>
+          <li>Install Claude Code and sign in with your subscription</li>
+          <li>The safety fence ships in the repo — Claude can edit sites but never PitForge itself, and never deploys</li>
+        </ul>
+        <span class="cmd"><span class="c"># in the PitForge folder</span>
+npm install
+npm i -g @anthropic-ai/claude-code
+claude   <span class="c"># sign in on first run</span></span>
+        <div class="callout tip">📄 Full setup, the safety fence, and the boundary smoke-test live in <span class="k">CLAUDE-SETUP.md</span> at the repo root.</div>
+      </div>
+      <div class="step-shot"><a><img src="img/02-how-it-works.png" alt="PitForge onboarding wizard"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 1 -->
+  <section id="s1" class="step">
+    <div class="step-head"><div class="badge">1</div><h3>Start the Studio</h3><span class="tag mkt">Marketer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Run the dev server and open the Studio. First time in, a short <b>“How it works”</b> tour walks the same journey you’re reading now — you can reopen it anytime from the Sites screen.</p>
+        <span class="cmd">npm run dev   <span class="c"># opens the Studio at localhost:4321</span></span>
+        <ul class="do">
+          <li>Keep this running while you work</li>
+          <li>The <b>Sites</b> screen lists every landing page in the project</li>
+        </ul>
+      </div>
+      <div class="step-shot"><a><img src="img/01-dashboard.png" alt="PitForge Sites dashboard"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section id="s2" class="step">
+    <div class="step-head"><div class="badge">2</div><h3>Create your first site</h3><span class="tag mkt">Marketer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Click <b>+ New site</b>. Choose <b>Import from Figma</b> — paste your Figma design link — or start blank. The dialog writes a ready-to-run prompt for Claude Code.</p>
+        <ul class="do">
+          <li>Import from Figma → paste the design URL</li>
+          <li>Give the site a name and a URL slug (e.g. <code>/summer-bonus</code>)</li>
+          <li>Copy the generated prompt into Claude Code</li>
+        </ul>
+        <div class="callout tip">💡 A Figma link is the fast path — Claude reads the real design (colours, spacing, fonts) instead of guessing from a picture.</div>
+      </div>
+      <div class="step-shot"><a><img src="img/04-from-figma.png" alt="New site from Figma dialog"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section id="s3" class="step">
+    <div class="step-head"><div class="badge">3</div><h3>Claude builds it</h3><span class="tag claude">Claude Code</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Paste the prompt into Claude Code. It maps the design, scaffolds the project (one block per section), and writes the content — then <b>proves it’s done</b> by running both gates. It won’t hand back a broken page.</p>
+        <div class="callout gate">✅ <b>Responsive gate</b> — renders 320→2200px, fails on any real break.</div>
+        <div class="callout gate">✅ <b>SEO gate</b> — one <span class="k">&lt;h1&gt;</span>, correct heading order, meta, structured data. A fail blocks export.</div>
+        <div class="callout warn">🔄 A brand-new site needs one dev-server restart to appear in the Studio — Claude will tell you.</div>
+      </div>
+      <div class="step-shot"><a><img src="img/03-new-site.png" alt="Creating a new site"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section id="s4" class="step">
+    <div class="step-head"><div class="badge">4</div><h3>Open the editor</h3><span class="tag mkt">Marketer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Back on the Sites screen, click <b>Edit</b>. The left <b>Elements</b> panel lists every section and the fields inside it; the canvas shows the live page.</p>
+        <ul class="do">
+          <li>Sections group the fields — Hero, Bonus, Games, FAQ, Footer…</li>
+          <li>Click a field name to jump to it on the page</li>
+          <li>The 🔒 <b>Marketer mode</b> keeps structure safe — you edit content, not layout</li>
+        </ul>
+      </div>
+      <div class="step-shot"><a><img src="img/05-editor.png" alt="PitForge editor with Elements panel"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section id="s5" class="step">
+    <div class="step-head"><div class="badge">5</div><h3>Edit the content — just click it</h3><span class="tag mkt">Marketer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Click any headline, paragraph, button, or image — right on the page or in the panel — and change it. The edit shows instantly. A live <b>search-engine check</b> confirms the heading is still valid as you type.</p>
+        <ul class="do">
+          <li>Text: type over it; a counter warns if you exceed the limit</li>
+          <li>Images: upload a new file, set the alt text</li>
+          <li>“What kind of element is this?” changes only its <i>meaning</i> for Google &amp; screen readers — never the look</li>
+        </ul>
+        <div class="callout tip">✨ Need a sharper line? The optional <b>AI copy</b> buttons can improve, shorten, or translate the selected text — but plain typing works the same.</div>
+      </div>
+      <div class="step-shot"><a><img src="img/06-inspector.png" alt="Editing a field in the inspector"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 6 -->
+  <section id="s6" class="step">
+    <div class="step-head"><div class="badge">6</div><h3>Set your SEO</h3><span class="tag mkt">Marketer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Open the <b>Page</b> tab. Edit exactly what Google shows — the page title, the URL slug, and the meta description — with a live <b>Google preview</b> so there are no surprises.</p>
+        <ul class="do">
+          <li>Title &amp; description can auto-follow your page content, or be set custom</li>
+          <li>Slug: lowercase, dashes — the page’s web address</li>
+          <li>These feed the SEO gate that guards every export</li>
+        </ul>
+      </div>
+      <div class="step-shot"><a><img src="img/07-seo.png" alt="SEO / Page settings panel"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 7 -->
+  <section id="s7" class="step">
+    <div class="step-head"><div class="badge">7</div><h3>Preview the real site</h3><span class="tag mkt">Marketer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Hit <b>Preview</b> to see the actual rendered page — the same zero-JS HTML that ships. Check it at phone, tablet, and desktop widths using the size toggles.</p>
+        <ul class="do">
+          <li>This is the truth — what a visitor will load</li>
+          <li>If a width looks off, ask Claude to fix it the fluid way (no fixed-px patches)</li>
+        </ul>
+        <div class="callout tip">👀 The preview is always live; an exported ZIP is a frozen snapshot. Re-export after changes.</div>
+      </div>
+      <div class="step-shot"><a><img src="img/09-preview.png" alt="Live preview of the built landing page"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 8 -->
+  <section id="s8" class="step">
+    <div class="step-head"><div class="badge">8</div><h3>Export the bundle</h3><span class="tag mkt">Marketer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Click <b>Export</b>, enter the live domain, and <b>Download ZIP</b>. The SEO checks run one last time — if anything fails, the export is blocked until it’s clean, so you can’t ship a broken page.</p>
+        <ul class="do">
+          <li>The ZIP is a complete, self-contained static site</li>
+          <li>Claude can also produce it from the terminal — same gated result</li>
+        </ul>
+        <span class="cmd">npm run export -- --project &lt;slug&gt; --domain https://yoursite.com</span>
+      </div>
+      <div class="step-shot"><a><img src="img/08-export.png" alt="Export site dialog"></a></div>
+    </div>
+  </section>
+
+  <!-- STEP 9 -->
+  <section id="s9" class="step">
+    <div class="step-head"><div class="badge">9</div><h3>Deploy — hand it off</h3><span class="tag you">Owner</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>The last step is deliberately human. Give the exported bundle to the site owner — they upload it to the GitLab repo, and the pipeline ships it to <b>Cloudflare Pages</b> instantly.</p>
+        <ul class="do">
+          <li>Claude never deploys and holds no credentials — it stops at the ZIP</li>
+          <li>The owner owns the deploy: upload → pipeline → live</li>
+        </ul>
+        <div class="callout gate">🚀 That’s it — your first SPA is live on Cloudflare Pages.</div>
+      </div>
+      <div class="step-shot"><div class="noimg">Owner uploads the ZIP →<br>GitLab pipeline →<br>Cloudflare Pages · live</div></div>
+    </div>
+  </section>
+
+  <!-- WHO OWNS WHAT -->
+  <section id="own">
+    <h2 class="sec">Reference</h2>
+    <div class="lead">Who owns what</div>
+    <table class="own">
+      <tr><th>Job</th><th>Owner</th><th>Notes</th></tr>
+      <tr><td>Convert Figma → site</td><td><span class="pill c">Claude</span></td><td>Reads the real design via the Figma connection</td></tr>
+      <tr><td>Design / structure edits</td><td><span class="pill c">Claude</span></td><td>Plain-language requests; gated before done</td></tr>
+      <tr><td>Content &amp; image edits</td><td><span class="pill m">Marketer</span></td><td>Click-to-edit in the Studio</td></tr>
+      <tr><td>SEO — title, slug, meta</td><td><span class="pill m">Marketer</span></td><td>Live Google preview on the Page tab</td></tr>
+      <tr><td>Export the bundle</td><td><span class="pill m">Marketer</span> / <span class="pill c">Claude</span></td><td>Gated by the SEO checks either way</td></tr>
+      <tr><td>Deploy to Cloudflare</td><td><span class="pill y">Owner</span></td><td>Upload to GitLab → pipeline. Human only.</td></tr>
+      <tr><td>Change PitForge itself</td><td><span class="pill y">Owner</span></td><td>Engine is off-limits to Claude by the fence</td></tr>
+    </table>
+  </section>
+
+  </main>
+</div>
+</div>
+
+<footer>
+  PitForge · Build your first SPA — screenshots captured live from the Studio at localhost:4321.
+</footer>
+
+<div id="lb"><img src="" alt=""></div>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad:true, theme:'base',
+    themeVariables:{
+      background:'#10202d', primaryColor:'#12283a', primaryTextColor:'#e7eef5', primaryBorderColor:'#2c4c63',
+      lineColor:'#5f7d94', fontFamily:"'Manrope',system-ui,sans-serif", fontSize:'14px',
+      mainBkg:'#12283a', nodeBorder:'#2c4c63', clusterBkg:'#0c1a26', clusterBorder:'#1d3547', titleColor:'#f5b638'
+    }
+  });
+  // lightbox
+  const lb=document.getElementById('lb'), lbi=lb.querySelector('img');
+  document.querySelectorAll('.step-shot img').forEach(im=>im.addEventListener('click',()=>{lbi.src=im.src;lb.style.display='flex';}));
+  lb.addEventListener('click',()=>lb.style.display='none');
+</script>
+</body>
+</html>

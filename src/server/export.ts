@@ -8,6 +8,7 @@ import type { RenderHtml } from './ssr-entry';
 import { buildHead, absolutize } from '../seo/head';
 import { runChecks, referencedAssetBytes, type CheckResult } from '../seo/checks';
 import type { ImageValue } from '../runtime/types';
+import { PF_UTILITIES_CSS } from '../runtime/pfUtilities';
 
 export interface ExportResult {
   checks: CheckResult[];
@@ -42,69 +43,183 @@ export function prettifyHtml(html: string): string {
   return out;
 }
 
-const HTACCESS = `# PitForge export — Apache config
-<IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml
-</IfModule>
-<IfModule mod_brotli.c>
-  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript image/svg+xml
-</IfModule>
-# Long cache on fingerprinted assets
-<FilesMatch "\\.(css|js|avif|webp|jpg|jpeg|png|svg|woff2)$">
-  Header set Cache-Control "public, max-age=31536000, immutable"
-</FilesMatch>
-# No-cache on HTML
-<FilesMatch "\\.html$">
-  Header set Cache-Control "no-cache"
-</FilesMatch>
-ErrorDocument 404 /404.html
+const REDIRECTS = `# Cloudflare Pages / Netlify redirect rules
+# Static files are served directly; anything else falls back to the 404 page.
+/*    /404.html    404
 `;
 
-const NGINX = `# PitForge export — example nginx server block
-server {
-  listen 80;
-  server_name example.com;
-  root /var/www/site;
-  index index.html;
+// Cloudflare Pages native _headers file — immutable caching for fingerprinted assets,
+// revalidated HTML, and a baseline security-header set.
+const CF_HEADERS = `# Cloudflare Pages — caching + security headers
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
 
-  gzip on;
-  gzip_types text/html text/css application/javascript image/svg+xml;
-  brotli on;
-  brotli_types text/html text/css application/javascript image/svg+xml;
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
 
-  location ~* \\.(css|js|avif|webp|jpe?g|png|svg|woff2)$ {
-    expires 1y;
-    add_header Cache-Control "public, immutable";
-  }
-  location ~* \\.html$ {
-    add_header Cache-Control "no-cache";
-  }
-  error_page 404 /404.html;
-  location / { try_files $uri $uri/ =404; }
-}
-`;
-
-const REDIRECTS = `# PitForge export — Netlify-style rules
-/assets/*  /assets/:splat  200
-/*         /404.html       404
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests
 `;
 
 function readme(project: Project, domain: string): string {
-  return `# ${project.config.name} — static export
+  const d = domain.replace(/\/+$/, '');
+  return `# ${project.config.name} — static site (Cloudflare Pages ready)
 
-Deploy in four steps:
+Fully static, zero-JavaScript site. Critical CSS is inlined, fonts are self-hosted
+(subset WOFF2) and preloaded — no third-party requests.
 
-1. Unzip this archive.
-2. Upload the contents of the unzipped folder to your web root (e.g. \`public_html/\`).
-3. Point ${domain || 'your domain'} at the server (DNS A/CNAME record).
-4. Submit ${domain.replace(/\/+$/, '')}/sitemap.xml in Google Search Console.
+## Deploy to Cloudflare Pages
 
-One-liner (rsync):
+**Direct upload (fastest):**
+1. Cloudflare dashboard → *Workers & Pages* → *Create* → *Pages* → *Upload assets*.
+2. Drag the **contents of this folder** in (not the folder itself).
+3. Deploy — you get a \`*.pages.dev\` URL immediately.
 
-\`\`\`sh
-rsync -avz --delete ./ user@your-server:/var/www/site/
-\`\`\`
+**Git-connected (CI):**
+1. Commit this folder to a repository.
+2. Pages → *Connect to Git*. Framework preset: **None**. Build command: **(leave empty)**.
+   Build output directory: **/** (this folder is already the build output).
+
+## Custom domain & TLS
+Pages → project → *Custom domains* → add \`${d || 'your-domain.com'}\`.
+Cloudflare provisions and renews TLS automatically.
+
+## Included / optimized for CF Pages
+- \`_headers\` — 1-year immutable cache on \`/assets/*\` and fonts; \`must-revalidate\` HTML;
+  security headers (nosniff, Referrer-Policy, X-Frame-Options, Permissions-Policy, HSTS).
+- \`_redirects\` — 404 fallback.
+- \`sitemap.xml\`, \`robots.txt\`, \`site.webmanifest\`, favicon.
+- Canonical / OG / sitemap URLs are baked to \`${d || 'your domain'}\` — rebuild if the domain changes.
+
+## Post-launch
+- Submit \`${d || 'https://your-domain.com'}/sitemap.xml\` in Google Search Console.
+
+## Notes for DevOps
+- \`.htaccess\` and \`nginx.conf.example\` are Apache/nginx fallbacks only — **ignored by
+  Cloudflare Pages**; safe to delete if deploying solely to Pages.
 `;
+}
+
+const CSP_VALUE =
+  "default-src 'self'; script-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests";
+
+// Cloudflare Worker that serves the static bundle mounted at a sub-path, applying security +
+// cache headers. Static files live under ./public/<basePath>/, so the request path already
+// matches the on-disk layout — ASSETS.fetch serves them directly; misses fall to 404.html.
+function workerJs(): string {
+  return `// Auto-generated by PitForge — serves the static site with security + cache headers.
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'X-Frame-Options': 'SAMEORIGIN',
+  'Permissions-Policy': 'geolocation=(), microphone=(), camera=()',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Content-Security-Policy': "${CSP_VALUE}",
+};
+
+export default {
+  async fetch(request, env) {
+    const res = await env.ASSETS.fetch(request);
+    const headers = new Headers(res.headers);
+    for (const [k, v] of Object.entries(SECURITY_HEADERS)) headers.set(k, v);
+    if (new URL(request.url).pathname.includes('/assets/')) {
+      headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+    return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
+  },
+};
+`;
+}
+
+function wranglerToml(projectId: string, host: string, basePath: string): string {
+  const zone = host.split('.').slice(-2).join('.');
+  return `name = "${projectId}"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "404-page"
+# Run the Worker for every request so security/cache headers are applied (not just on misses).
+run_worker_first = true
+
+[[routes]]
+pattern = "${host}${basePath}*"
+zone_name = "${zone}"
+`;
+}
+
+function workerReadme(project: Project, domain: string, basePath: string): string {
+  const d = domain.replace(/\/+$/, '');
+  const host = new URL(domain).host;
+  const zone = host.split('.').slice(-2).join('.');
+  return `# ${project.config.name} — Cloudflare Worker (sub-path deploy)
+
+This bundle serves the site at **${d}** (mounted under \`${basePath}\` on \`${host}\`) via a
+Cloudflare Worker with static assets. Every asset path is already prefixed with \`${basePath}\`,
+so it works at the sub-path (a root/sub-domain deploy would use the Pages bundle instead).
+
+## Deploy
+\`\`\`sh
+npx wrangler@latest deploy
+\`\`\`
+Use a recent Wrangler (v3.90+ / v4) — Workers Static Assets + \`run_worker_first\` need it.
+First run prompts a Cloudflare login. The zone \`${zone}\` must be on your Cloudflare account.
+
+## Structure
+- \`worker.js\` — serves \`public/\` and sets security + cache headers.
+- \`wrangler.toml\` — assets binding + the route \`${host}${basePath}*\`.
+- \`public/${basePath.replace(/^\//, '')}/\` — the static site (index.html, 404.html, assets).
+
+## Verify the route
+\`wrangler.toml\` sets \`pattern = "${host}${basePath}*"\` and \`zone_name = "${zone}"\`.
+If your zone name differs (e.g. a sub-domain host), edit \`zone_name\` before deploying.
+
+## Custom checks
+- The canonical/OG URLs are baked to \`${d}\`. Set the domain path to match your SEO slug.
+- Everything is zero-JS, AVIF/WebP images, self-hosted preloaded fonts.
+`;
+}
+
+// Self-contained, branded 404 page — inlines the project's tokens (fonts + colors) so it
+// renders correctly on its own, with a clean dark background and a link back home.
+function notFoundHtml(project: Project, lang: string, faviconHref: string): string {
+  const fav = faviconHref ? `<link rel="icon" href="${faviconHref}">` : '';
+  return `<!doctype html>
+<html lang="${lang}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>404 — Page not found</title>
+${fav}
+<style>
+${project.tokensCss}
+body { min-height: 100vh; margin: 0; background: radial-gradient(60% 45% at 50% 32%, rgba(232,199,92,0.10), transparent 70%), var(--bg-950); }
+.nf { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 24px; gap: 14px; }
+.nf-code { font-family: var(--font-display); font-weight: 800; line-height: 1; letter-spacing: -0.02em; color: var(--brand); font-size: clamp(80px, 20vw, 168px); }
+.nf-title { margin: 0; font-family: var(--font-display); font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; color: var(--text); font-size: clamp(20px, 4.5vw, 34px); }
+.nf-text { margin: 0; max-width: 440px; color: var(--subtitle); line-height: 1.5; }
+.nf-btn { margin-top: 10px; display: inline-flex; align-items: center; padding: 14px 28px; border-radius: 12px; background: var(--brand); color: var(--brand-on); font-weight: 700; text-decoration: none; }
+.nf-btn:hover { filter: brightness(1.05); }
+</style>
+</head>
+<body>
+<main class="nf">
+<div class="nf-code">404</div>
+<h1 class="nf-title">Page not found</h1>
+<p class="nf-text">The page you're looking for doesn't exist or may have moved.</p>
+<a class="nf-btn" href="/">Back to home</a>
+</main>
+</body>
+</html>`;
 }
 
 function timestamp(): string {
@@ -123,6 +238,15 @@ export async function exportProject(
   if (!domain || !/^https?:\/\/.+/.test(domain)) {
     throw new Error('A domain is required for export (e.g. https://example.com) — it is needed for absolute URLs.');
   }
+  // A domain with a path (e.g. https://fortunejack.com/best-dogecoin-casino) means a SUB-PATH
+  // deploy: the site is mounted under that path by a Cloudflare Worker. Every internal absolute
+  // reference (/assets, /favicon) must be prefixed so it resolves under the sub-path, not root.
+  const domUrl = new URL(domain);
+  const basePath = domUrl.pathname.replace(/\/+$/, ''); // '' for a root/sub-domain deploy
+  // Prefix EVERY root-relative asset path (incl. each URL inside a multi-value srcset, which
+  // isn't quote-anchored) and favicon so they resolve under the sub-path, not the domain root.
+  const applyBase = (s: string) =>
+    basePath ? s.replace(/\/assets\//g, `${basePath}/assets/`).replace(/\/favicon\./g, `${basePath}/favicon.`) : s;
   const project = loadProject(projectId);
   const content: Project['content'] = { ...project.content, 'seo.dateModified': new Date().toISOString().slice(0, 10) };
 
@@ -136,9 +260,9 @@ export async function exportProject(
     throw err;
   }
 
-  // CSS: tokens + block CSS, concatenated then minified (§9).
+  // CSS: tokens + block CSS + the bounded style-override utilities, concatenated then minified (§9).
   const dir = path.join(PROJECTS_DIR, projectId);
-  let css = project.tokensCss + '\n';
+  let css = project.tokensCss + '\n' + PF_UTILITIES_CSS + '\n';
   for (const name of project.config.blocks) {
     const cssPath = path.join(dir, 'blocks', `${name}.css`);
     if (fs.existsSync(cssPath)) css += fs.readFileSync(cssPath, 'utf8') + '\n';
@@ -146,6 +270,19 @@ export async function exportProject(
   const minCss = minifyCss(css);
   const hash = crypto.createHash('sha1').update(minCss).digest('hex').slice(0, 4);
   const cssHref = `/assets/styles.${hash}.css`;
+
+  // Assets referenced from CSS url(...) — fonts, CSS background images. The HTML scan
+  // (referencedAssetBytes) misses these, so collect them here to copy + preload.
+  const cssAssetRel = new Set<string>();
+  for (const mm of css.matchAll(/url\(\s*['"]?\/assets\/([^'")]+?)['"]?\s*\)/g)) cssAssetRel.add(mm[1]);
+  // Preload the critical woff2 faces (cap 4) so LCP text isn't font-blocked. Prefer the
+  // bold/display weights first — headings drive LCP; body regular is rarely the LCP element.
+  const wPriority: Record<string, number> = { '700': 0, '800': 1, '400': 2 };
+  const preloadFonts = [...cssAssetRel]
+    .filter((r) => /-(400|700|800)\.woff2$/i.test(r))
+    .sort((a, b) => (wPriority[/-(\d+)\.woff2$/i.exec(a)?.[1] ?? ''] ?? 9) - (wPriority[/-(\d+)\.woff2$/i.exec(b)?.[1] ?? ''] ?? 9))
+    .slice(0, 4)
+    .map((r) => `/assets/${r}`);
 
   // Priority image (§10.4 preload).
   let prioritySrc = '';
@@ -156,8 +293,13 @@ export async function exportProject(
     }
   }
 
-  const head = buildHead(project, content, domain, { cssHref, priorityImageSrc: prioritySrc });
-  const lang = content['seo.lang'] || project.config.lang || 'en';
+  // Favicon copied to the site root — link it so the browser doesn't 404 on /favicon.ico.
+  let faviconHref = '';
+  for (const fav of ['favicon.svg', 'favicon.ico']) {
+    if (fs.existsSync(path.join(dir, 'assets', fav))) { faviconHref = `/${fav}`; break; }
+  }
+  const head = buildHead(project, content, domain, { cssHref, priorityImageSrc: prioritySrc, inlineCss: minCss, preloadFonts, faviconHref });
+  const lang = String(content['seo.lang'] || project.config.lang || 'en');
   const htmlDoc = prettifyHtml(
     `<!doctype html>\n<html lang="${lang}">\n<head>\n${head.head}\n${head.jsonLd}\n</head>\n<body>\n<main>\n${body}\n</main>\n</body>\n</html>`
   );
@@ -165,33 +307,52 @@ export async function exportProject(
   const name = `${projectId}-${timestamp()}`;
   const outDir = destDir ?? path.join(PROJECTS_DIR, projectId, 'dist', name);
   fs.rmSync(outDir, { recursive: true, force: true });
-  fs.mkdirSync(path.join(outDir, 'assets'), { recursive: true });
 
-  fs.writeFileSync(path.join(outDir, 'index.html'), htmlDoc);
-  fs.writeFileSync(path.join(outDir, '404.html'), prettifyHtml(`<!doctype html>\n<html lang="${lang}">\n<head>\n<meta charset="utf-8">\n<title>404</title>\n<link rel="stylesheet" href="${cssHref}">\n</head>\n<body>\n<main><h1>404</h1></main>\n</body>\n</html>`));
-  fs.writeFileSync(path.join(outDir, 'assets', `styles.${hash}.css`), minCss);
-  fs.writeFileSync(path.join(outDir, 'sitemap.xml'), head.sitemapXml);
-  fs.writeFileSync(path.join(outDir, 'robots.txt'), head.robotsTxt);
+  // Root/sub-domain deploy → flat Cloudflare Pages bundle at outDir root.
+  // Sub-path deploy → static under public/<basePath>/, served by the generated Worker.
+  const staticDir = basePath ? path.join(outDir, 'public', basePath.replace(/^\//, '')) : outDir;
+  fs.mkdirSync(path.join(staticDir, 'assets'), { recursive: true });
+
+  fs.writeFileSync(path.join(staticDir, 'index.html'), applyBase(htmlDoc));
+  fs.writeFileSync(path.join(staticDir, '404.html'), applyBase(prettifyHtml(notFoundHtml(project, lang, faviconHref))));
+  fs.writeFileSync(path.join(staticDir, 'assets', `styles.${hash}.css`), applyBase(minCss));
+  fs.writeFileSync(path.join(staticDir, 'sitemap.xml'), head.sitemapXml);
+  fs.writeFileSync(path.join(staticDir, 'robots.txt'), head.robotsTxt);
   fs.writeFileSync(
-    path.join(outDir, 'site.webmanifest'),
-    JSON.stringify({ name: project.config.name, short_name: project.config.name, lang, start_url: absolutize('/', domain), display: 'browser' }, null, 2)
+    path.join(staticDir, 'site.webmanifest'),
+    JSON.stringify({ name: project.config.name, short_name: project.config.name, lang, start_url: absolutize(basePath ? `${basePath}/` : '/', domain), display: 'browser' }, null, 2)
   );
-  fs.writeFileSync(path.join(outDir, '.htaccess'), HTACCESS);
-  fs.writeFileSync(path.join(outDir, 'nginx.conf.example'), NGINX);
-  fs.writeFileSync(path.join(outDir, '_redirects'), REDIRECTS);
-  fs.writeFileSync(path.join(outDir, 'README.md'), readme(project, domain));
 
-  // Copy only referenced assets (§12.6).
+  if (basePath) {
+    // Worker deploy — Worker sets headers; 404 handled by not_found_handling.
+    fs.writeFileSync(path.join(outDir, 'worker.js'), workerJs());
+    fs.writeFileSync(path.join(outDir, 'wrangler.toml'), wranglerToml(projectId, domUrl.host, basePath));
+    fs.writeFileSync(path.join(outDir, 'README.md'), workerReadme(project, domain, basePath));
+  } else {
+    // Pages deploy — static-host config files.
+    fs.writeFileSync(path.join(outDir, '_redirects'), REDIRECTS);
+    fs.writeFileSync(path.join(outDir, '_headers'), CF_HEADERS);
+    fs.writeFileSync(path.join(outDir, 'README.md'), readme(project, domain));
+  }
+
+  // Copy only referenced assets (§12.6): HTML-referenced + CSS-referenced (fonts, bg images).
   for (const f of files) {
     const rel = path.relative(path.join(dir, 'assets'), f);
-    const dest = path.join(outDir, 'assets', rel);
+    const dest = path.join(staticDir, 'assets', rel);
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(f, dest);
+  }
+  for (const rel of cssAssetRel) {
+    const src = path.join(dir, 'assets', rel);
+    if (!fs.existsSync(src)) continue;
+    const dest = path.join(staticDir, 'assets', rel);
+    fs.mkdirSync(path.dirname(dest), { recursive: true });
+    fs.copyFileSync(src, dest);
   }
   // favicon if present
   for (const fav of ['favicon.ico', 'favicon.svg']) {
     const f = path.join(dir, 'assets', fav);
-    if (fs.existsSync(f)) fs.copyFileSync(f, path.join(outDir, fav));
+    if (fs.existsSync(f)) fs.copyFileSync(f, path.join(staticDir, fav));
   }
 
   // ZIP it.
@@ -202,7 +363,9 @@ export async function exportProject(
     output.on('close', () => resolve());
     archive.on('error', reject);
     archive.pipe(output);
-    archive.directory(outDir, `${project.config.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`);
+    // Files at the archive ROOT (no wrapping folder) so static hosts like Cloudflare Pages
+    // find index.html at the top level instead of under a subdirectory.
+    archive.directory(outDir, false);
     archive.finalize();
   });
 
