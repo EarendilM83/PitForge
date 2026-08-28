@@ -3,8 +3,9 @@
 **Turn Figma designs into fast, SEO-clean landing pages — and edit them yourself, no code.**
 
 PitForge is a locally-run CMS Studio. An AI coding assistant (Claude Code) builds a site from your
-Figma file; you edit the words, images, and SEO visually in the Studio, then export a deploy-ready
-static site that works on **every screen size**.
+Figma file; you edit the words, images, styling-within-limits, and translations visually in a
+design-tool-grade editor, then export a deploy-ready static site that works on **every screen from
+320px to 3200px**.
 
 > New here? After `npm run dev`, open the Studio and click **“? How it works”** for a one-minute
 > interactive tour — or read the full [**Guide**](docs/GUIDE.md).
@@ -32,20 +33,67 @@ Claude Code.** Claude builds the site and it appears in your Sites list. Open it
 
 1. **Design** in Figma (desktop + mobile frames).
 2. **Build** — paste your Figma link; Claude Code converts it into a PitForge project, guided by the
-   bundled skills so it matches the design and works on every screen.
-3. **Edit** — click any text/image in the Studio; set SEO on the Page tab.
-4. **Ship** — Preview, then Export a deploy-ready static site (Cloudflare Pages or Worker).
+   bundled skills so it matches the design and stays fluid at every width.
+3. **Edit** — in the pro editor: content, safe styling, semantic tags, translations, SEO.
+4. **Test** — the live **Test & scan** dashboard proves the site holds up 320→3200 and passes an
+   end-to-end suite; run it in CI with `npm run test:ui`.
+5. **Ship** — Preview, then Export a deploy-ready static site (Cloudflare Pages or Worker).
+
+---
+
+## The pro editor — what you can do
+
+A dark, three-column builder: **Layers · canvas · Settings**, with a top bar for devices, language,
+undo/redo, and publish.
+
+- **Content** — click any text or image on the canvas to edit it inline.
+- **Semantic tags** — change what an element *means* (Main title → Section heading, etc.) in plain
+  language. The look never changes; only the HTML meaning does (great for SEO/accessibility).
+- **Bounded style** — **Marketer mode** offers safe, on-brand controls (alignment, weight, spacing,
+  opacity, per-device visibility) from a fixed scale — no raw hex or arbitrary px. **Builder mode**
+  unlocks free-form editing. Every override has a one-click **Reset to design**.
+- **Translations (i18n)** — English is the source; add a language and translate **per key**.
+  Untranslated keys fall back to English. Editing a translation never touches the source.
+- **Device = publish** — **Desktop** is the editable canvas; **Tablet/Mobile** render the *exact*
+  published output in a real iframe at that width, so what you see is byte-identical to what ships
+  (correct media queries — no desktop-squished preview).
+- **Structure is locked.** You can't add/remove sections (those come from Figma); you can add/remove
+  repeat items within the min/max a designer set.
+
+---
+
+## Test & scan — proof it works everywhere
+
+Click **▶ Test** in the editor to open the dashboard:
+
+- A **live thumbnail per breakpoint** (320→3200). Hover to auto-scroll the whole page; **⤢ Zoom** to
+  inspect at real size; **☰ Test case** to open its checklist.
+- **Client scan** flags horizontal overflow, over-wide elements, broken images and empty sections —
+  offenders outlined right in the thumbnail.
+- **▶ Run with Playwright** streams the authoritative end-to-end suite live.
+- **Editable test-case library** in [`tests/cases.json`](tests/cases.json) — design fidelity,
+  fluidity, fonts, assets, code, box-model, flex/grid, interactive elements, i18n, SEO, a11y. Edit a
+  checklist or add a case; it saves to the file (git-diffable) so Claude can read it on the next run.
+
+Run the whole thing headlessly (dev server must be up):
+
+```sh
+npm run test:ui        # routes · screens · layout 320→3200 · SEO/a11y · assets/perf ·
+                       # fluid type & spacing · every editor interaction · editor↔preview parity
+npm run test:sites     # sites only     npm run test:editor  # editor only
+npm run gate           # typecheck + test:ui  (use to gate publish/export in CI)
+```
 
 ---
 
 ## Why it's different
 
-- **No code for the operator.** The whole edit → SEO → publish flow is visual.
+- **No code for the operator.** Edit → style-safely → translate → SEO → publish, all visual.
 - **Faithful to the design.** Bundled Claude skills (`.claude/skills/`) enforce a pixel-faithful,
-  proportional build — no AI guesswork.
-- **Works on every screen, not just two.** Designers draw ~1920 and ~490; PitForge's fluid system
-  fills the gaps, and a gate proves it: `npm run verify -- --project <id>` (renders 320→2200px).
-- **SEO-first.** 16 checks gate every export; canonical, structured data, sitemap handled for you.
+  proportional build. Style edits are bounded to the design system.
+- **Fully fluid — every screen, not just two.** Designers draw ~1920 and ~490; PitForge's fluid `--u`
+  unit + `clamp()` type fill the gaps, and the suite proves it across the full 320→3200 ladder.
+- **SEO-first.** Heading/canonical/structured-data checks gate every export.
 - **Zero-JavaScript output.** Clean, fast, semantic HTML that loads instantly and ranks well.
 
 ---
@@ -70,20 +118,24 @@ Claude Code.** Claude builds the site and it appears in your Sites list. Open it
 
 - **Projects are folders** in `./projects/` (no database): `pitforge.json` (config + block order),
   `manifest.json` (field types, zod-validated), `content/default.json`, `tokens.css`, `blocks/*.tsx`,
-  `assets/`. The shipped `demo` project exercises every field type.
-- **Blocks are React components** rendered twice by the same tree — interactive in the Studio,
-  static at export (`renderToStaticMarkup`) → zero-JS HTML.
-- **The Studio** uses the Atlassian Design System (token-driven, in `src/studio/studio.css`).
+  `assets/`. The shipped `demo` project exercises every field type. (Your own sites stay local — only
+  the demo is committed.)
+- **Content overrides** ride the same `content` file: `_tags` (semantic tag), `_style`/`_vis`
+  (bounded style + visibility), `_t`/`_langs` (translations) — so publish, undo/redo and the export
+  bundle all honor them, and styling never depends on the HTML tag.
+- **Blocks are React components** rendered twice by the same tree — interactive in the Studio, static
+  at export (`renderToStaticMarkup`) → zero-JS HTML.
+- **The Studio** uses a dark pro theme scoped over the Atlassian token system (`src/studio/studio.css`).
 
 ```sh
-npm run dev                                   # Studio
-npm run verify -- --project <id>              # responsive gate (320→2200px)
+npm run dev                                   # Studio at :4321
+npm run test:ui                               # full E2E suite (320→3200) — dev server must be up
+npm run verify -- --project <id>              # standalone responsive gate
 npm run export -- --project <id> --domain https://example.com   # headless ZIP export
 npm run typecheck
 ```
 
-See [`docs/GUIDE.md`](docs/GUIDE.md) for the full walkthrough, `CLAUDE.md` for how the AI is guided,
-and `STATUS.md` / `DECISIONS.md` for build state and design choices.
+See [`docs/GUIDE.md`](docs/GUIDE.md) for the full walkthrough and `CLAUDE.md` for how the AI is guided.
 
 ## License
 

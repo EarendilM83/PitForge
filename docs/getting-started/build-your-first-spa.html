@@ -290,7 +290,7 @@ claude   <span class="c"># sign in on first run</span></span>
     <div class="step-body">
       <div class="step-copy">
         <p>Paste the prompt into Claude Code. It maps the design, scaffolds the project (one block per section), and writes the content — then <b>proves it’s done</b> by running both gates. It won’t hand back a broken page.</p>
-        <div class="callout gate">✅ <b>Responsive gate</b> — renders 320→2200px, fails on any real break.</div>
+        <div class="callout gate">✅ <b>Test &amp; scan</b> — the ▶ Test dashboard and <code>npm run test:ui</code> render every width 320→3200 and run an end-to-end suite; failures block publish.</div>
         <div class="callout gate">✅ <b>SEO gate</b> — one <span class="k">&lt;h1&gt;</span>, correct heading order, meta, structured data. A fail blocks export.</div>
         <div class="callout warn">🔄 A brand-new site needs one dev-server restart to appear in the Studio — Claude will tell you.</div>
       </div>
@@ -325,7 +325,7 @@ claude   <span class="c"># sign in on first run</span></span>
           <li>Images: upload a new file, set the alt text</li>
           <li>“What kind of element is this?” changes only its <i>meaning</i> for Google &amp; screen readers — never the look</li>
         </ul>
-        <div class="callout tip">✨ Need a sharper line? The optional <b>AI copy</b> buttons can improve, shorten, or translate the selected text — but plain typing works the same.</div>
+        <div class="callout tip">🌐 Want the same page in another language? Use the top-bar language switcher → <b>＋ Add language</b>, then translate any text per key. English stays the source and untranslated keys fall back to it.</div>
       </div>
       <div class="step-shot"><a><img src="img/06-inspector.png" alt="Editing a field in the inspector"></a></div>
     </div>

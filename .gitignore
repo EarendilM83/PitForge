@@ -15,6 +15,5 @@ projects/*
 
 # local Claude / MCP config and scratch — not part of the product
 .claude/
-.mcp.json
 demo-*.html
 projects/demo/dist/
