@@ -128,6 +128,15 @@ When the project folder is complete and the dev server has been restarted, the n
 the Studio Sites list automatically. Editing, publishing and deploying are the Studio + the
 **pitforge-export-deploy** skill.
 
+## Step 7 — Stand up the project's test environment (don't skip)
+
+A build isn't finished until the project can test itself. Immediately invoke the
+**pitforge-qa-setup** skill and run its loop to completion (`node scripts/qa-setup.mjs --project
+<slug> --status`, do the `nextAction`, repeat until `complete: true`). While you still have the Figma
+node open, this is the cheapest moment to capture the design references it needs
+(`projects/<slug>/design/<Block>.png`) — so QA's "expected" comes from the design, not a guess. The
+marketer will never author tests; you leave the project self-sufficient.
+
 ## When the Figma file itself isn't build-ready (defensive mode)
 
 - **Absolute positioning instead of Auto Layout** → magic `top/left` numbers, no layout intent. Don't reproduce coordinates; infer the intended flow (stack/row/grid) and rebuild with `--u`.

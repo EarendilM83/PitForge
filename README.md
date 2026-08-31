@@ -64,24 +64,39 @@ undo/redo, and publish.
 
 ## Test & scan — proof it works everywhere
 
-**▶ Test** — the fast dashboard: a **live thumbnail per breakpoint** (320→3200; hover to auto-scroll,
-**⤢ Zoom** to real size, **☰ Test case** for its checklist), a **client scan** that outlines overflow /
-over-wide / broken-image / empty-section offenders in the thumbnail, and **▶ Run with Playwright** to
-stream the authoritative end-to-end suite live.
+One button — **🔬 Test & QA** — opens both, as tabs:
 
-**🔬 QA** — the **AI QA pipeline**, a senior-QA simulation you watch run. For each breakpoint it runs
-real stages — **Navigate → Measure → Screenshot → AI review** — and every check reports
-**Expected · Current · Delta** (delta must be 0). A **Page-wide** stage covers semantics/SEO, zero-JS,
-fonts and fluid scaling; per-breakpoint stages cover typography, colour/contrast, spacing/box-model,
-flex/grid, images and interactive elements (~100 measured checks). The **AI stage sends the real
-screenshot to your local Claude**, which inspects it like a QA engineer and returns a verdict + notes.
-It takes real time and produces evidence — screenshots land in `tests/.qa-evidence/`. This is the
-`QA` job simulation, not a label check.
+**⚡ Quick scan** — the fast dashboard: a **live thumbnail per breakpoint** (320→3200; hover to
+auto-scroll, **⤢ Zoom** to real size, **☰ Test case** for its checklist), a **client scan** that
+outlines overflow / over-wide / broken-image / empty-section offenders in the thumbnail, and **▶ Run
+with Playwright** to stream the authoritative end-to-end suite live.
+
+**🔬 AI QA** — the **AI QA pipeline**, a senior-QA simulation you watch run. It discovers every
+**section** (Header, Hero, …, Footer) and tests each one at **every breakpoint** — a section ×
+breakpoint matrix. For each cell it **measures** (overflow, height, images, text), **screenshots that
+section**, and has your **local Claude review the screenshot**. Every check reports
+**Expected · Current · Delta** (delta 0 to pass); click any cell for its metrics + evidence + verdict.
+
+**Expected = the design source + UX judgment.** If a Figma reference exists for a section
+(`projects/<id>/design/<Block>.png`), Claude compares the build **against the design** — so an
+intentional pattern (a carousel's peeking card, a decorative bleed) is **not** flagged as a bug. When
+the design doesn't answer, Claude falls back to UI/UX best practice and writes an **advisory
+recommendation** ("the design doesn't specify this, but the button's padding looks tight — consider…")
+rather than a hard failure. Verdicts are **OK · 💡 Recommendation · Defect**; only defects fail.
+A **Page-wide** card adds semantics/SEO, zero-JS, fonts and fluid scaling. It takes real time and
+produces evidence — screenshots land in `tests/.qa-evidence/`.
+
+**Self-sufficient per project — set up by the build, not the marketer.** When Claude builds a site it
+runs the [`pitforge-qa-setup`](docs/skills/pitforge-qa-setup) **loop** (`node scripts/qa-setup.mjs
+--project <id> --status`): it discovers every section, writes per-project test cases/scenarios from the
+design, captures Figma design references, runs the AI QA baseline, triages defects, covers interactive
+elements, and ends with a completeness critic. It's iterative and resumable — it stops only when an
+objective coverage checklist is fully green, so the project can test itself.
 
 **Editable test-case library** in [`tests/cases.json`](tests/cases.json) + the full deterministic
 catalog in [`tests/qa-catalog.md`](tests/qa-catalog.md) (13 suites, ~90 checks). Edit a checklist or
-add a case in the dashboard; it saves to the file (git-diffable) so the next run — and any agent —
-inherits it. The [`pitforge-qa`](.claude/skills/pitforge-qa) skill and [`AGENTS.md`](AGENTS.md) force
+add a case in the Quick-scan tab; it saves to the file (git-diffable) so the next run — and any agent —
+inherits it. The [`pitforge-qa`](docs/skills/pitforge-qa) skill and [`AGENTS.md`](AGENTS.md) force
 any model (Claude, Codex, …) to run the catalog before "done". Compatible with
 [qa-skills](https://github.com/petrkindlmann/qa-skills) (`npx skills add petrkindlmann/qa-skills`).
 
@@ -99,8 +114,8 @@ npm run gate           # typecheck + test:ui  (use to gate publish/export in CI)
 ## Why it's different
 
 - **No code for the operator.** Edit → style-safely → translate → SEO → publish, all visual.
-- **Faithful to the design.** Bundled Claude skills (`.claude/skills/`) enforce a pixel-faithful,
-  proportional build. Style edits are bounded to the design system.
+- **Faithful to the design.** Bundled Claude skills ([`docs/skills/`](docs/skills/)) enforce a
+  pixel-faithful, proportional build. Style edits are bounded to the design system.
 - **Fully fluid — every screen, not just two.** Designers draw ~1920 and ~490; PitForge's fluid `--u`
   unit + `clamp()` type fill the gaps, and the suite proves it across the full 320→3200 ladder.
 - **SEO-first.** Heading/canonical/structured-data checks gate every export.
@@ -110,11 +125,13 @@ npm run gate           # typecheck + test:ui  (use to gate publish/export in CI)
 
 ## The skills (what makes the AI reliable)
 
-`.claude/skills/` ships with the repo, so Claude behaves the same on every clone:
+[`docs/skills/`](docs/skills/) ships with the repo (Claude loads them via the `.claude/skills`
+symlink), so Claude behaves the same on every clone:
 
 | Skill | Role |
 |---|---|
 | `figma-to-pitforge` | Figma → a faithful, responsive PitForge project |
+| `pitforge-qa-setup` | after a build, the loop that makes a project's testing self-sufficient |
 | `pitforge-responsive-fluid` | the fluid system; the responsive gate |
 | `pitforge-seo` | headings, canonical, structured data, the checks |
 | `pitforge-accessibility` | semantic HTML, zero-JS accordions, focus/contrast |

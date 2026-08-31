@@ -14,9 +14,9 @@ projects/*
 !projects/demo/**
 
 # local Claude / MCP config and scratch — not part of the product
+# skills live in docs/skills/ (tracked); .claude/skills is a symlink → ../docs/skills
 .claude/*
-!.claude/skills/
-!.claude/skills/**
+!.claude/skills
 demo-*.html
 projects/demo/dist/
 

@@ -11,7 +11,9 @@
     "test:ui": "node scripts/test-pipeline.mjs",
     "test:sites": "node scripts/test-pipeline.mjs --sites-only",
     "test:editor": "node scripts/test-pipeline.mjs --editor-only",
-    "gate": "npm run typecheck && npm run test:ui"
+    "gate": "npm run typecheck && npm run test:ui",
+    "qa:run": "node scripts/qa-run.mjs --project",
+    "qa:setup": "node scripts/qa-setup.mjs --project"
   },
   "dependencies": {
     "archiver": "^7.0.1",

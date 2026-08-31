@@ -23,7 +23,8 @@ Figma → PitForge workflow:
 
 ## The skills — load them, don't wing it
 
-This repo ships a skill set in `.claude/skills/`. **When any Figma MCP conversion or block work
+This repo ships a skill set in `docs/skills/` (Claude loads it via the `.claude/skills` symlink).
+**When any Figma MCP conversion or block work
 starts, load and apply these — all of them, as one job:**
 
 - **`figma-to-pitforge`** — the flagship. Figma → a new `./projects/<slug>/` project. Read it first.
@@ -54,7 +55,11 @@ Studio's "New site → From Figma" dialog generates a prompt that names this ski
    - **SEO checks** (`pitforge-seo`) — any `fail` blocks export.
    - Any failure or unverifiable check → file it in [`tests/cases.json`](tests/cases.json).
 5. Restart the dev server so `import.meta.glob` picks up new blocks → the site appears in the Studio.
-6. The marketer edits content in the Studio; **export & deploy** per `pitforge-export-deploy`.
+6. **Stand up the test environment** — run the **pitforge-qa-setup** loop until `complete: true`
+   (`node scripts/qa-setup.mjs --project <slug> --status` → do `nextAction` → repeat). Capture design
+   refs (`projects/<slug>/design/`) while the Figma node is open. The project must leave your hands
+   able to test itself; the marketer never authors tests.
+7. The marketer edits content in the Studio; **export & deploy** per `pitforge-export-deploy`.
 
 ## Hard constraints (respect these)
 

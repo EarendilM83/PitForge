@@ -154,6 +154,22 @@ For EACH of the 14 widths:
 | EP-04 | Apply a bounded style override, then Publish/Export. | Utility classes ship in the export bundle; published render matches editor. | HYBRID |
 | EP-05 | Add a translation, switch language. | Canvas renders the translation; English source untouched; export honors active language. | HYBRID |
 
+## AI review model (expected = design + UX judgment)
+
+The 🔬 QA pipeline's AI stage does not guess. For each section it decides:
+- **OK** — correct, and faithful to the design.
+- **DEFECT** — a clear bug (content unintentionally cut off, text clipped/overlapping, broken/misaligned
+  layout, distorted images). Only defects fail (delta 1).
+- **💡 Recommendation** — no bug, but a UI/UX best-practice improvement (tight padding, small tap target,
+  weak contrast, alignment). **Advisory, not a failure** (delta 0), phrased as advice.
+
+**Where "expected" comes from:** if the build saved a Figma reference for the section at
+`projects/<id>/design/<Block>[-mobile|-desktop].png`, the AI compares the build **against the design**
+— so intentional patterns (a carousel's peeking card, a decorative bleed) are **not** flagged. When no
+reference exists, or the design doesn't answer the question, the AI applies UI/UX best practice and
+writes a recommendation, noting the design source should confirm. Populate `projects/<id>/design/`
+during the Figma→PitForge build to turn UX recommendations into hard design-fidelity checks.
+
 ## 12 — Fidelity to design (diff to Figma)
 
 | ID | Step | Expected | Verify |

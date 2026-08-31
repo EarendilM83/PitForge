@@ -8,6 +8,11 @@ PitForge turns Figma designs into fast, SEO-clean, fully-fluid landing pages. If
 - Convert a Figma design into `./projects/<slug>/` following the skills in `.claude/skills/`
   (`figma-to-pitforge`, `pitforge-responsive-fluid`, `pitforge-seo`, `pitforge-accessibility`,
   `pitforge-export-deploy`). Match the design; make it fluid at every width; keep output zero-JS.
+- **After building, stand up the project's test environment** with the **`pitforge-qa-setup`** loop:
+  `node scripts/qa-setup.mjs --project <slug> --status` → do the `nextAction` → repeat until
+  `complete: true`. Iterative (discover → per-project cases → capture Figma design refs → AI QA
+  baseline → triage defects → interactive → completeness critic). Don't stop until the coverage
+  checklist is fully green — the project must be able to test itself.
 
 ## Quality gate — MANDATORY before "done", publish, or export
 

@@ -44,7 +44,7 @@ npm run dev        # opens the Studio at http://localhost:4321
 4. Claude reads the design and builds the project. When it finishes, the site **appears in your Sites
    list automatically** — open it and start editing.
 
-> Claude follows built-in **skills** (in `.claude/skills/`) so it matches your design exactly, keeps
+> Claude follows built-in **skills** (in [`docs/skills/`](skills/)) so it matches your design exactly, keeps
 > it **fluid at every width**, and keeps the SEO clean — without you asking.
 
 **Prefer to try it empty first?** *New site → Start blank* gives you a one-section starter.
@@ -59,7 +59,7 @@ A dark, three-column builder:
 - **Centre — canvas.** Click on the page to select and edit. Hover to highlight.
 - **Right — Settings.** Three tabs for the selected element: **Style · Content · Settings**.
 - **Top bar.** Language switcher · device switcher (Desktop/Tablet/Mobile) · Marketer/Builder mode ·
-  undo/redo · **▶ Test** · Preview · Export · Publish.
+  undo/redo · **🔬 Test & QA** · Preview · Export · Publish.
 
 ---
 
@@ -131,23 +131,37 @@ The top-bar device switcher:
 
 ## 9. Test & scan (prove it works everywhere)
 
-Two tools in the editor:
+One button — **🔬 Test & QA** — opens the testing surface with two tabs:
 
-**▶ Test — fast dashboard.** A **live thumbnail per breakpoint**, 320→3200. **Hover** to auto-scroll
-the whole page; **⤢ Zoom** to inspect at real size; **☰ Test case** to open its checklist. The client
-scan flags overflow / over-wide / broken-image / empty-section issues (offenders outlined in the
-thumbnail); **▶ Run with Playwright** runs the authoritative suite and streams it live.
+**⚡ Quick scan.** A **live thumbnail per breakpoint**, 320→3200. **Hover** to auto-scroll the whole
+page; **⤢ Zoom** to inspect at real size; **☰ Test case** to open its checklist. The client scan flags
+overflow / over-wide / broken-image / empty-section issues (offenders outlined in the thumbnail);
+**▶ Run with Playwright** runs the authoritative suite and streams it live. This is the fast "did I
+break it" glance.
 
-**🔬 QA — AI QA pipeline (the QA simulation).** Click **🔬 QA → ▶ Run AI QA** and watch it work. For
-every breakpoint it runs real stages — **Navigate → Measure → Screenshot → AI review** — and every
-check shows **Expected · Current · Delta** (delta must be 0 to pass). A **Page-wide** card checks
-semantics/SEO, zero-JS, fonts and fluid scaling; each breakpoint checks typography, colour/contrast,
-spacing/box-model, flex/grid, images and interactive elements (~100 measured checks). The **AI stage
-sends the real screenshot to your local Claude**, which reviews it like a QA engineer and returns a
-verdict. It takes real time and saves **evidence screenshots** (click any to enlarge). Deltas that
-aren't 0 point at exactly what to fix.
+**🔬 AI QA — the QA simulation.** Click **▶ Run AI QA** and watch it work. It finds **every section**
+(Header, Hero, …, Footer) and tests each at **every breakpoint** — a section × breakpoint matrix. Each
+cell **measures** the section (overflow, height, images, text), **screenshots it**, and has your
+**local Claude review the shot** like a QA engineer. Every check shows **Expected · Current · Delta**
+(delta 0 to pass) — click a cell for its metrics, evidence and verdict. A **Page-wide** card adds
+semantics/SEO, zero-JS, fonts and fluid scaling. It takes real time and saves **evidence screenshots**.
+Deltas that aren't 0 point at exactly what to fix.
 
-**The test-case library** (`tests/cases.json`) is editable in the ▶ Test dashboard — tick/edit a check,
+**Expected comes from the design, not a guess.** If a Figma reference exists for a section
+(`projects/<id>/design/<Block>.png`), Claude reviews the build **against the design** — so an
+intentional pattern (a carousel's peeking next card, a decorative image bleed) is **not** flagged as
+a bug. When the design doesn't answer a question, Claude uses UI/UX best practice and gives an
+**advisory recommendation** (💡) instead of a hard failure. Verdicts are **OK · 💡 Recommendation ·
+Defect** — only defects fail.
+
+**You don't set any of this up — the build does.** When Claude builds a site it also stands up that
+site's **test environment**: per-project test cases and scenarios drawn from the design, Figma design
+references for each section, a clean baseline run, and interactive coverage. This runs as a loop that
+only stops when the project can fully test itself, so a marketer never authors a test. (Under the hood:
+the `pitforge-qa-setup` skill + `node scripts/qa-setup.mjs --project <id> --status`, which reports a
+coverage checklist and the single next action until `complete`.)
+
+**The test-case library** (`tests/cases.json`) is editable in the Quick-scan tab — tick/edit a check,
 add a check, or add a whole case; it saves to the file (tracked in git). The full deterministic
 catalog is `tests/qa-catalog.md`.
 
@@ -157,7 +171,8 @@ Headless (dev server up):
 npm run test:ui      # routes · screens · layout 320→3200 · SEO/a11y · assets/perf ·
                      # fluid · every editor interaction · editor↔preview parity
 npm run gate         # typecheck + test:ui  (gate publish/export in CI)
-node scripts/qa-run.mjs --project <id> [--full]   # the AI QA pipeline, headless
+npm run qa:run <id> -- --full     # the AI QA pipeline, headless
+npm run qa:setup <id>             # the self-sufficiency loop: coverage + next action
 ```
 
 ---

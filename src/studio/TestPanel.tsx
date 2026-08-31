@@ -19,7 +19,7 @@ interface Check { id: string; text: string }
 interface Case { id: string; title: string; description: string; tags?: string[]; checklist: Check[] }
 const uid = () => 'c' + Math.floor(performance.now() * 1000).toString(36);
 
-export default function TestPanel({ state, onClose }: { state: StudioState; onClose: () => void }) {
+export default function TestPanel({ state, onClose, embedded }: { state: StudioState; onClose: () => void; embedded?: boolean }) {
   const id = state.project!.id;
   const [tiles, setTiles] = React.useState<Tile[]>(blank);
   const [sel, setSel] = React.useState<number | null>(null);
@@ -120,13 +120,13 @@ export default function TestPanel({ state, onClose }: { state: StudioState; onCl
   const passN = tiles.filter((t) => t.status === 'pass').length, failN = tiles.filter((t) => t.status === 'fail').length;
 
   return (
-    <div className="pf-test-overlay">
+    <div className={embedded ? 'pf-test-embed' : 'pf-test-overlay'}>
       <div className="pf-test-head">
-        <div className="pf-test-title">◆ Responsive test & scan <span className="pf-test-sub">{id}</span></div>
+        {!embedded && <div className="pf-test-title">◆ Responsive test & scan <span className="pf-test-sub">{id}</span></div>}
         <button className="pro-btn ghost" onClick={runClientScan}>⟳ Scan now</button>
         <button className="pro-btn primary" onClick={runPlaywright} disabled={pwState === 'running'}>{pwState === 'running' ? 'Running…' : '▶ Run with Playwright'}</button>
         <div className="pf-test-stat">{pwState !== 'idle' ? <><b>{pwCount.pass}</b>✓ · <b className={pwCount.fail ? 'bad' : ''}>{pwCount.fail}</b>✗ · {elapsed.toFixed(1)}s</> : <><b>{passN}</b>✓ · <b className={failN ? 'bad' : ''}>{failN}</b>⚠ scanned</>}</div>
-        <button className="pf-test-x" onClick={onClose}>✕</button>
+        {!embedded && <button className="pf-test-x" onClick={onClose}>✕</button>}
       </div>
 
       <div className="pf-test-body">
