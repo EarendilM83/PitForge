@@ -1,0 +1,178 @@
+.fc {
+  background: var(--bg-950);
+  padding-block: calc(50 * var(--u));
+  padding-inline: var(--gutter);
+}
+
+.fc-inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 600fr) minmax(0, 760fr); /* design 600 / 760 */
+  align-items: center;
+  gap: calc(80 * var(--u));
+}
+
+/* ---- left column: copy ---- */
+.fc-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+
+.fc-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px var(--space-3);
+  border: 0.5px solid var(--border-yellow);
+  border-radius: var(--radius-full);
+  background: rgba(232, 199, 92, 0.15);
+  backdrop-filter: blur(7.5px);
+  color: var(--brand);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.fc-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-size: clamp(28px, calc(56 * 100vw / 1920), 56px);
+}
+.fc-title-top { color: var(--text); }
+.fc-title-accent { color: var(--brand); }
+
+/* ---- feature panels ---- */
+.fc-panels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.fc-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-xl);
+}
+/* Open panel (first) carries the dark accent card; collapsed panels are bare */
+.fc-panel--open {
+  background: var(--bg-500);
+}
+
+.fc-panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.fc-panel-heading {
+  margin: 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--subtitle);
+  font-size: clamp(15px, calc(20 * 100vw / 1920), 20px);
+}
+.fc-panel--open .fc-panel-heading {
+  color: var(--text);
+}
+
+/* × / + marker rendered as a ghost-button chip */
+.fc-panel-marker {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  color: var(--subtitle);
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1;
+  backdrop-filter: blur(7.5px);
+}
+.fc-panel--open .fc-panel-marker {
+  color: var(--text);
+}
+
+.fc-panel-body {
+  margin: 0;
+  color: var(--subtitle);
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  line-height: 1.5;
+}
+
+/* collapse a panel with no body copy to a single-row card */
+.fc-panel:not(.fc-panel--open) .fc-panel-body:empty {
+  display: none;
+}
+
+/* ---- CTA ---- */
+.fc-cta.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: calc(140 * var(--u)); /* design 7372:4443: 140px-wide button */
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-xl);
+  background: var(--brand);
+  color: var(--brand-on);
+  font-weight: 700;
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.fc-cta.btn-primary:hover { filter: brightness(1.05); }
+
+/* ---- right column: product image ---- */
+.fc-media {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 32px;
+  overflow: hidden;
+}
+
+.fc-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---- mobile: stack to one column ---- */
+@media (max-width: 768px) {
+  .fc-inner {
+    grid-template-columns: 1fr;
+  }
+  .fc-copy {
+    align-items: stretch;
+  }
+  .fc-eyebrow {
+    align-self: flex-start;
+  }
+  .fc-cta.btn-primary {
+    align-self: stretch;
+  }
+  .fc-media {
+    order: 1;
+    max-width: 480px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}

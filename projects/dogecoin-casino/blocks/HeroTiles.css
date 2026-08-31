@@ -1,0 +1,245 @@
+/* HeroTiles — proportional to the 1920 canvas via var(--u). */
+.tiles {
+  background: transparent;
+  /* top padding leaves room for the art that overhangs above the cards so it
+     never collides with the hero's Join Now button */
+  padding: calc(76 * var(--u)) 0 calc(40 * var(--u));
+}
+
+.tiles-inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+/* Fixed 1200-wide row of four 291px cards (design 7372:5522), centered. */
+.tiles-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: calc(12 * var(--u));
+  max-width: calc(1200 * var(--u));
+  margin: 0 auto;
+}
+
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* design 7372:4557: content vertically centered */
+  gap: calc(24 * var(--u));
+  padding: calc(100 * var(--u)) calc(20 * var(--u)) calc(32 * var(--u));
+  border: 1px solid var(--border-10);
+  border-radius: calc(20 * var(--u));
+  background: var(--bg-600);
+  /* no overflow:hidden — the 3D art must overhang above the card top like the design.
+     The colored top-glow is clipped by its own border-radius, and the card background
+     is clipped by border-radius automatically, so nothing else leaks. */
+}
+.tile-glow { overflow: hidden; }
+
+/* subtle grid pattern in the card top, fading down (design) */
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(177, 202, 223, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(177, 202, 223, 0.05) 1px, transparent 1px);
+  background-size: calc(30 * var(--u)) calc(30 * var(--u));
+  background-position: center calc(6 * var(--u));
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 58%);
+  mask-image: linear-gradient(180deg, #000 0%, transparent 58%);
+}
+
+/* Colored top glow behind the art — one accent per column */
+/* soft top glow — no hard bright frame (design) */
+.tile-glow {
+  position: absolute;
+  top: calc(3 * var(--u));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - (8 * var(--u)));
+  height: calc(113 * var(--u));
+  border-radius: calc(16 * var(--u)) calc(16 * var(--u)) 0 0;
+  pointer-events: none;
+}
+.tile--0 .tile-glow { background: linear-gradient(180deg, rgba(0, 166, 244, 0.3), rgba(0, 166, 244, 0)); }
+.tile--1 .tile-glow { background: linear-gradient(180deg, rgba(194, 122, 255, 0.3), rgba(194, 122, 255, 0)); }
+.tile--2 .tile-glow { height: calc(160 * var(--u)); background: linear-gradient(180deg, rgba(154, 230, 0, 0.3), rgba(154, 230, 0, 0)); }
+.tile--3 .tile-glow { background: linear-gradient(180deg, rgba(232, 199, 92, 0.3), rgba(232, 199, 92, 0)); }
+
+/* Artwork overhangs the top edge */
+.tile-art {
+  position: absolute;
+  top: calc(-78 * var(--u));
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(176 * var(--u));
+  height: calc(176 * var(--u));
+  z-index: 2;
+  pointer-events: none;
+}
+.tile-img { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+.tile-body {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--u));
+  width: 100%;
+  text-align: center;
+}
+.tile-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(16px, calc(24 * 100vw / 1920), 24px);
+  line-height: 1.25;
+  /* design 7372:4560 crops the heading to cap-height so the card stays compact */
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  -webkit-text-box-trim: trim-both;
+  -webkit-text-box-edge: cap alphabetic;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.tile-desc {
+  margin: 0;
+  color: var(--subtitle);
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  line-height: 1.5;
+}
+
+/* Alpha (glass) button — design 7372:4563: w-full, px-24 py-20, leading-24, r-12 */
+.tile-cta.btn-alpha {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(8 * var(--u));
+  width: 100%;
+  padding: calc(20 * var(--u)) calc(24 * var(--u));
+  border: 0.5px solid var(--border-10);
+  border-radius: calc(12 * var(--u));
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(calc(7.5 * var(--u)));
+  color: var(--text);
+  font-weight: 700;
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  line-height: 1.5;
+  letter-spacing: -0.4px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.tile-cta.btn-alpha:hover { background: rgba(255, 255, 255, 0.16); }
+
+/* ---- Currency / crypto logo strip (design 7372:4397 — ~800 centered) ---- */
+.tiles-strip {
+  margin: calc(56 * var(--u)) auto 0;
+  max-width: calc(820 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(16 * var(--u));
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.strip-logo-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: calc(56 * var(--u));
+  height: calc(56 * var(--u));
+}
+.strip-logo-wrap--0, .strip-logo-wrap--8 { width: calc(40 * var(--u)); height: calc(40 * var(--u)); }
+.strip-logo-wrap--1, .strip-logo-wrap--7 { width: calc(48 * var(--u)); height: calc(48 * var(--u)); }
+.strip-logo-wrap--2, .strip-logo-wrap--6 { width: calc(56 * var(--u)); height: calc(56 * var(--u)); }
+.strip-logo-wrap--3, .strip-logo-wrap--5 { width: calc(64 * var(--u)); height: calc(64 * var(--u)); }
+.strip-logo-wrap--4 { width: calc(72 * var(--u)); height: calc(72 * var(--u)); }
+.strip-logo { display: block; width: 100%; height: 100%; object-fit: contain; }
+
+/* Below 910px: 2×2 grid (not 4-up). Force equal card heights and pin buttons to the card
+   bottom so the two cards in a row always line up regardless of how the text wraps. */
+@media (max-width: 910px) {
+  .tiles-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: none;
+    row-gap: calc(104 * var(--u));
+    align-items: stretch;
+  }
+  .tile { height: 100%; justify-content: flex-start; }
+  .tile-cta.btn-alpha { margin-top: auto; }
+}
+
+/* currency strip → mobile design (7240:3470): 5 crypto on top row (LTC enlarged, centered),
+   then $, €, DOGE, BNB on the second row. Reorder via `order`, force the 5+4 wrap via max-width. */
+@media (max-width: 768px) {
+  .tiles-strip {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px;
+    max-width: 300px;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .strip-logo-wrap,
+  .strip-logo-wrap--0, .strip-logo-wrap--1, .strip-logo-wrap--2, .strip-logo-wrap--3,
+  .strip-logo-wrap--4, .strip-logo-wrap--5, .strip-logo-wrap--6, .strip-logo-wrap--7, .strip-logo-wrap--8 {
+    width: 40px;
+    height: 40px;
+  }
+  .strip-logo-wrap--4 { width: 56px; height: 56px; } /* Litecoin — enlarged center */
+  /* PFRepeat wraps each logo in an anonymous div — order must go on the wrapper (flex item),
+     addressed by nth-child. Content order: 1=$ 2=€ 3=BTC 4=ETH 5=LTC 6=USDT 7=TRX 8=DOGE 9=BNB.
+     Target row 1: BTC ETH LTC USDT TRX ; row 2: $ € DOGE BNB */
+  .tiles-strip > *:nth-child(3) { order: 1; }
+  .tiles-strip > *:nth-child(4) { order: 2; }
+  .tiles-strip > *:nth-child(5) { order: 3; }
+  .tiles-strip > *:nth-child(6) { order: 4; }
+  .tiles-strip > *:nth-child(7) { order: 5; }
+  .tiles-strip > *:nth-child(1) { order: 6; }
+  .tiles-strip > *:nth-child(2) { order: 7; }
+  .tiles-strip > *:nth-child(8) { order: 8; }
+  .tiles-strip > *:nth-child(9) { order: 9; }
+}
+
+/* Phones (design 7240:5522 mobile): cards become a horizontal scroll-snap carousel —
+   one card near full-width with the next peeking. Top padding houses the art that
+   overhangs each card so the scroll container doesn't clip it. */
+@media (max-width: 600px) {
+  .tiles-grid {
+    display: flex;
+    grid-template-columns: none;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 16px;
+    max-width: none;
+    padding: 76px 20px 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tiles-grid::-webkit-scrollbar { display: none; }
+  /* PFRepeat wraps each tile in an anonymous div — that wrapper is the flex/scroll item. */
+  .tiles-grid > * {
+    flex: 0 0 auto;
+    width: 86%;
+    min-width: 86%;
+    display: flex;
+    scroll-snap-align: center;
+  }
+  .tile {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    justify-content: flex-start;
+  }
+}

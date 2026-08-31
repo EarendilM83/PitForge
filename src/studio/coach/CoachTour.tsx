@@ -6,9 +6,9 @@ import './coach.css';
 /* A non-modal coach tour: spotlights real spots in the Studio and narrates them
    through Zippy the hummingbird. Steps target live DOM elements by selector. */
 
-interface Step { target?: string; title: string; text: string }
+export interface Step { target?: string; title: string; text: string }
 
-const STEPS: Step[] = [
+const DASHBOARD_STEPS: Step[] = [
   {
     title: 'Hi, I’m Zippy!',
     text: 'I’ll show you around in a few quick hops. This is your Sites workspace — where everything starts.',
@@ -37,7 +37,8 @@ const STEPS: Step[] = [
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
-export default function CoachTour({ onClose }: { onClose: () => void }) {
+export default function CoachTour({ onClose, steps }: { onClose: () => void; steps?: Step[] }) {
+  const STEPS = steps ?? DASHBOARD_STEPS;
   const [i, setI] = React.useState(0);
   const [rect, setRect] = React.useState<DOMRect | null>(null);
   const [tick, setTick] = React.useState(0);

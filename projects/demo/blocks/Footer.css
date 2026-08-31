@@ -1,5 +1,0 @@
-.footer { padding: var(--space-8) var(--space-6); background: var(--grey-900); color: #fff; text-align: center; }
-.footer-heading { font-size: var(--text-lg); margin: 0 0 var(--space-3); }
-.footer-note { color: #cbd5e0; max-width: 560px; margin: 0 auto var(--space-4); }
-.footer-link { color: #fff; text-decoration: underline; display: inline-block; margin-bottom: var(--space-4); }
-.footer-age-icon { width: 40px; height: 40px; display: inline-block; }

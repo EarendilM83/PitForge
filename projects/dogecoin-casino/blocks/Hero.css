@@ -1,0 +1,148 @@
+/* Hero — proportional to the 1920 Figma canvas via var(--u). Every dimension is
+   calc(<designPx> * var(--u)) so the section is an exact scaled copy at any width. */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: transparent; /* body paints the top gradient band + base */
+  padding: calc(72 * var(--u)) calc(60 * var(--u)) calc(44 * var(--u));
+}
+
+/* Subtle grid overlay in the blue hero area (Figma line pattern), fading out */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(177, 202, 223, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(177, 202, 223, 0.06) 1px, transparent 1px);
+  background-size: calc(64 * var(--u)) calc(64 * var(--u));
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(115% 70% at 50% 18%, #000 32%, transparent 72%);
+  mask-image: radial-gradient(115% 70% at 50% 18%, #000 32%, transparent 72%);
+}
+
+/* Radial background glows */
+.hero-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(calc(60 * var(--u)));
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-glow--gold {
+  width: calc(760 * var(--u));
+  height: calc(760 * var(--u));
+  top: calc(-140 * var(--u));
+  left: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(232, 199, 92, 0.16), transparent 62%);
+}
+.hero-glow--purple {
+  width: calc(520 * var(--u));
+  height: calc(520 * var(--u));
+  top: 30%;
+  left: 8%;
+  background: radial-gradient(circle, rgba(194, 122, 255, 0.14), transparent 65%);
+}
+
+.hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: calc(1080 * var(--u));
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: calc(16 * var(--u));
+}
+
+/* Dogecoin coin badge (Figma 7372:4423 — 48px coin, 8px pad, white-10 ring) */
+.hero-coin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(8 * var(--u));
+  border: 1px solid var(--border-10);
+  border-radius: 999px;
+  background: rgba(94, 131, 161, 0.1);
+}
+.hero-coin-img {
+  display: block;
+  width: calc(48 * var(--u));
+  height: calc(48 * var(--u));
+  object-fit: contain;
+}
+
+/* Eyebrow pill */
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(10 * var(--u)) calc(12 * var(--u));
+  border: 0.5px solid var(--border-yellow);
+  border-radius: 999px;
+  background: rgba(232, 199, 92, 0.15);
+  backdrop-filter: blur(calc(7.5 * var(--u)));
+  color: var(--brand);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Two-tone headline in ONE <h1>; accent is a block so it wraps to its own line */
+.hero-title {
+  display: block;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-size: clamp(30px, calc(64 * 100vw / 1920), 64px);
+}
+.hero-title-top { color: var(--text); }
+.hero-title-accent { display: block; color: var(--brand); }
+
+.hero-subtitle {
+  max-width: calc(500 * var(--u));
+  margin: 0;
+  color: var(--subtitle);
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  line-height: 1.5;
+}
+
+/* Primary CTA */
+.hero-cta.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: calc(8 * var(--u));
+  padding: calc(20 * var(--u)) calc(24 * var(--u));
+  min-width: calc(172 * var(--u)); /* design 7372:4427 is a fixed 172px-wide button (size-full frame) */
+  border-radius: calc(12 * var(--u));
+  background: var(--brand);
+  color: var(--brand-on);
+  font-weight: 700;
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.hero-cta.btn-primary:hover { filter: brightness(1.05); }
+
+/* Small screens: --u is frozen at the 1366 floor, so the ~45px title is too wide for a
+   long word like "SPORTSBOOK" on a ~320px screen. Trim the side padding and scale the
+   title with the viewport so it always fits edge-to-edge without clipping. */
+@media (max-width: 600px) {
+  .hero { padding-inline: calc(20 * var(--u)); }
+  /* design mobile (7240:3055): the Join Now CTA is a full-width block button */
+  .hero-cta.btn-primary {
+    width: 100%;
+    padding-block: 20px;
+    border-radius: 16px;
+    font-size: 16px;
+  }
+}

@@ -59,7 +59,8 @@ A dark, three-column builder:
 - **Centre — canvas.** Click on the page to select and edit. Hover to highlight.
 - **Right — Settings.** Three tabs for the selected element: **Style · Content · Settings**.
 - **Top bar.** Language switcher · device switcher (Desktop/Tablet/Mobile) · Marketer/Builder mode ·
-  undo/redo · **🔬 Test & QA** · Preview · Export · Publish.
+  undo/redo · **🐦 Guide** (Zippy walks you through the editor any time) · **🔬 Test & QA** ·
+  Preview · Export · Publish.
 
 ---
 

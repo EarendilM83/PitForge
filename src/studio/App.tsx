@@ -7,6 +7,9 @@ import BuilderLeftRail from './BuilderLeftRail';
 import BuilderInspector from './BuilderInspector';
 import TestingPanel from './TestingPanel';
 import ExportDialog from './ExportDialog';
+import CoachTour from './coach/CoachTour';
+import { EDITOR_STEPS } from './coach/editorSteps';
+import Hummingbird from './coach/Hummingbird';
 import { PFProvider } from '../runtime/context';
 import { RenderPage, type BlockModule } from '../runtime/renderPage';
 import { PF_UTILITIES_CSS } from '../runtime/pfUtilities';
@@ -39,6 +42,7 @@ export default function App() {
   const [publishing, setPublishing] = React.useState(false);
   const [builderMode, setBuilderMode] = React.useState(false); // Marketer (bounded) vs Builder (free-form)
   const [testOpen, setTestOpen] = React.useState(false);
+  const [guideOpen, setGuideOpen] = React.useState(false);
   const saveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const changeBaseline = React.useRef(0);
 
@@ -200,6 +204,7 @@ export default function App() {
           <button className="pro-icobtn" title="Undo" onClick={() => dispatch({ type: 'undo' })} disabled={!state.undoStack.length}>↩</button>
           <button className="pro-icobtn" title="Redo" onClick={() => dispatch({ type: 'redo' })} disabled={!state.redoStack.length}>↪</button>
           <span className="pro-tb-div" />
+          <button className="pro-guide" onClick={() => setGuideOpen(true)} title="Show me around — Zippy the guide"><Hummingbird size={22} mood="happy" /><span>Guide</span></button>
           <button className="pro-btn ghost" onClick={() => setTestOpen(true)} title="Test & QA — quick scan + the AI QA pipeline">🔬 Test &amp; QA</button>
           <button className="pro-btn ghost" onClick={() => setPreviewMode(true)}>Preview</button>
           <button className="pro-btn ghost" onClick={() => setExportOpen(true)}>Export</button>
@@ -222,6 +227,7 @@ export default function App() {
       <BuilderInspector state={state} dispatch={dispatch} builderMode={builderMode} />
 
       {testOpen && <TestingPanel state={state} onClose={() => setTestOpen(false)} />}
+      {guideOpen && <CoachTour steps={EDITOR_STEPS} onClose={() => setGuideOpen(false)} />}
       {exportOpen && <ExportDialog projectId={state.project.id} onClose={() => setExportOpen(false)} />}
       {externalChange && (
         <div className="studio-notice">

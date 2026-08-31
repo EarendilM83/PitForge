@@ -1,0 +1,113 @@
+/* Dogecoin Casino — design tokens (from Figma UI-UX v4.0 design system) */
+
+/* border-box so width:100% + padding never overflows (matches the Figma/Tailwind box model) */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Manrope — body face, self-hosted (no render-blocking Google Fonts request) */
+@font-face { font-family: 'Manrope'; src: url('/assets/fonts/manrope-400.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('/assets/fonts/manrope-500.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('/assets/fonts/manrope-600.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('/assets/fonts/manrope-700.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Manrope'; src: url('/assets/fonts/manrope-800.woff2') format('woff2'); font-weight: 800; font-style: normal; font-display: swap; }
+
+/* Magistral — the Figma display face, self-hosted (see assets/fonts/) */
+@font-face {
+  font-family: 'Magistral';
+  src: url('/assets/fonts/magistral-400.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Magistral';
+  src: url('/assets/fonts/magistral-500.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Magistral';
+  src: url('/assets/fonts/magistral-700.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'Magistral';
+  src: url('/assets/fonts/magistral-800.woff2') format('woff2');
+  font-weight: 800; font-style: normal; font-display: swap;
+}
+
+:root {
+  /* Proportional design unit: 1 = one pixel in the 1920px Figma canvas.
+     The whole layout scales as one unit with the viewport up to 1920, then
+     locks (so 27"/35"/42" show the design unchanged). Express desktop sizes
+     as calc(<designPx> * var(--u)) so every screen looks identical, just scaled. */
+  --u: calc(clamp(1366px, min(100vw, 1920px), 1920px) / 1920);
+
+  /* Backgrounds (dark navy scale) */
+  --bg-950: #0d1923;
+  --bg-900: #0e1c27;
+  --bg-800: #10202d;
+  --bg-700: #142636;
+  --bg-600: #162d3f;
+  --bg-500: #1a364c;
+
+  /* Brand + accents */
+  --brand: #e8c75c;          /* gold */
+  --brand-on: #29220b;       /* text on gold */
+  --sky: #00a6f4;
+  --purple: #c27aff;
+  --green: #3fb950;
+  --lime: #9ae600;
+  --blue: #283dce;
+
+  /* Text */
+  --text: #ffffff;
+  --subtitle: #b1cadf;
+
+  /* Borders */
+  --border-10: rgba(177, 202, 223, 0.10);
+  --border-15: rgba(177, 202, 223, 0.15);
+  --border-yellow: rgba(230, 191, 71, 0.15);
+
+  /* Radius */
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-full: 999px;
+
+  /* Spacing */
+  --space-1: calc(4 * var(--u));
+  --space-2: calc(8 * var(--u));
+  --space-3: calc(12 * var(--u));
+  --space-4: calc(16 * var(--u));
+  --space-5: calc(20 * var(--u));
+  --space-6: calc(24 * var(--u));
+  --space-8: calc(32 * var(--u));
+  --space-10: calc(40 * var(--u));
+  --space-16: calc(64 * var(--u));
+
+  /* Type */
+  --font-body: 'Manrope', -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Magistral', 'Archivo Black', 'Manrope', sans-serif;
+
+  /* Layout — content locks to the Figma desktop width (1440) and centers on
+     larger screens; nothing reflows past this, so 27"/35"/42" all show the
+     design unchanged. Section backgrounds stay full-bleed. */
+  --page-max: calc(1440 * var(--u)); /* content scales with the design, locks at 1920 */
+  --gutter: calc(60 * var(--u));
+
+  /* legacy aliases used by the runtime scaffold defaults */
+  --radius: var(--radius-lg);
+}
+
+body {
+  margin: 0;
+  /* Rectangle 22973 — top gradient band (sky-500 50% → blue-200 10% → transparent,
+     631px tall) painted over the dark base so it spans nav + hero like the design. */
+  background:
+    /* gold hero halo (Ellipse 1) */
+    radial-gradient(1140px 640px at 50% -60px, rgba(232, 199, 92, 0.16), rgba(232, 199, 92, 0) 60%),
+    /* Rectangle 22973 — blue top band */
+    linear-gradient(180deg, rgba(0, 166, 244, 0.55) 0, rgba(40, 61, 206, 0.14) 42%, rgba(13, 25, 35, 0) 100%)
+      top center / 100% 660px no-repeat,
+    var(--bg-950);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}

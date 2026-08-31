@@ -1,0 +1,335 @@
+.ft {
+  background: var(--bg-900);
+  border-top: 1px solid rgba(177, 202, 223, 0.05);
+  padding-block: var(--space-8);
+  padding-inline: var(--gutter);
+}
+
+.ft-inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+/* ---- link columns row ---- */
+.ft-top {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-8);
+}
+
+.ft-columns {
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.ft-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 100px;
+}
+
+.ft-col-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+/* accordion toggle — hidden on desktop; drives the mobile collapse */
+.ft-col-toggle {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.ft-col-plus {
+  display: none;
+} /* shown only on mobile */
+
+.ft-col-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ft-col-link {
+  color: var(--subtitle);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.ft-col-link:hover {
+  color: var(--text);
+}
+
+/* ---- community ---- */
+.ft-community {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  align-items: flex-start;
+}
+
+.ft-social {
+  display: flex;
+  flex-wrap: nowrap; /* all social icons stay on one line, even at 320px */
+  align-items: center;
+  gap: var(--space-2);
+}
+.ft-social-link {
+  flex: 0 0 auto;
+}
+
+.ft-social-icon,
+.ft-social-icon svg {
+  width: 36px;
+  height: 36px;
+  display: block;
+}
+
+/* clickable icon wrappers (social + payment) */
+.ft-social-link,
+.ft-pay-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+.ft-social-link:hover,
+.ft-pay-link:hover {
+  opacity: 0.7;
+}
+
+.ft-support {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px;
+  gap: var(--space-2);
+  width: 136px;
+  border: 1px solid rgba(232, 199, 92, 0.1);
+  border-radius: var(--radius-lg);
+  background: rgba(232, 199, 92, 0.1);
+  color: var(--brand);
+}
+
+.ft-support-icon,
+.ft-support-icon svg {
+  width: 24px;
+  height: 24px;
+  display: block;
+  color: var(--brand);
+}
+
+.ft-support-label {
+  color: var(--brand);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  text-decoration: none;
+}
+
+/* ---- payment / crypto icons ---- */
+.ft-pay-wrap {
+  width: 100%;
+  border-block: 1px solid var(--border-10);
+  padding-block: var(--space-8);
+}
+
+/* Carousel: centered when all logos fit, horizontal-scroll when they don't.
+   fit-content hugs the content but is capped at 100%, so overflow scrolls. */
+.ft-pay {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: clamp(22px, calc(64 * 100vw / 1920), 64px);
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ft-pay::-webkit-scrollbar {
+  display: none;
+}
+.ft-pay-link {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+}
+
+.ft-pay-icon,
+.ft-pay-icon svg {
+  width: 40px;
+  height: 40px;
+  display: block;
+}
+
+/* ---- legal block ---- */
+.ft-legal {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-6);
+}
+
+/* Carousel (same pattern as payments): centered when it fits, scrolls when it doesn't. */
+.ft-awards {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: calc(28 * var(--u));
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.ft-awards::-webkit-scrollbar {
+  display: none;
+}
+.ft-award-link {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+.ft-award-link:hover { opacity: 0.7; }
+.ft-award,
+.ft-award img {
+  height: calc(34 * var(--u));
+  width: auto;
+  display: block;
+}
+
+.ft-copyright {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.ft-legal-text,
+.ft-legal-text p {
+  color: var(--subtitle);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.ft-legal-text a {
+  color: var(--subtitle);
+  text-decoration: underline;
+}
+
+.ft-brand-mark {
+  width: 109px;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .ft-top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  /* ---- mobile: link columns become collapsible accordions (design 7240:4093) ---- */
+  .ft-columns {
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+  }
+  .ft-col {
+    width: 100%;
+    gap: 0;
+    border-bottom: 1px solid var(--border-10);
+  }
+  .ft-col-heading {
+    cursor: pointer;
+    font-size: 22px;
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    padding: 18px 4px;
+    user-select: none;
+  }
+  /* +/− icon built from two bars */
+  .ft-col-plus {
+    display: block;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    flex: 0 0 auto;
+  }
+  .ft-col-plus::before,
+  .ft-col-plus::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: var(--subtitle);
+    transform: translate(-50%, -50%);
+    transition: opacity 0.2s ease;
+  }
+  .ft-col-plus::before {
+    width: 16px;
+    height: 2px;
+  }
+  .ft-col-plus::after {
+    width: 2px;
+    height: 16px;
+  }
+  /* collapsed by default; expand when the sibling checkbox is checked */
+  .ft-col-links {
+    display: none;
+    padding: 0 4px 18px;
+  }
+  .ft-col-toggle:checked ~ .ft-col-links {
+    display: flex;
+  }
+  /* checked → plus becomes minus (hide the vertical bar) */
+  .ft-col-toggle:checked ~ .ft-col-heading .ft-col-plus::after {
+    opacity: 0;
+  }
+  .ft-col-link {
+    font-size: 16px;
+  }
+  .ft-community {
+    align-items: stretch;
+    width: 100%;
+    padding-top: var(--space-6);
+  }
+  /* design mobile (7240:4093): no "Community" heading, icons spread full-width, full-width button */
+  .ft-community > .ft-col-heading {
+    display: none;
+  }
+  .ft-social {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .ft-support {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -24,7 +24,7 @@ await page.waitForSelector('.studio-canvas .pf-editable');
 ok('project opens, editable elements outlined', (await page.$$('.studio-canvas .pf-editable')).length > 10);
 
 // save original content to restore later
-const origContent = await (await fetch(`${BASE}/api/projects/demo`)).json().then((p) => p.content);
+const origContent = await (await fetch(`${BASE}/api/projects/dogecoin-casino`)).json().then((p) => p.content);
 
 // --- outline toggle ---
 await page.click('.studio-el-iconbtn[title="Toggle edit outlines"]');
@@ -110,7 +110,7 @@ const removeDisabled = await page.$$eval('.games .pf-repeat-remove', (bs) => bs.
 ok('remove disabled at min=2', removeDisabled);
 
 // --- restore original content ---
-await fetch(`${BASE}/api/projects/demo/content`, {
+await fetch(`${BASE}/api/projects/dogecoin-casino/content`, {
   method: 'PUT',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(origContent),

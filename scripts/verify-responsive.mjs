@@ -18,7 +18,7 @@ const arg = (name, def) => {
   const i = process.argv.indexOf(`--${name}`);
   return i > -1 ? process.argv[i + 1] : def;
 };
-const project = arg('project', 'demo');
+const project = arg('project', 'dogecoin-casino');
 
 // The ladder: phones → large phone → tablet portrait/landscape → laptops → desktop → locked.
 // The two ends (490, 1920) are usually designed; everything else must be derived by the fluid system.

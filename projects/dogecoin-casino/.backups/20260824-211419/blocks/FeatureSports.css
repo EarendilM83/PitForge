@@ -1,0 +1,181 @@
+.fsports {
+  background: var(--bg-950);
+  padding-block: calc(50 * var(--u));
+}
+
+.fsports-inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+  display: grid;
+  grid-template-columns: minmax(0, 600fr) minmax(0, 760fr);
+  align-items: center;
+  gap: calc(80 * var(--u));
+}
+
+/* ---- left column: copy ---- */
+.fsports-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-8);
+}
+
+.fsports-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  width: 100%;
+}
+
+/* Badge pill */
+.fsports-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px var(--space-3);
+  border: 0.5px solid rgba(230, 191, 71, 0.15);
+  border-radius: var(--radius-full);
+  background: rgba(232, 199, 92, 0.15);
+  backdrop-filter: blur(7.5px);
+  color: var(--brand);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+/* Headline. Two-tone <h2>: white lead + gold "with Dogecoin" accent, matching
+   the design. Split into two PFText spans so it stays a single SEO h2. */
+.fsports-title {
+  margin: 0;
+  width: 100%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  font-size: calc(56 * var(--u));
+}
+.fsports-title-top { color: var(--text); }
+.fsports-title-accent { color: var(--brand); }
+
+/* ---- feature items ---- */
+.fsports-items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.fsports-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border-radius: var(--radius-md);
+  width: 100%;
+}
+
+.fsports-item--open {
+  background: var(--bg-500);
+}
+
+.fsports-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.fsports-item-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--subtitle);
+}
+
+.fsports-item--open .fsports-item-title {
+  color: var(--text);
+}
+
+/* ×/+ marker chip on each row */
+.fsports-item-marker {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  color: var(--subtitle);
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  line-height: 1;
+  backdrop-filter: blur(7.5px);
+}
+.fsports-item--open .fsports-item-marker {
+  color: var(--text);
+}
+
+.fsports-item-body {
+  margin: 0;
+  color: var(--subtitle);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+/* Collapsed rows carry no body copy — hide the empty node */
+.fsports-item:not(.fsports-item--open) .fsports-item-body:empty {
+  display: none;
+}
+
+/* ---- CTA ---- */
+.fsports-cta.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5) var(--space-6);
+  border-radius: var(--radius-xl);
+  background: var(--brand);
+  color: var(--brand-on);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+.fsports-cta.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+/* ---- right column: 3D image ---- */
+.fsports-media {
+  position: relative;
+  width: 100%;
+}
+
+.fsports-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+}
+
+/* ---- responsive: single column under ~768px, image below copy ---- */
+@media (max-width: 768px) {
+  .fsports-inner {
+    grid-template-columns: 1fr;
+  }
+  .fsports-media {
+    order: 2;
+  }
+}

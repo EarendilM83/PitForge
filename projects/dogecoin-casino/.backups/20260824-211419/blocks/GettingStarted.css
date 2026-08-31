@@ -1,0 +1,159 @@
+.gs {
+  background: var(--bg-950);
+  padding-block: calc(50 * var(--u));
+  padding-inline: var(--gutter);
+}
+
+.gs-inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+
+/* ---- header ---- */
+.gs-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  margin-bottom: calc(64 * var(--u));
+}
+
+.gs-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: calc(10 * var(--u)) calc(12 * var(--u));
+  border: 0.5px solid var(--border-yellow);
+  border-radius: var(--radius-full);
+  background: rgba(232, 199, 92, 0.15);
+  backdrop-filter: blur(calc(7.5 * var(--u)));
+  color: var(--brand);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: calc(16 * var(--u));
+  letter-spacing: -0.32px;
+  text-transform: uppercase;
+}
+
+.gs-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: calc(64 * var(--u));
+  line-height: 1.05;
+  letter-spacing: -0.4px;
+  text-transform: uppercase;
+  color: var(--text);
+  max-width: calc(1080 * var(--u));
+}
+
+/* gold half on its own line (design: white "Getting started with" / gold "Dogecoin betting") */
+.gs-title-accent {
+  display: block;
+  color: var(--brand);
+}
+
+.gs-intro {
+  max-width: calc(612 * var(--u));
+  color: var(--subtitle);
+  font-size: calc(14 * var(--u));
+  line-height: 1.5;
+}
+
+/* ---- cards grid ---- */
+.gs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr; /* all cards the same height (design) */
+  gap: var(--space-5);
+}
+
+@media (max-width: 1024px) {
+  .gs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .gs-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gs-card {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(272 * var(--u));
+  padding: var(--space-6) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-3);
+  background: var(--bg-600);
+  border: 1px solid var(--border-10);
+  border-radius: var(--space-5);
+  /* per-card accent, overridden below */
+  --accent: var(--sky);
+}
+
+/* accent glow across the top of each card — soft gradient, no hard frame (design) */
+.gs-card-glow {
+  position: absolute;
+  inset: calc(3 * var(--u)) calc(3 * var(--u)) auto calc(3 * var(--u));
+  height: calc(113 * var(--u));
+  border-radius: calc(16 * var(--u)) calc(16 * var(--u)) 0 0;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--accent) 30%, transparent) 0%,
+    color-mix(in srgb, var(--accent) 0%, transparent) 100%);
+  pointer-events: none;
+}
+
+.gs-card-icon {
+  position: relative;
+  width: calc(80 * var(--u));
+  height: calc(80 * var(--u));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  border: 1px solid color-mix(in srgb, var(--accent) 10%, transparent);
+  background: color-mix(in srgb, var(--accent) 20%, transparent);
+  box-shadow: 0 calc(20 * var(--u)) calc(40 * var(--u)) 0 color-mix(in srgb, var(--accent) 20%, transparent);
+  margin-bottom: var(--space-2);
+}
+
+.gs-icon,
+.gs-icon svg {
+  width: calc(40 * var(--u));
+  height: calc(40 * var(--u));
+  display: block;
+}
+
+.gs-card-title {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.25;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.gs-card-body {
+  position: relative;
+  color: var(--subtitle);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* card accent order (matches Figma left-to-right, top-to-bottom):
+   1 purple, 2 green, 3 blue, 4 sky, 5 gold, 6 lime */
+/* index-based (PFRepeat wraps each item in a div, so :nth-child won't work) */
+.gs-card--0 { --accent: var(--purple); }
+.gs-card--1 { --accent: var(--green); }
+.gs-card--2 { --accent: var(--blue); }
+.gs-card--3 { --accent: var(--sky); }
+.gs-card--4 { --accent: var(--brand); }
+.gs-card--5 { --accent: var(--lime); }

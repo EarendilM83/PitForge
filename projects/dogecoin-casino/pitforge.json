@@ -1,0 +1,19 @@
+{
+  "name": "Dogecoin Casino",
+  "lang": "en",
+  "blocks": [
+    "SiteNav",
+    "Hero",
+    "HeroTiles",
+    "FeatureCasino",
+    "FeatureLive",
+    "FeatureSports",
+    "FeatureEsport",
+    "GettingStarted",
+    "Faq",
+    "Cta",
+    "Footer"
+  ],
+  "domain": "",
+  "createdBy": "figma-to-pitforge v1"
+}

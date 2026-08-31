@@ -7,18 +7,20 @@ projects/*/dist/
 shots/
 .pitforge-ai-key
 
-# Public repo ships only the neutral demo project. A user's own sites (and any
-# client work) live in ./projects/ locally but are never committed.
+# The repo ships the dogecoin-casino site as its single example project. Any other
+# sites live in ./projects/ locally but are never committed.
 projects/*
-!projects/demo
-!projects/demo/**
+!projects/dogecoin-casino
+!projects/dogecoin-casino/**
+# never commit build output, QA evidence, or the AI-run cache
+projects/*/dist/
+projects/*/qa/last-run.json
 
 # local Claude / MCP config and scratch — not part of the product
 # skills live in docs/skills/ (tracked); .claude/skills is a symlink → ../docs/skills
 .claude/*
 !.claude/skills
 demo-*.html
-projects/demo/dist/
 
 # QA evidence screenshots (regenerated per run)
 tests/.qa-evidence/

@@ -1,0 +1,600 @@
+{
+  "project": "dogecoin-casino",
+  "source": "design + UX best-practice",
+  "cases": [
+    {
+      "id": "sec-sitenav",
+      "section": "Site Nav",
+      "block": "SiteNav",
+      "title": "Site Nav — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-hero",
+      "section": "Hero",
+      "block": "Hero",
+      "title": "Hero — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-herotiles",
+      "section": "Hero Tiles",
+      "block": "HeroTiles",
+      "title": "Hero Tiles — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-featurecasino",
+      "section": "Feature Casino",
+      "block": "FeatureCasino",
+      "title": "Feature Casino — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-featurelive",
+      "section": "Feature Live",
+      "block": "FeatureLive",
+      "title": "Feature Live — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-featuresports",
+      "section": "Feature Sports",
+      "block": "FeatureSports",
+      "title": "Feature Sports — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-featureesport",
+      "section": "Feature Esport",
+      "block": "FeatureEsport",
+      "title": "Feature Esport — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-gettingstarted",
+      "section": "Getting Started",
+      "block": "GettingStarted",
+      "title": "Getting Started — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-faq",
+      "section": "Faq",
+      "block": "Faq",
+      "title": "Faq — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-cta",
+      "section": "Cta",
+      "block": "Cta",
+      "title": "Cta — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    },
+    {
+      "id": "sec-footer",
+      "section": "Footer",
+      "block": "Footer",
+      "title": "Footer — visual & responsive",
+      "description": "Fill from the design source. What must this section look like and do at every breakpoint?",
+      "scenarios": [
+        {
+          "id": "layout",
+          "text": "Layout matches the design at 320 / 768 / 1440; no unintended horizontal overflow",
+          "covers": [
+            "layout",
+            "overflow"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "type",
+          "text": "Type scales fluidly (no clipping, no jumps); body ≈16px, headings per design",
+          "covers": [
+            "fonts",
+            "fluidity"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "space",
+          "text": "Margins & padding match the design proportionally across widths",
+          "covers": [
+            "spacing"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "assets",
+          "text": "Images crisp, correctly sized, not distorted; no broken/placeholder assets",
+          "covers": [
+            "assets",
+            "images"
+          ],
+          "status": "todo"
+        },
+        {
+          "id": "content",
+          "text": "Copy & content faithful to the design source",
+          "covers": [
+            "content",
+            "fidelity"
+          ],
+          "status": "todo"
+        }
+      ],
+      "interactive": []
+    }
+  ]
+}

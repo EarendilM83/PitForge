@@ -1,7 +1,0 @@
-{
-  "name": "LuckyBet DE",
-  "lang": "de-DE",
-  "blocks": ["Hero", "Bonus", "Games", "Faq", "Footer"],
-  "domain": "",
-  "createdBy": "figma-to-pitforge v1"
-}

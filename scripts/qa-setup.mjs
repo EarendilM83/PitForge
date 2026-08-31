@@ -16,7 +16,7 @@ import path from 'node:path';
 
 const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > -1 ? process.argv[i + 1] : d; };
 const has = (n) => process.argv.includes(`--${n}`);
-const project = arg('project', 'demo');
+const project = arg('project', 'dogecoin-casino');
 const ROOT = path.join(process.cwd(), 'projects', project);
 const QA = path.join(ROOT, 'qa');
 const DESIGN = path.join(ROOT, 'design');

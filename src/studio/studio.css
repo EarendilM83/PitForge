@@ -799,6 +799,10 @@ button.builder-node-toggle:hover { background: var(--ads-surface-sunken); color:
 .pro-mode { padding: 6px 11px; border-radius: 8px; font-weight: 600; font-size: 12px; color: var(--ads-text-subtle); border: 1px solid var(--pro-line2); background: none; }
 .pro-mode.on { color: var(--ads-accent); background: var(--ads-accent-bg); border-color: var(--ads-accent); }
 .pro-mode:hover { color: var(--ads-text); }
+/* Zippy guide launcher — a little bird you can tap for a walkthrough */
+.pro-guide { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 5px; border-radius: 999px; font-weight: 600; font-size: 12px; color: var(--ads-text-subtle); border: 1px solid var(--pro-line2); background: none; cursor: pointer; }
+.pro-guide svg { flex: 0 0 auto; }
+.pro-guide:hover { color: var(--ads-text); border-color: var(--ads-accent); background: var(--ads-accent-bg); }
 
 /* language switcher (i18n) */
 .pro-lang { font: 600 12px inherit; color: var(--ads-text-subtle); background: var(--ads-surface-sunken);

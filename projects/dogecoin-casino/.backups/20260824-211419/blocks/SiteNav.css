@@ -1,0 +1,85 @@
+/* SiteNav — proportional to the 1920 canvas via var(--u). Dark bar; blue hero band below. */
+.nav {
+  position: relative;
+  z-index: 2;
+  background: var(--bg-950);
+}
+
+.nav-inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: calc(8 * var(--u)) var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(16 * var(--u));
+  min-height: calc(72 * var(--u));
+}
+
+/* Logo */
+.nav-logo-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+.nav-logo,
+.nav-logo svg {
+  display: block;
+  height: calc(40 * var(--u));
+  width: auto;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: calc(12 * var(--u));
+}
+
+/* Language selector */
+.nav-lang {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  padding: calc(10 * var(--u)) calc(14 * var(--u));
+  border-radius: calc(8 * var(--u));
+  color: var(--subtitle);
+  font-size: calc(14 * var(--u));
+  font-weight: 600;
+}
+.nav-lang-flag {
+  width: calc(24 * var(--u));
+  height: calc(24 * var(--u));
+  border-radius: 999px;
+  object-fit: cover;
+}
+.nav-lang-label { white-space: nowrap; }
+.nav-lang-chevron,
+.nav-lang-chevron svg {
+  display: block;
+  width: calc(12 * var(--u));
+  height: auto;
+  color: #5e83a1;
+}
+
+/* Primary CTA — design 7372:4421: content-hug, p-16, r-12 (no fixed width/height). */
+.nav-cta.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(8 * var(--u));
+  padding: calc(16 * var(--u));
+  border-radius: calc(12 * var(--u));
+  background: var(--brand);
+  color: var(--brand-on);
+  font-weight: 700;
+  font-size: calc(16 * var(--u));
+  line-height: 1.5;
+  letter-spacing: -0.4px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-cta.btn-primary:hover { filter: brightness(1.05); }
+
+@media (max-width: 768px) {
+  .nav-lang { display: none; }
+}

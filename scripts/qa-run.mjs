@@ -23,7 +23,7 @@ import path from 'node:path';
 const BASE = 'http://localhost:4321';
 const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > -1 ? process.argv[i + 1] : d; };
 const has = (n) => process.argv.includes(`--${n}`);
-const project = arg('project', 'demo');
+const project = arg('project', 'dogecoin-casino');
 const BPS = has('full')
   ? [320, 375, 414, 600, 768, 834, 1024, 1280, 1440, 1680, 1920, 2200, 2560, 3200]
   : [320, 375, 768, 1024, 1440, 1920];

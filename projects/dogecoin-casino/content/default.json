@@ -1,0 +1,1000 @@
+{
+  "hero.eyebrow": "INSTANT PAYOUTS",
+  "hero.titleTop": "THE BEST DOGECOIN",
+  "hero.titleAccent": "CASINO AND SPORTSBOOK",
+  "hero.subtitle": "Play thousands of Dogecoin casino games and place bets on your favourite sports with DOGE. Enjoy a faster way to gamble with instant deposits, rapid withdrawals and zero hidden fees.",
+  "hero.cta": {
+    "label": "Join Now",
+    "href": "https://fortunejack.com/",
+    "rel": "nofollow sponsored"
+  },
+  "seo.title": "Dogecoin Casino - DOGE Casino games & Slots | FortuneJack",
+  "seo.description": "Play Dogecoin casino games and bet on sports at FortuneJack. Enjoy DOGE dice, slots, blackjack, live tables and fast crypto deposits and withdrawals.",
+  "seo.slug": "best-dogecoin-casino",
+  "seo.canonical": "https://fortunejack.com/best-dogecoin-casino/",
+  "seo.robots": {
+    "index": true,
+    "follow": true,
+    "maxImagePreview": "large",
+    "noarchive": false
+  },
+  "seo.lang": "en",
+  "seo.hreflang": [],
+  "seo.og.title": "",
+  "seo.og.description": "",
+  "seo.og.image": {
+    "src": "",
+    "alt": ""
+  },
+  "seo.og.type": "website",
+  "seo.twitter.card": "summary_large_image",
+  "seo.focusKeyword": "",
+  "seo.secondaryKeywords": [],
+  "seo.author": {},
+  "seo.datePublished": "",
+  "seo.dateModified": "",
+  "seo.schema.types": [],
+  "seo.schema.faq": [],
+  "seo.breadcrumb": [],
+  "nav.logo": {
+    "src": "/assets/icons/nav-logo.svg",
+    "alt": "FortuneJack",
+    "width": 0,
+    "height": 0
+  },
+  "nav.langFlag": {
+    "src": "/assets/nav-flag-uk-400.png",
+    "alt": "United Kingdom flag",
+    "width": 400,
+    "height": 400
+  },
+  "nav.langLabel": "English",
+  "nav.langChevron": {
+    "src": "/assets/icons/nav-chevron.svg",
+    "alt": "",
+    "width": 0,
+    "height": 0
+  },
+  "nav.cta": {
+    "label": "Join Now",
+    "href": "https://fortunejack.com/",
+    "rel": "nofollow sponsored"
+  },
+  "tiles.cards": [
+    {
+      "image": {
+        "src": "/assets/tile-casino-400.png",
+        "alt": "3D golden and blue slot machine",
+        "width": 400,
+        "height": 400
+      },
+      "title": "CASINO",
+      "desc": "Thousands of Dogecoin slots & jackpots",
+      "cta": {
+        "label": "Play Casino",
+        "href": "https://fortunejack.com/crypto-casino",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "image": {
+        "src": "/assets/tile-live-400.png",
+        "alt": "Live casino playing cards and dice",
+        "width": 400,
+        "height": 400
+      },
+      "title": "LIVE CASINO",
+      "desc": "Real dealers & live tables with Dogecoin",
+      "cta": {
+        "label": "Play Live",
+        "href": "https://fortunejack.com/crypto-casino/live",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "image": {
+        "src": "/assets/tile-sports-400.png",
+        "alt": "Navy and gold football",
+        "width": 400,
+        "height": 400
+      },
+      "title": "SPORTS",
+      "desc": "Competitive odds & Dogecoin sports betting",
+      "cta": {
+        "label": "Bet Now",
+        "href": "https://fortunejack.com/crypto-sportsbook",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "image": {
+        "src": "/assets/tile-esports-400.png",
+        "alt": "Blue and gold game controller",
+        "width": 400,
+        "height": 400
+      },
+      "title": "ESPORTS",
+      "desc": "CS2, Dota 2, LoL & more with Dogecoin",
+      "cta": {
+        "label": "Bet eSports",
+        "href": "https://fortunejack.com/crypto-sportsbook/e_sport/300",
+        "rel": "nofollow sponsored"
+      }
+    }
+  ],
+  "tiles.currencies": [
+    {
+      "logo": {
+        "src": "/assets/pay-usd-400.png",
+        "alt": "US dollar",
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/pay-euro-400.png",
+        "alt": "Euro",
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/pay-bitcoin-400.png",
+        "alt": "Bitcoin",
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/pay-ethereum-400.png",
+        "alt": "Ethereum",
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/pay-litecoin-400.png",
+        "alt": "Litecoin",
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/pay-tether-400.png",
+        "alt": "Tether USDT",
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/pay-tron-400.png",
+        "alt": "Tron",
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/pay-dogecoin-400.png",
+        "alt": "Dogecoin",
+        "width": 400,
+        "height": 400
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/pay-binance-400.png",
+        "alt": "Binance Coin",
+        "width": 400,
+        "height": 400
+      }
+    }
+  ],
+  "casino.eyebrow": "The Complete Dogecoin casino",
+  "casino.title": "The Complete Dogecoin Casino",
+  "casino.panels": [
+    {
+      "heading": "PLAY DOGECOIN CASINO GAMES AT FORTUNEJACK.",
+      "body": "One wallet, thousands of games. As an online Dogecoin casino, we run every game on your crypto. No conversions, no waiting - deposit DOGE and dive into Dogecoin casino games instantly.",
+      "marker": "×"
+    },
+    {
+      "heading": "Provably fair classics",
+      "body": "",
+      "marker": "+"
+    }
+  ],
+  "casino.cta": {
+    "label": "Join Now",
+    "href": "https://fortunejack.com/",
+    "rel": "nofollow sponsored"
+  },
+  "casino.image": {
+    "src": "/assets/casino-dice-wheel-1200.png",
+    "alt": "Golden Dogecoin roulette wheel with blue dice and a spade, FortuneJack casino 3D artwork",
+    "width": 1280,
+    "height": 1280
+  },
+  "live.image": {
+    "src": "/assets/live-casino-slot-800.png",
+    "alt": "3D navy-and-gold Dogecoin slot machine surrounded by floating gold DOGE coins",
+    "width": 1080,
+    "height": 1080
+  },
+  "live.eyebrow": "Gambling With Dogecoin",
+  "live.titleTop": "Inside",
+  "live.titleAccent": "Dogecoin Live Casino",
+  "live.cta": {
+    "label": "Join Now",
+    "href": "https://fortunejack.com/",
+    "rel": "nofollow sponsored"
+  },
+  "live.items": [
+    {
+      "title": "A real casino floor, wherever you are",
+      "body": "Take a seat at dozens of live tables streamed in crystal-clear HD. Real dealers, real cards, real atmosphere, brought straight to your screen with DOGE.",
+      "icon": {
+        "src": "/assets/icons/live-close.svg",
+        "alt": "Collapse section"
+      }
+    },
+    {
+      "title": "Play your way, at your limits",
+      "body": "",
+      "icon": {
+        "src": "/assets/icons/live-plus.svg",
+        "alt": "Expand section"
+      }
+    }
+  ],
+  "sports.badge": "Sports",
+  "sports.title": "Sports Betting with Dogecoin",
+  "sports.items": [
+    {
+      "title": "LIVE BETTING ON EVERY MOMENT",
+      "marker": "×",
+      "body": "Bet live on football, tennis, basketball, MMA and more, with one of the widest ranges of in-play markets in crypto. Dogecoin betting that keeps up with the action in real time."
+    },
+    {
+      "title": "Unbeatable odds, higher limits",
+      "marker": "+",
+      "body": ""
+    }
+  ],
+  "sports.cta": {
+    "label": "Join Now",
+    "href": "https://fortunejack.com/",
+    "rel": "nofollow sponsored"
+  },
+  "sports.image": {
+    "src": "/assets/sports-3d-1600.png",
+    "alt": "3D tennis racket, football, tennis ball and basketball with FortuneJack Dogecoin logos",
+    "width": 1920,
+    "height": 1920
+  },
+  "esport.image": {
+    "src": "/assets/esport-controller-1200.png",
+    "alt": "3D esports render — gold-and-purple game controller, CS2 soldier in a ring and a dogecoin grenade",
+    "width": 1200,
+    "height": 1200
+  },
+  "esport.eyebrow": "ESPORTS",
+  "esport.title": "Esport betting with dogecoin",
+  "esport.features": [
+    {
+      "label": "Every match that matters",
+      "marker": "×",
+      "body": "Place Real time Dogecoin bets while top teams battle it out on CS2, League of Legends, Dota 2 and more. The games you follow, the odds you want."
+    },
+    {
+      "label": "Markets for true fans",
+      "marker": "+",
+      "body": ""
+    }
+  ],
+  "esport.cta": {
+    "label": "Join Now",
+    "href": "https://fortunejack.com/",
+    "rel": "nofollow sponsored"
+  },
+  "steps.badge": "JOIN NOW",
+  "steps.titleTop": "Getting started with",
+  "steps.titleAccent": "Dogecoin betting",
+  "steps.intro": "Getting started with dogecoin betting is simple. From fast crypto payments to expert support, FortuneJack gives you everything you need for a smooth and secure betting experience.",
+  "steps.cards": [
+    {
+      "icon": {
+        "src": "/assets/icons/steps-icon-btc.svg",
+        "alt": "Multiple cryptocurrencies",
+        "width": 0,
+        "height": 0
+      },
+      "title": "DOGECOIN, BTC, ETH, LTC, USDT & USDC",
+      "body": "Dogecoin is only one option. Deposit and play with Bitcoin, Ethereum, Litecoin, USDT, and other leading cryptocurrencies - all in one place."
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/steps-icon-withdraw.svg",
+        "alt": "Instant withdrawals",
+        "width": 0,
+        "height": 0
+      },
+      "title": "Instant withdrawals",
+      "body": "Withdraw your Dogecoin wins instantly to your wallet in minutes, no waiting for processing times. Your crypto, your control, anytime."
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/steps-icon-responsible.svg",
+        "alt": "Responsible gambling",
+        "width": 0,
+        "height": 0
+      },
+      "title": "Responsible gambling",
+      "body": "Here at FortuneJack we care about you and your safety when gaming. We want you to have fun, but most importantly – we want you to play responsibly."
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/steps-icon-blog.svg",
+        "alt": "Blog",
+        "width": 0,
+        "height": 0
+      },
+      "title": "Blog",
+      "body": "If you are new to Dogecoin betting, FortuneJack blog is a great place to start. Perfect for anyone looking for an introduction to how DOGE gaming works."
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/steps-icon-about.svg",
+        "alt": "About us",
+        "width": 0,
+        "height": 0
+      },
+      "title": "About us",
+      "body": "FortuneJack is the most secure crypto betting platform online, offering casino gaming and sports betting for players around the world."
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/steps-icon-support.svg",
+        "alt": "Customer support",
+        "width": 0,
+        "height": 0
+      },
+      "title": "Customer support",
+      "body": "Our Customer Support team is available 24/7 to help with any questions you might have about betting with us. Get in touch with your questions today."
+    }
+  ],
+  "cta.titleTop": "Start betting on the site rated 9.8/10.",
+  "cta.titleAccent": "Join fortunejack now!",
+  "cta.button": {
+    "label": "Start playing now",
+    "href": "https://fortunejack.com/",
+    "rel": "nofollow sponsored"
+  },
+  "footer.columns": [
+    {
+      "heading": "Casino",
+      "links": [
+        {
+          "link": {
+            "label": "Slots",
+            "href": "https://fortunejack.com/crypto-casino/slots",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Live Casino",
+            "href": "https://fortunejack.com/crypto-casino/live",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Roulette",
+            "href": "https://fortunejack.com/crypto-casino/roulette",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Blackjack",
+            "href": "https://fortunejack.com/crypto-casino/blackjack",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Baccarat",
+            "href": "https://fortunejack.com/crypto-casino/baccarat",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Game Shows",
+            "href": "https://fortunejack.com/crypto-casino/game-shows",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Instant Games",
+            "href": "https://fortunejack.com/crypto-casino/instant",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Crash Games",
+            "href": "https://fortunejack.com/crypto-casino/crash",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Providers",
+            "href": "https://fortunejack.com/crypto-casino/providers",
+            "rel": "nofollow sponsored"
+          }
+        }
+      ]
+    },
+    {
+      "heading": "Sport",
+      "links": [
+        {
+          "link": {
+            "label": "Soccer",
+            "href": "https://fortunejack.com/crypto-sportsbook/soccer-1",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Basketball",
+            "href": "https://fortunejack.com/crypto-sportsbook/basketball-2",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "MMA-UFC",
+            "href": "https://fortunejack.com/crypto-sportsbook/mixed-martial-arts-117",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Tennis",
+            "href": "https://fortunejack.com/crypto-sportsbook/tennis-5",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Ice Hockey",
+            "href": "https://fortunejack.com/crypto-sportsbook/ice-hockey-4",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Counter Strike",
+            "href": "https://fortunejack.com/crypto-sportsbook/counter-strike-109",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Dota 2",
+            "href": "https://fortunejack.com/crypto-sportsbook/dota-2-111",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "League Of Legends",
+            "href": "https://fortunejack.com/crypto-sportsbook/league-of-legends-110",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Valorant",
+            "href": "https://fortunejack.com/crypto-sportsbook/valorant-194",
+            "rel": "nofollow sponsored"
+          }
+        }
+      ]
+    },
+    {
+      "heading": "Bonuses",
+      "links": [
+        {
+          "link": {
+            "label": "Promotions",
+            "href": "https://fortunejack.com/promotions",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Loyalty",
+            "href": "https://fortunejack.com/jacks-loyalty-club",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Welcome Bonus",
+            "href": "https://fortunejack.com/promotions/welcome-bonus",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Tournaments",
+            "href": "https://fortunejack.com/tournaments",
+            "rel": "nofollow sponsored"
+          }
+        }
+      ]
+    },
+    {
+      "heading": "Terms",
+      "links": [
+        {
+          "link": {
+            "label": "Terms & Conditions",
+            "href": "https://fortunejack.com/faq/terms_and_conditions",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Privacy Policy",
+            "href": "https://fortunejack.com/faq/privacy-policy",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Self-Exclusion Terms",
+            "href": "https://fortunejack.com/faq/self-exclusion-policy",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Sports T&C",
+            "href": "https://fortunejack.com/faq/sportsbook",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Bonus T&C",
+            "href": "https://fortunejack.com/faq/bonus_tnc",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Games Excluded From Bonus",
+            "href": "https://fortunejack.com/faq/bonus-excluded-games-list",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Responsible Gaming Terms",
+            "href": "https://fortunejack.com/faq/responsible-gaming-terms",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "AML Policy",
+            "href": "https://fortunejack.com/faq/aml-policy",
+            "rel": "nofollow sponsored"
+          }
+        }
+      ]
+    },
+    {
+      "heading": "About Us",
+      "links": [
+        {
+          "link": {
+            "label": "Payment Options",
+            "href": "https://fortunejack.com/currency/btc",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "Blog",
+            "href": "https://fortunejack.com/blog",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "FAQ",
+            "href": "https://fortunejack.com/faq/faq",
+            "rel": "nofollow sponsored"
+          }
+        },
+        {
+          "link": {
+            "label": "About Us",
+            "href": "https://fortunejack.com/about-us",
+            "rel": "nofollow sponsored"
+          }
+        }
+      ]
+    }
+  ],
+  "footer.communityHeading": "Community",
+  "footer.social": {
+    "src": "/assets/footer-social-400.png",
+    "alt": "Community social channels",
+    "width": 600,
+    "height": 72
+  },
+  "footer.support": {
+    "label": "Live Support",
+    "href": "mailto:support@fortunejack.com"
+  },
+  "footer.payments": [
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-1.svg",
+        "alt": "Bitcoin",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Bitcoin",
+        "href": "https://fortunejack.com/currency/btc",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-2.svg",
+        "alt": "Ethereum",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Ethereum",
+        "href": "https://fortunejack.com/currency/eth",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-3.svg",
+        "alt": "Litecoin",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Litecoin",
+        "href": "https://fortunejack.com/currency/ltc",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-4.svg",
+        "alt": "Tron",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Tron",
+        "href": "https://fortunejack.com/currency/trx",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-5.svg",
+        "alt": "Dogecoin",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Dogecoin",
+        "href": "https://fortunejack.com/currency/xdg",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-6.svg",
+        "alt": "Tether",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Tether",
+        "href": "https://fortunejack.com/currency/usdt",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-7.svg",
+        "alt": "Binance Coin",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Binance Coin",
+        "href": "https://fortunejack.com/currency/bnb",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-8.svg",
+        "alt": "Zcash",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Zcash",
+        "href": "https://fortunejack.com/currency/zec",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-9.svg",
+        "alt": "Dogecoin",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Dogecoin",
+        "href": "https://fortunejack.com/currency/xdg",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-10.svg",
+        "alt": "USD Coin",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "USD Coin",
+        "href": "https://fortunejack.com/currency/usdc",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-11.svg",
+        "alt": "Polygon",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "Polygon",
+        "href": "https://fortunejack.com/currency/matic",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/footer-pay-12.svg",
+        "alt": "Crypto payment",
+        "width": 0,
+        "height": 0
+      },
+      "link": {
+        "label": "FortuneJack",
+        "href": "https://fortunejack.com/",
+        "rel": "nofollow sponsored"
+      }
+    }
+  ],
+  "footer.awards": [
+    {
+      "logo": {
+        "src": "/assets/award-best-promo-2026.svg",
+        "alt": "Best Promo 2026 — AFFPAPA",
+        "width": 72,
+        "height": 25
+      },
+      "link": {
+        "label": "Best Promo 2026",
+        "href": "https://affpapa.com/affpapa-awards-2026/promo-of-the-year/",
+        "rel": "nofollow"
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/award-best-brand-2026.svg",
+        "alt": "Best Brand 2026 — AFFPAPA",
+        "width": 72,
+        "height": 25
+      },
+      "link": {
+        "label": "Best Brand 2026",
+        "href": "https://affpapa.com/affpapa-awards-2026/crypto-casino-brand-of-the-year/",
+        "rel": "nofollow"
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/award-best-partner-2026.svg",
+        "alt": "Best Partner 2026 — Orbital",
+        "width": 72,
+        "height": 25
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/award-members-choice-2023.svg",
+        "alt": "Members Choice 2023 — LCB",
+        "width": 72,
+        "height": 25
+      }
+    },
+    {
+      "logo": {
+        "src": "/assets/award-best-casino-2022.svg",
+        "alt": "Best Casino 2022 — AFFPAPA",
+        "width": 72,
+        "height": 25
+      }
+    }
+  ],
+  "footer.copyright": "© Fortunejack.com - All Rights Reserved.",
+  "footer.legal": "This website is operated by PlayWave SRL, registration number: CE-2024-206981, registered address: Mata Redonda, Boulevard Ernesto Rohrmoser, Edificio Sabana Business Center, Piso Doce, Diagonal al Estadio Dacional, San José, Costa Rica.\n\nPlayWave SRL is licensed and regulated by the Government of the Autonomous Island of Anjouan, Union of Comoros, and operates under License No. ALSI-202411021-FI1.",
+  "footer.brandMark": {
+    "src": "/assets/footer-brand-mark-400.png",
+    "alt": "FortuneJack 18+",
+    "width": 436,
+    "height": 200
+  },
+  "hero.coin": {
+    "src": "/assets/pay-dogecoin-400.png",
+    "alt": "Dogecoin",
+    "width": 400,
+    "height": 400
+  },
+  "casino.titleTop": "The Complete",
+  "casino.titleAccent": "DOGECOIN CASINO",
+  "sports.titleTop": "SPORTS BETTING",
+  "sports.titleAccent": "WITH DOGECOIN",
+  "esport.titleTop": "Esport betting with",
+  "esport.titleAccent": "dogecoin",
+  "footer.supportIcon": {
+    "src": "/assets/icons/ft-support-icon.svg",
+    "alt": "Live support",
+    "width": 20,
+    "height": 20
+  },
+  "footer.socials": [
+    {
+      "icon": {
+        "src": "/assets/icons/out-twitter.svg",
+        "alt": "X / Twitter",
+        "width": 36,
+        "height": 36
+      },
+      "link": {
+        "label": "X / Twitter",
+        "href": "https://twitter.com/FortuneJackCOM",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/out-instagram.svg",
+        "alt": "Instagram",
+        "width": 36,
+        "height": 36
+      },
+      "link": {
+        "label": "Instagram",
+        "href": "https://www.instagram.com/fortunejack_/",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/out-discord.svg",
+        "alt": "Discord",
+        "width": 36,
+        "height": 36
+      },
+      "link": {
+        "label": "Discord",
+        "href": "https://discord.gg/fortunejack",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/out-bitcointalk.svg",
+        "alt": "BitcoinTalk",
+        "width": 36,
+        "height": 36
+      },
+      "link": {
+        "label": "BitcoinTalk",
+        "href": "https://bitcointalk.org/index.php",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/out-facebook.svg",
+        "alt": "Facebook",
+        "width": 36,
+        "height": 36
+      },
+      "link": {
+        "label": "Facebook",
+        "href": "https://www.facebook.com/profile.php",
+        "rel": "nofollow sponsored"
+      }
+    },
+    {
+      "icon": {
+        "src": "/assets/icons/out-telegram.svg",
+        "alt": "Telegram",
+        "width": 36,
+        "height": 36
+      },
+      "link": {
+        "label": "Telegram",
+        "href": "https://t.me/fortunejackcom",
+        "rel": "nofollow sponsored"
+      }
+    }
+  ],
+  "seo._custom": [
+    "seo.slug",
+    "seo.title",
+    "seo.description"
+  ],
+  "seo.schema.raw": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"Organization\",\n      \"@id\": \"https://fortunejack.com/#organization\",\n      \"name\": \"FortuneJack\",\n      \"legalName\": \"PlayWave SRL\",\n      \"url\": \"https://fortunejack.com\",\n      \"logo\": \"https://fortunejack.com/_app/immutable/assets/fj-desktop.D5ajmooO.svg\",\n      \"sameAs\": [\n        \"https://x.com/fortunejackcom\",\n        \"https://www.instagram.com/fortunejack.casino/\",\n        \"https://www.facebook.com/fortunejackcom/\"\n      ],\n      \"contactPoint\": [\n        {\n          \"@type\": \"ContactPoint\",\n          \"contactType\": \"customer support\",\n          \"email\": \"support@fortunejack.com\",\n          \"availableLanguage\": \"en\"\n        }\n      ]\n    },\n    {\n      \"@type\": \"WebSite\",\n      \"@id\": \"https://fortunejack.com/#website\",\n      \"url\": \"https://fortunejack.com\",\n      \"name\": \"FortuneJack\",\n      \"inLanguage\": \"en\",\n      \"publisher\": {\n        \"@id\": \"https://fortunejack.com/#organization\"\n      }\n    },\n    {\n      \"@type\": \"WebPage\",\n      \"@id\": \"https://fortunejack.com/best-dogecoin-casino/#webpage\",\n      \"url\": \"https://fortunejack.com/best-dogecoin-casino/\",\n      \"name\": \"Best Dogecoin Casino 2026 – DOGE Slots & Sportsbook | FortuneJack\",\n      \"description\": \"Play thousands of Dogecoin casino games and place bets on your favourite sports with DOGE. Instant deposits, rapid withdrawals and zero hidden fees.\",\n      \"inLanguage\": \"en\",\n      \"dateModified\": \"2026-08-24\",\n      \"isPartOf\": {\n        \"@id\": \"https://fortunejack.com/#website\"\n      },\n      \"about\": {\n        \"@id\": \"https://fortunejack.com/#organization\"\n      },\n      \"publisher\": {\n        \"@id\": \"https://fortunejack.com/#organization\"\n      },\n      \"primaryImageOfPage\": {\n        \"@type\": \"ImageObject\",\n        \"url\": \"https://fortunejack.com/best-dogecoin-casino/assets/casino-dice-wheel-1200.webp\",\n        \"width\": 1280,\n        \"height\": 1280\n      }\n    },\n    {\n      \"@type\": \"FAQPage\",\n      \"@id\": \"https://fortunejack.com/best-dogecoin-casino/#faq\",\n      \"inLanguage\": \"en\",\n      \"isPartOf\": {\n        \"@id\": \"https://fortunejack.com/best-dogecoin-casino/#webpage\"\n      },\n      \"mainEntity\": [\n        {\n          \"@type\": \"Question\",\n          \"@id\": \"https://fortunejack.com/best-dogecoin-casino/#faq-1\",\n          \"position\": 1,\n          \"name\": \"What makes a Dogecoin casino the best one?\",\n          \"acceptedAnswer\": {\n            \"@type\": \"Answer\",\n            \"text\": \"Four things separate a strong DOGE casino from the rest: it holds DOGE natively instead of converting it to fiat at deposit, it pays withdrawals out in minutes rather than days, it runs provably fair games you can verify yourself, and it operates under a real licence. FortuneJack does all four — your Dogecoin stays Dogecoin from deposit to cashout.\"\n          }\n        },\n        {\n          \"@type\": \"Question\",\n          \"@id\": \"https://fortunejack.com/best-dogecoin-casino/#faq-2\",\n          \"position\": 2,\n          \"name\": \"Why gamble with Dogecoin instead of a card or bank transfer?\",\n          \"acceptedAnswer\": {\n            \"@type\": \"Answer\",\n            \"text\": \"Dogecoin moves faster and costs less. A DOGE transaction settles in about a minute for a fraction of a cent, while a card deposit can be declined by your bank and a withdrawal can sit in processing for days. There are no chargebacks, no currency conversion fees, and no third party deciding whether your deposit goes through.\"\n          }\n        },\n        {\n          \"@type\": \"Question\",\n          \"@id\": \"https://fortunejack.com/best-dogecoin-casino/#faq-3\",\n          \"position\": 3,\n          \"name\": \"Do I need to complete KYC to play with Dogecoin?\",\n          \"acceptedAnswer\": {\n            \"@type\": \"Answer\",\n            \"text\": \"You can register with an email address and start playing with DOGE within a minute — no documents are required to open an account or make your first deposit. Verification may be requested on larger withdrawals or under our AML Policy. Your Dogecoin wallet address is all you need to cash out.\"\n          }\n        },\n        {\n          \"@type\": \"Question\",\n          \"@id\": \"https://fortunejack.com/best-dogecoin-casino/#faq-4\",\n          \"position\": 4,\n          \"name\": \"Can I bet on sports and esports with Dogecoin?\",\n          \"acceptedAnswer\": {\n            \"@type\": \"Answer\",\n            \"text\": \"Yes. The same DOGE balance covers the casino and the sportsbook — there is no separate wallet to top up. Bet on football, tennis, basketball, ice hockey and MMA with in-play markets, or back CS2, Dota 2, League of Legends and Valorant in the esports book, all priced and settled directly in Dogecoin.\"\n          }\n        },\n        {\n          \"@type\": \"Question\",\n          \"@id\": \"https://fortunejack.com/best-dogecoin-casino/#faq-5\",\n          \"position\": 5,\n          \"name\": \"What games can I play at a Dogecoin casino?\",\n          \"acceptedAnswer\": {\n            \"@type\": \"Answer\",\n            \"text\": \"Everything a regular online casino offers, funded straight from your DOGE balance: thousands of slots and jackpots from licensed studios, live dealer roulette, blackjack and baccarat streamed in HD, game shows, crash and instant games, plus provably fair originals like dice. No conversion step — you play the whole library in Dogecoin.\"\n          }\n        }\n      ]\n    }\n  ]\n}",
+  "faq.heading": "Frequently Asked Questions",
+  "faq.items": [
+    {
+      "q": "What makes a Dogecoin casino the best one?",
+      "a": "Four things separate a strong DOGE casino from the rest: it holds DOGE natively instead of converting it to fiat at deposit, it pays withdrawals out in minutes rather than days, it runs provably fair games you can verify yourself, and it operates under a real licence. FortuneJack does all four — your Dogecoin stays Dogecoin from deposit to cashout."
+    },
+    {
+      "q": "Why gamble with Dogecoin instead of a card or bank transfer?",
+      "a": "Dogecoin moves faster and costs less. A DOGE transaction settles in about a minute for a fraction of a cent, while a card deposit can be declined by your bank and a withdrawal can sit in processing for days. There are no chargebacks, no currency conversion fees, and no third party deciding whether your deposit goes through."
+    },
+    {
+      "q": "Do I need to complete KYC to play with Dogecoin?",
+      "a": "You can register with an email address and start playing with DOGE within a minute — no documents are required to open an account or make your first deposit. Verification may be requested on larger withdrawals or under our AML Policy. Your Dogecoin wallet address is all you need to cash out."
+    },
+    {
+      "q": "Can I bet on sports and esports with Dogecoin?",
+      "a": "Yes. The same DOGE balance covers the casino and the sportsbook — there is no separate wallet to top up. Bet on football, tennis, basketball, ice hockey and MMA with in-play markets, or back CS2, Dota 2, League of Legends and Valorant in the esports book, all priced and settled directly in Dogecoin."
+    },
+    {
+      "q": "What games can I play at a Dogecoin casino?",
+      "a": "Everything a regular online casino offers, funded straight from your DOGE balance: thousands of slots and jackpots from licensed studios, live dealer roulette, blackjack and baccarat streamed in HD, game shows, crash and instant games, plus provably fair originals like dice. No conversion step — you play the whole library in Dogecoin."
+    }
+  ]
+}

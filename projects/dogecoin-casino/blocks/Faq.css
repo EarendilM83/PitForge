@@ -1,0 +1,110 @@
+.faq {
+  background: var(--bg-950);
+  padding-block: calc(50 * var(--u));
+}
+
+.faq-inner {
+  max-width: calc(880 * var(--u));
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+  display: flex;
+  flex-direction: column;
+  gap: calc(32 * var(--u));
+}
+
+.faq-heading {
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+  font-size: clamp(24px, calc(56 * 100vw / 1920), 56px);
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(12 * var(--u));
+}
+
+.faq-item {
+  border: 1px solid var(--border-10);
+  border-radius: var(--radius-xl);
+  background: var(--bg-600);
+  overflow: hidden;
+}
+.faq-item[open] {
+  background: var(--bg-500);
+}
+
+/* clickable question row */
+.faq-q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: calc(20 * var(--u)) calc(24 * var(--u));
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+.faq-q::-webkit-details-marker {
+  display: none;
+}
+
+.faq-q-text {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+  font-size: clamp(15px, calc(20 * 100vw / 1920), 20px);
+}
+
+/* +/− icon from two bars */
+.faq-icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+}
+.faq-icon::before,
+.faq-icon::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: var(--brand);
+  transform: translate(-50%, -50%);
+  transition: opacity 0.2s ease;
+}
+.faq-icon::before {
+  width: 16px;
+  height: 2px;
+}
+.faq-icon::after {
+  width: 2px;
+  height: 16px;
+}
+.faq-item[open] .faq-icon::after {
+  opacity: 0;
+}
+
+.faq-a {
+  padding: 0 calc(24 * var(--u)) calc(22 * var(--u));
+  color: var(--subtitle);
+  font-family: var(--font-body);
+  font-size: clamp(13px, calc(16 * 100vw / 1920), 16px);
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .faq-inner {
+    padding-inline: 20px;
+  }
+}

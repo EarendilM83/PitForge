@@ -1,0 +1,645 @@
+{
+ "version": 1,
+ "fields": {
+  "hero.eyebrow": {
+   "type": "text",
+   "label": "Eyebrow badge",
+   "block": "Hero",
+   "maxLength": 24
+  },
+  "hero.titleTop": {
+   "type": "text",
+   "label": "Headline (line 1, white)",
+   "block": "Hero",
+   "maxLength": 40
+  },
+  "hero.titleAccent": {
+   "type": "text",
+   "label": "Headline (line 2, gold)",
+   "block": "Hero",
+   "maxLength": 40
+  },
+  "hero.subtitle": {
+   "type": "text",
+   "label": "Hero subtitle",
+   "block": "Hero",
+   "maxLength": 220
+  },
+  "hero.cta": {
+   "type": "button",
+   "label": "Primary CTA",
+   "block": "Hero",
+   "external": true,
+   "defaultRel": "nofollow sponsored",
+   "variant": "primary"
+  },
+  "seo.title": {
+   "type": "text",
+   "label": "SEO title",
+   "block": "_seo",
+   "maxLength": 60,
+   "derivedFrom": "hero.titleTop"
+  },
+  "seo.description": {
+   "type": "text",
+   "label": "Meta description",
+   "block": "_seo",
+   "maxLength": 155,
+   "derivedFrom": "hero.subtitle"
+  },
+  "seo.slug": {
+   "type": "text",
+   "label": "Slug",
+   "block": "_seo",
+   "derivedFrom": "hero.titleTop"
+  },
+  "seo.canonical": {
+   "type": "text",
+   "label": "Canonical",
+   "block": "_seo"
+  },
+  "seo.robots": {
+   "type": "text",
+   "label": "Robots",
+   "block": "_seo"
+  },
+  "seo.lang": {
+   "type": "text",
+   "label": "Language",
+   "block": "_seo"
+  },
+  "seo.hreflang": {
+   "type": "text",
+   "label": "Hreflang",
+   "block": "_seo"
+  },
+  "seo.og.title": {
+   "type": "text",
+   "label": "OG title",
+   "block": "_seo",
+   "maxLength": 60
+  },
+  "seo.og.description": {
+   "type": "text",
+   "label": "OG description",
+   "block": "_seo",
+   "maxLength": 155
+  },
+  "seo.og.image": {
+   "type": "image",
+   "label": "OG image",
+   "block": "_seo"
+  },
+  "seo.og.type": {
+   "type": "text",
+   "label": "OG type",
+   "block": "_seo"
+  },
+  "seo.twitter.card": {
+   "type": "text",
+   "label": "Twitter card",
+   "block": "_seo"
+  },
+  "seo.focusKeyword": {
+   "type": "text",
+   "label": "Focus keyword",
+   "block": "_seo"
+  },
+  "seo.secondaryKeywords": {
+   "type": "text",
+   "label": "Secondary keywords",
+   "block": "_seo"
+  },
+  "seo.author": {
+   "type": "text",
+   "label": "Author",
+   "block": "_seo"
+  },
+  "seo.datePublished": {
+   "type": "text",
+   "label": "Date published",
+   "block": "_seo"
+  },
+  "seo.dateModified": {
+   "type": "text",
+   "label": "Date modified",
+   "block": "_seo"
+  },
+  "seo.schema.types": {
+   "type": "text",
+   "label": "Schema types",
+   "block": "_seo"
+  },
+  "seo.schema.faq": {
+   "type": "text",
+   "label": "Schema FAQ",
+   "block": "_seo"
+  },
+  "seo.breadcrumb": {
+   "type": "text",
+   "label": "Breadcrumb",
+   "block": "_seo"
+  },
+  "nav.logo": {
+   "type": "icon",
+   "label": "Nav logo",
+   "block": "SiteNav"
+  },
+  "nav.langFlag": {
+   "type": "image",
+   "label": "Language flag",
+   "block": "SiteNav"
+  },
+  "nav.langLabel": {
+   "type": "text",
+   "label": "Language label",
+   "maxLength": 20,
+   "block": "SiteNav"
+  },
+  "nav.langChevron": {
+   "type": "icon",
+   "label": "Language chevron",
+   "block": "SiteNav"
+  },
+  "nav.cta": {
+   "type": "button",
+   "label": "Nav CTA",
+   "external": true,
+   "defaultRel": "nofollow sponsored",
+   "variant": "primary",
+   "block": "SiteNav"
+  },
+  "tiles.cards": {
+   "type": "repeat",
+   "label": "Category tiles",
+   "min": 4,
+   "max": 4,
+   "item": {
+    "image": {
+     "type": "image",
+     "label": "Tile artwork",
+     "block": "HeroTiles"
+    },
+    "title": {
+     "type": "text",
+     "label": "Tile title",
+     "maxLength": 24,
+     "block": "HeroTiles"
+    },
+    "desc": {
+     "type": "text",
+     "label": "Tile description",
+     "maxLength": 80,
+     "block": "HeroTiles"
+    },
+    "cta": {
+     "type": "button",
+     "label": "Tile CTA",
+     "external": true,
+     "defaultRel": "nofollow sponsored",
+     "variant": "alpha",
+     "block": "HeroTiles"
+    }
+   },
+   "block": "HeroTiles"
+  },
+  "tiles.currencies": {
+   "type": "repeat",
+   "label": "Currency logos",
+   "min": 1,
+   "max": 12,
+   "item": {
+    "logo": {
+     "type": "image",
+     "label": "Currency logo",
+     "block": "HeroTiles"
+    }
+   },
+   "block": "HeroTiles"
+  },
+  "casino.eyebrow": {
+   "type": "text",
+   "label": "Eyebrow badge",
+   "maxLength": 40,
+   "block": "FeatureCasino"
+  },
+  "casino.title": {
+   "type": "text",
+   "label": "Section heading",
+   "maxLength": 60,
+   "block": "FeatureCasino"
+  },
+  "casino.panels": {
+   "type": "repeat",
+   "label": "Feature panels",
+   "min": 1,
+   "max": 4,
+   "item": {
+    "heading": {
+     "type": "text",
+     "label": "Panel heading",
+     "maxLength": 80,
+     "block": "FeatureCasino"
+    },
+    "body": {
+     "type": "text",
+     "label": "Panel body",
+     "maxLength": 280,
+     "block": "FeatureCasino"
+    },
+    "marker": {
+     "type": "text",
+     "label": "Marker",
+     "block": "FeatureCasino",
+     "maxLength": 2
+    }
+   },
+   "block": "FeatureCasino"
+  },
+  "casino.cta": {
+   "type": "button",
+   "label": "Primary CTA",
+   "external": true,
+   "defaultRel": "nofollow sponsored",
+   "variant": "primary",
+   "block": "FeatureCasino"
+  },
+  "casino.image": {
+   "type": "image",
+   "label": "Product image",
+   "block": "FeatureCasino"
+  },
+  "live.image": {
+   "type": "image",
+   "priority": false,
+   "block": "FeatureLive",
+   "label": "Image"
+  },
+  "live.eyebrow": {
+   "type": "text",
+   "block": "FeatureLive",
+   "label": "Eyebrow"
+  },
+  "live.titleTop": {
+   "type": "text",
+   "block": "FeatureLive",
+   "label": "Title Top"
+  },
+  "live.titleAccent": {
+   "type": "text",
+   "block": "FeatureLive",
+   "label": "Title Accent"
+  },
+  "live.cta": {
+   "type": "button",
+   "external": false,
+   "block": "FeatureLive",
+   "label": "Cta"
+  },
+  "live.items": {
+   "type": "repeat",
+   "min": 1,
+   "max": 6,
+   "item": {
+    "title": {
+     "type": "text",
+     "block": "FeatureLive",
+     "label": "Title"
+    },
+    "body": {
+     "type": "text",
+     "block": "FeatureLive",
+     "label": "Body"
+    },
+    "icon": {
+     "type": "icon",
+     "block": "FeatureLive",
+     "label": "Icon"
+    }
+   },
+   "block": "FeatureLive",
+   "label": "Items"
+  },
+  "sports.badge": {
+   "type": "text",
+   "label": "Section badge",
+   "maxLength": 24,
+   "block": "FeatureSports"
+  },
+  "sports.title": {
+   "type": "text",
+   "label": "Section heading",
+   "maxLength": 60,
+   "block": "FeatureSports"
+  },
+  "sports.items": {
+   "type": "repeat",
+   "label": "Feature items",
+   "min": 1,
+   "max": 4,
+   "item": {
+    "title": {
+     "type": "text",
+     "label": "Feature title",
+     "maxLength": 60,
+     "block": "FeatureSports"
+    },
+    "body": {
+     "type": "text",
+     "label": "Feature body (first item only)",
+     "maxLength": 260,
+     "block": "FeatureSports"
+    },
+    "marker": {
+     "type": "text",
+     "label": "Marker",
+     "block": "FeatureSports",
+     "maxLength": 2
+    }
+   },
+   "block": "FeatureSports"
+  },
+  "sports.cta": {
+   "type": "button",
+   "label": "CTA button",
+   "external": true,
+   "defaultRel": "nofollow sponsored",
+   "variant": "primary",
+   "block": "FeatureSports"
+  },
+  "sports.image": {
+   "type": "image",
+   "label": "3D sports image",
+   "block": "FeatureSports"
+  },
+  "esport.image": {
+   "type": "image",
+   "label": "Esports 3D image",
+   "block": "FeatureEsport"
+  },
+  "esport.eyebrow": {
+   "type": "text",
+   "label": "Eyebrow",
+   "block": "FeatureEsport"
+  },
+  "esport.title": {
+   "type": "text",
+   "label": "Section title",
+   "block": "FeatureEsport"
+  },
+  "esport.features": {
+   "type": "repeat",
+   "label": "Feature rows",
+   "min": 1,
+   "max": 6,
+   "item": {
+    "label": {
+     "type": "text",
+     "label": "Feature label",
+     "block": "FeatureEsport"
+    },
+    "marker": {
+     "type": "text",
+     "label": "Marker",
+     "block": "FeatureEsport"
+    },
+    "body": {
+     "type": "text",
+     "label": "Feature body",
+     "block": "FeatureEsport"
+    }
+   },
+   "block": "FeatureEsport"
+  },
+  "esport.cta": {
+   "type": "button",
+   "label": "CTA",
+   "external": false,
+   "block": "FeatureEsport"
+  },
+  "steps.badge": {
+   "type": "text",
+   "label": "Steps badge",
+   "maxLength": 24,
+   "block": "GettingStarted"
+  },
+  "steps.titleTop": {
+   "type": "text",
+   "label": "Steps headline (white)",
+   "maxLength": 40,
+   "block": "GettingStarted"
+  },
+  "steps.titleAccent": {
+   "type": "text",
+   "label": "Steps headline (gold)",
+   "maxLength": 40,
+   "block": "GettingStarted"
+  },
+  "steps.intro": {
+   "type": "text",
+   "label": "Steps intro",
+   "maxLength": 220,
+   "block": "GettingStarted"
+  },
+  "steps.cards": {
+   "type": "repeat",
+   "label": "Step cards",
+   "min": 1,
+   "max": 6,
+   "item": {
+    "icon": {
+     "type": "icon",
+     "label": "Icon",
+     "block": "GettingStarted"
+    },
+    "title": {
+     "type": "text",
+     "label": "Card title",
+     "maxLength": 40,
+     "block": "GettingStarted"
+    },
+    "body": {
+     "type": "text",
+     "label": "Card body",
+     "maxLength": 200,
+     "block": "GettingStarted"
+    }
+   },
+   "block": "GettingStarted"
+  },
+  "cta.titleTop": {
+   "type": "text",
+   "label": "CTA headline (white)",
+   "maxLength": 60,
+   "block": "Cta"
+  },
+  "cta.titleAccent": {
+   "type": "text",
+   "label": "CTA headline (gold)",
+   "maxLength": 40,
+   "block": "Cta"
+  },
+  "cta.button": {
+   "type": "button",
+   "label": "CTA button",
+   "external": true,
+   "defaultRel": "nofollow sponsored",
+   "variant": "primary",
+   "block": "Cta"
+  },
+  "footer.columns": {
+   "type": "repeat",
+   "label": "Footer link columns",
+   "min": 1,
+   "max": 6,
+   "item": {
+    "heading": {
+     "type": "text",
+     "label": "Column heading",
+     "maxLength": 30,
+     "block": "Footer"
+    },
+    "links": {
+     "type": "repeat",
+     "label": "Links",
+     "min": 1,
+     "max": 12,
+     "item": {
+      "link": {
+       "type": "link",
+       "label": "Link",
+       "block": "Footer"
+      }
+     },
+     "block": "Footer"
+    }
+   },
+   "block": "Footer"
+  },
+  "footer.communityHeading": {
+   "type": "text",
+   "label": "Community heading",
+   "maxLength": 30,
+   "block": "Footer"
+  },
+  "footer.social": {
+   "type": "image",
+   "label": "Social icons strip",
+   "block": "Footer"
+  },
+  "footer.support": {
+   "type": "link",
+   "label": "Live support link",
+   "block": "Footer"
+  },
+  "footer.payments": {
+   "type": "repeat",
+   "label": "Payment / crypto icons",
+   "min": 1,
+   "max": 12,
+   "item": {
+    "icon": {
+     "type": "icon",
+     "label": "Payment icon",
+     "block": "Footer"
+    },
+    "link": {
+     "type": "link",
+     "external": true,
+     "label": "Payment link",
+     "block": "Footer",
+     "defaultRel": "nofollow sponsored"
+    }
+   },
+   "block": "Footer"
+  },
+  "footer.awards": {
+   "type": "image",
+   "label": "Awards strip",
+   "block": "Footer"
+  },
+  "footer.copyright": {
+   "type": "text",
+   "label": "Copyright",
+   "maxLength": 80,
+   "block": "Footer"
+  },
+  "footer.legal": {
+   "type": "richtext",
+   "label": "Legal blurb",
+   "block": "Footer"
+  },
+  "footer.brandMark": {
+   "type": "image",
+   "label": "Brand / 18+ mark",
+   "block": "Footer"
+  },
+  "hero.coin": {
+   "type": "image",
+   "label": "Dogecoin coin badge",
+   "block": "Hero"
+  },
+  "casino.titleTop": {
+   "type": "text",
+   "label": "Heading (white)",
+   "block": "FeatureCasino",
+   "maxLength": 40
+  },
+  "casino.titleAccent": {
+   "type": "text",
+   "label": "Heading (gold)",
+   "block": "FeatureCasino",
+   "maxLength": 40
+  },
+  "sports.titleTop": {
+   "type": "text",
+   "label": "Heading (white)",
+   "block": "FeatureSports",
+   "maxLength": 40
+  },
+  "sports.titleAccent": {
+   "type": "text",
+   "label": "Heading (gold)",
+   "block": "FeatureSports",
+   "maxLength": 40
+  },
+  "esport.titleTop": {
+   "type": "text",
+   "label": "Title (white)",
+   "block": "FeatureEsport",
+   "maxLength": 40
+  },
+  "esport.titleAccent": {
+   "type": "text",
+   "label": "Title (gold)",
+   "block": "FeatureEsport",
+   "maxLength": 40
+  },
+  "footer.supportIcon": {
+   "type": "icon",
+   "label": "Live support icon",
+   "block": "Footer"
+  },
+  "footer.socials": {
+   "type": "repeat",
+   "label": "Community / social icons",
+   "block": "Footer",
+   "min": 1,
+   "max": 8,
+   "item": {
+    "icon": {
+     "type": "icon",
+     "label": "Social icon",
+     "block": "Footer"
+    },
+    "link": {
+     "type": "link",
+     "external": true,
+     "label": "Social link",
+     "block": "Footer",
+     "defaultRel": "nofollow sponsored"
+    }
+   }
+  }
+ }
+}
