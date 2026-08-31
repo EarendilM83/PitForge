@@ -873,6 +873,42 @@ button.builder-node-toggle:hover { background: var(--ads-surface-sunken); color:
 .pf-test-detail-lbl { font-size: 10px; text-transform: uppercase; letter-spacing: .09em; color: #626878; font-weight: 600; margin: 12px 0 6px; }
 .pf-test-side ul { margin: 0; padding-left: 16px; } .pf-test-side li { font-size: 12px; margin-bottom: 3px; color: #c9ccd6; }
 .pf-test-side .bad { color: #ff6b7a; } .pf-test-side .ok { color: #35d0a5; }
+/* ---------- AI QA pipeline ---------- */
+.qa-progress { height: 3px; background: rgba(255,255,255,.08); flex: none; }
+.qa-progress-bar { height: 100%; background: linear-gradient(90deg,#6d7cff,#9a7bff); transition: width .3s ease; }
+.qa-body { display: block; overflow: auto; padding: 16px; }
+.qa-intro { max-width: 620px; margin: 8vh auto; text-align: center; color: #c9ccd6; }
+.qa-intro h3 { font-size: 18px; color: #fff; margin: 0 0 10px; }
+.qa-intro p { font-size: 13px; line-height: 1.65; color: #949aa8; margin: 0 0 18px; }
+.qa-intro b { color: #dfe2ea; }
+.qa-bp { border: 1px solid rgba(255,255,255,.08); border-radius: 12px; background: #131519; margin-bottom: 12px; overflow: hidden; }
+.qa-bp.active { border-color: rgba(109,124,255,.5); }
+.qa-bp.pass { border-color: rgba(53,208,165,.4); } .qa-bp.fail { border-color: rgba(255,107,122,.5); }
+.qa-bp-head { display: flex; align-items: center; gap: 14px; padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.qa-bp-head > b { font-size: 14px; min-width: 56px; }
+.qa-stages { display: flex; gap: 14px; flex: 1; }
+.qa-stage { font-size: 11.5px; color: #5a5f6e; display: inline-flex; gap: 5px; align-items: center; }
+.qa-stage.run { color: #6d7cff; } .qa-stage.done { color: #35d0a5; }
+.qa-verdict { font: 700 11px 'Geist', sans-serif; letter-spacing: .04em; padding: 3px 9px; border-radius: 20px; }
+.qa-verdict.ok { color: #35d0a5; background: rgba(53,208,165,.14); } .qa-verdict.bad { color: #ff6b7a; background: rgba(255,107,122,.14); } .qa-verdict.skip { color: #949aa8; background: rgba(255,255,255,.06); }
+.qa-bp-body { display: grid; grid-template-columns: 1fr 260px; gap: 14px; padding: 12px 14px; }
+.qa-metrics { display: flex; flex-direction: column; gap: 2px; }
+.qa-metrics-hd, .qa-metric { display: grid; grid-template-columns: 1fr 90px 1fr 44px; gap: 8px; align-items: center; padding: 6px 8px; font-size: 12px; }
+.qa-metrics-hd { color: #626878; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; border-bottom: 1px solid rgba(255,255,255,.06); }
+.qa-metric { border-radius: 6px; }
+.qa-metric.ok { background: rgba(53,208,165,.06); } .qa-metric.bad { background: rgba(255,107,122,.09); } .qa-metric.skip { background: rgba(255,255,255,.03); }
+.qa-m-label { color: #dfe2ea; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qa-grp { display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #6d7cff; background: rgba(109,124,255,.14); border-radius: 4px; padding: 1px 5px; margin-right: 7px; vertical-align: middle; }
+.qa-m-exp { color: #949aa8; } .qa-m-cur { color: #eceef2; overflow: hidden; text-overflow: ellipsis; }
+.qa-ai-notes { white-space: normal; font-family: 'Geist', sans-serif; color: #c9ccd6; font-size: 11.5px; line-height: 1.4; }
+.qa-m-delta { text-align: center; font-weight: 700; border-radius: 5px; }
+.qa-m-delta.zero { color: #35d0a5; } .qa-m-delta.nonzero { color: #fff; background: #ff5c6c; }
+.qa-metric.ai { border-top: 1px solid rgba(255,255,255,.06); margin-top: 4px; padding-top: 8px; align-items: start; }
+.qa-evidence { padding: 0; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; overflow: hidden; background: #0b1620; height: 180px; cursor: zoom-in; }
+.qa-evidence:disabled { cursor: default; opacity: .6; }
+.qa-evidence img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+.qa-evidence-wait { display: grid; place-items: center; height: 100%; color: #5a5f6e; font-size: 11px; font-family: 'Geist Mono', monospace; }
+
 .pf-test-log { font-family: 'Geist Mono', monospace; font-size: 11.5px; line-height: 1.7; margin-top: 14px; border-top: 1px solid rgba(255,255,255,.08); padding-top: 10px; }
 .pf-test-logline { color: #949aa8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pf-test-logline.ok { color: #7fe3c8; } .pf-test-logline.bad { color: #ff9aa4; }

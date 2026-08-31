@@ -260,6 +260,33 @@ async function checkInteractive(browser, id) {
   await page.close();
 }
 
+// ---------- CONTRAST: WCAG AA for text over a solid background (catalog CO-01) ----------
+async function checkContrast(browser, id) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  try {
+    await page.goto(`${BASE}/preview/${id}`, { waitUntil: 'networkidle' });
+    const bad = await page.evaluate(() => {
+      const lum = (r, g, b) => { const a = [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2]; };
+      const parse = (c) => { const m = (c || '').match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(',').map((s) => parseFloat(s)); return { r: p[0], g: p[1], b: p[2], a: p[3] === undefined ? 1 : p[3] }; };
+      const solidBg = (el) => { for (let n = el; n; n = n.parentElement) { const s = getComputedStyle(n); if (s.backgroundImage && s.backgroundImage !== 'none') return null; const c = parse(s.backgroundColor); if (c && c.a === 1) return c; } return null; };
+      const ratio = (f, b) => { const L1 = lum(f.r, f.g, f.b) + 0.05, L2 = lum(b.r, b.g, b.b) + 0.05; return L1 > L2 ? L1 / L2 : L2 / L1; };
+      const out = [];
+      document.querySelectorAll('h1,h2,h3,h4,h5,h6,p,a,span,button,li').forEach((el) => {
+        if (!el.textContent.trim() || el.offsetParent === null) return;
+        const s = getComputedStyle(el); const fg = parse(s.color); if (!fg || fg.a < 0.9) return;
+        const bg = solidBg(el); if (!bg) return; // skip images/gradients/transparent — can't measure
+        const size = parseFloat(s.fontSize); const bold = parseInt(s.fontWeight) >= 700;
+        const min = size >= 24 || (bold && size >= 18.66) ? 3 : 4.5;
+        const r = ratio(fg, bg);
+        if (r < min - 0.05) out.push((el.className && typeof el.className === 'string' ? '.' + el.className.split(' ')[0] : el.tagName.toLowerCase()) + ' ' + Math.round(r * 10) / 10 + ':1');
+      });
+      return [...new Set(out)].slice(0, 8);
+    });
+    check(bad.length === 0, `a11y ${id}: text contrast AA on solid backgrounds (${bad.length} below${bad.length ? ' — ' + bad.slice(0, 3).join(', ') : ''})`, { kind: 'a11y' });
+  } catch (e) { check(false, `contrast ${id} — ${e.message.split('\n')[0]}`, { kind: 'a11y' }); }
+  await page.close();
+}
+
 // ---------- EDITOR: drive every interaction, assert its effect, restore content ----------
 async function editorE2E(browser, id) {
   const page = await browser.newPage({ viewport: { width: 1600, height: 940 } });
@@ -376,7 +403,7 @@ if (want('routes')) { head(`\n${c.d}ROUTES${c.x}`); await checkRoutes(ids); }
 if (want('screens')) { head(`\n${c.d}SCREENS${c.x}`); await checkScreens(browser, ids); }
 if (want('sites')) { head(`\n${c.d}LAYOUT — ${ids.length} site(s) × ${LADDER.length} widths (320→3200)${c.x}`); for (const id of ids) await checkSite(browser, id); }
 if (want('sites')) { head(`\n${c.d}CONTENT — SEO & accessibility${c.x}`); await checkContentQuality(browser, ids); }
-if (want('sites')) { head(`\n${c.d}QUALITY — assets, code, box-model, layout, fidelity${c.x}`); for (const id of ids) { await checkQuality(browser, id); await checkFluid(browser, id); await checkInteractive(browser, id); } }
+if (want('sites')) { head(`\n${c.d}QUALITY — assets, code, box-model, layout, fidelity, contrast${c.x}`); for (const id of ids) { await checkQuality(browser, id); await checkFluid(browser, id); await checkInteractive(browser, id); await checkContrast(browser, id); } }
 if (want('editor')) { head(`\n${c.d}EDITOR E2E — all interactions${c.x}`); await editorE2E(browser, ids[0]); }
 
 await browser.close();

@@ -42,12 +42,17 @@ Studio's "New site → From Figma" dialog generates a prompt that names this ski
    `tokens.css`, one `blocks/<Name>.tsx`+`.css` per design section, `assets/`.
 3. **Build** each block with the PF runtime components (`PFText`, `PFHeading`, `PFImage`, `PFRepeat`, …)
    bound to manifest fields — never hardcode copy or image paths.
-4. **Verify** — the build is not done until it passes both gates:
-   - `npm run verify -- --project <slug>` — the responsive gate (renders 320→2200px, fails on any
-     real break). Designers give only ~1920 + ~490; this proves the **undesigned** widths (768, 1024,
-     1280, 1440) ship unbroken. Fix failures with fluid/reflow rules — never fixed-px patches.
-   - The SEO checks (`pitforge-seo`) — any `fail` blocks export.
-   Then screenshot a few widths side-by-side with the Figma to confirm fidelity.
+4. **Verify — run the full QA gate; the build is not done until it passes.**
+   - **Automation:** `npm run test:ui` (dev server up) — routes · screens · layout **320→3200** ·
+     SEO/a11y · assets/perf · fluid type & spacing · every editor interaction · editor↔preview parity.
+     Must be GREEN. `npm run gate` = `typecheck && test:ui` for CI. (Standalone responsive gate:
+     `npm run verify -- --project <slug>`.)
+   - **Visual + interaction:** run the senior-QA catalog in [`tests/qa-catalog.md`](tests/qa-catalog.md)
+     via the **▶ Test** dashboard — every visual detail at every breakpoint, mouse AND keyboard. This
+     is mandatory; see the `pitforge-qa` skill and `AGENTS.md`. Designers give only ~1920 + ~490; prove
+     the **undesigned** widths (768–1440) ship unbroken. Fix with fluid/reflow — never fixed-px patches.
+   - **SEO checks** (`pitforge-seo`) — any `fail` blocks export.
+   - Any failure or unverifiable check → file it in [`tests/cases.json`](tests/cases.json).
 5. Restart the dev server so `import.meta.glob` picks up new blocks → the site appears in the Studio.
 6. The marketer edits content in the Studio; **export & deploy** per `pitforge-export-deploy`.
 

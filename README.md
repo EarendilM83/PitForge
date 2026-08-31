@@ -64,16 +64,26 @@ undo/redo, and publish.
 
 ## Test & scan — proof it works everywhere
 
-Click **▶ Test** in the editor to open the dashboard:
+**▶ Test** — the fast dashboard: a **live thumbnail per breakpoint** (320→3200; hover to auto-scroll,
+**⤢ Zoom** to real size, **☰ Test case** for its checklist), a **client scan** that outlines overflow /
+over-wide / broken-image / empty-section offenders in the thumbnail, and **▶ Run with Playwright** to
+stream the authoritative end-to-end suite live.
 
-- A **live thumbnail per breakpoint** (320→3200). Hover to auto-scroll the whole page; **⤢ Zoom** to
-  inspect at real size; **☰ Test case** to open its checklist.
-- **Client scan** flags horizontal overflow, over-wide elements, broken images and empty sections —
-  offenders outlined right in the thumbnail.
-- **▶ Run with Playwright** streams the authoritative end-to-end suite live.
-- **Editable test-case library** in [`tests/cases.json`](tests/cases.json) — design fidelity,
-  fluidity, fonts, assets, code, box-model, flex/grid, interactive elements, i18n, SEO, a11y. Edit a
-  checklist or add a case; it saves to the file (git-diffable) so Claude can read it on the next run.
+**🔬 QA** — the **AI QA pipeline**, a senior-QA simulation you watch run. For each breakpoint it runs
+real stages — **Navigate → Measure → Screenshot → AI review** — and every check reports
+**Expected · Current · Delta** (delta must be 0). A **Page-wide** stage covers semantics/SEO, zero-JS,
+fonts and fluid scaling; per-breakpoint stages cover typography, colour/contrast, spacing/box-model,
+flex/grid, images and interactive elements (~100 measured checks). The **AI stage sends the real
+screenshot to your local Claude**, which inspects it like a QA engineer and returns a verdict + notes.
+It takes real time and produces evidence — screenshots land in `tests/.qa-evidence/`. This is the
+`QA` job simulation, not a label check.
+
+**Editable test-case library** in [`tests/cases.json`](tests/cases.json) + the full deterministic
+catalog in [`tests/qa-catalog.md`](tests/qa-catalog.md) (13 suites, ~90 checks). Edit a checklist or
+add a case in the dashboard; it saves to the file (git-diffable) so the next run — and any agent —
+inherits it. The [`pitforge-qa`](.claude/skills/pitforge-qa) skill and [`AGENTS.md`](AGENTS.md) force
+any model (Claude, Codex, …) to run the catalog before "done". Compatible with
+[qa-skills](https://github.com/petrkindlmann/qa-skills) (`npx skills add petrkindlmann/qa-skills`).
 
 Run the whole thing headlessly (dev server must be up):
 

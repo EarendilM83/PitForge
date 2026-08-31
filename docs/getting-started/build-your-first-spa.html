@@ -136,6 +136,7 @@
     <a href="#s5"><span class="n">5</span>Edit content</a>
     <a href="#s6"><span class="n">6</span>Set the SEO</a>
     <a href="#s7"><span class="n">7</span>Preview</a>
+    <a href="#sqa"><span class="n">🔬</span>Test &amp; QA</a>
     <a href="#s8"><span class="n">8</span>Export</a>
     <a href="#s9"><span class="n">9</span>Deploy</a>
     <a href="#own"><span class="n">·</span>Who owns what</a>
@@ -360,6 +361,23 @@ claude   <span class="c"># sign in on first run</span></span>
         <div class="callout tip">👀 The preview is always live; an exported ZIP is a frozen snapshot. Re-export after changes.</div>
       </div>
       <div class="step-shot"><a><img src="img/09-preview.png" alt="Live preview of the built landing page"></a></div>
+    </div>
+  </section>
+
+  <!-- TEST & QA -->
+  <section id="sqa" class="step">
+    <div class="step-head"><div class="badge">🔬</div><h3>Test &amp; QA — prove it, don't assume it</h3><span class="tag mkt">Marketer</span></div>
+    <div class="step-body">
+      <div class="step-copy">
+        <p>Two tools in the editor prove the site holds up before you ship:</p>
+        <ul class="do">
+          <li><b>▶ Test</b> — a live thumbnail at every width 320→3200. Hover to auto-scroll a card, <b>⤢ Zoom</b> to real size, <b>☰ Test case</b> for its checklist. <b>▶ Run with Playwright</b> streams the full end-to-end suite.</li>
+          <li><b>🔬 QA</b> — the <b>AI QA pipeline</b>: click <b>▶ Run AI QA</b> and watch it run <b>Navigate → Measure → Screenshot → AI review</b> per breakpoint. Every check shows <b>Expected · Current · Delta</b> (delta 0 = pass), and your local Claude inspects each screenshot like a QA engineer.</li>
+        </ul>
+        <div class="callout gate">✅ ~100 measured checks across semantics/SEO, zero-JS, fonts, typography, colour/contrast, spacing, flex/grid, images and interactive elements — plus an AI visual verdict, with evidence screenshots. A red delta points at exactly what to fix.</div>
+        <div class="callout tip">🤖 Any AI agent (Claude, Codex…) is forced to run the catalog (<code>tests/qa-catalog.md</code>) before calling a site done — see <code>AGENTS.md</code>. Headless: <span class="cmd">node scripts/qa-run.mjs --project &lt;slug&gt;</span></div>
+      </div>
+      <div class="step-shot"><a><img src="img/09-preview.png" alt="AI QA pipeline"></a></div>
     </div>
   </section>
 

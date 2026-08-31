@@ -25,7 +25,7 @@ export default function TestPanel({ state, onClose }: { state: StudioState; onCl
   const [sel, setSel] = React.useState<number | null>(null);
   const [zoom, setZoom] = React.useState<number | null>(null);
   const [cases, setCases] = React.useState<Case[]>([]);
-  const [caseId, setCaseId] = React.useState<string>('responsive-layout');
+  const [caseId, setCaseId] = React.useState<string>('responsive');
   const [pwLog, setPwLog] = React.useState<string[]>([]);
   const [pwState, setPwState] = React.useState<'idle' | 'running' | 'done'>('idle');
   const [pwCount, setPwCount] = React.useState({ pass: 0, fail: 0 });
@@ -45,7 +45,7 @@ export default function TestPanel({ state, onClose }: { state: StudioState; onCl
     setCases(next);
     if (saveTimer.current) clearTimeout(saveTimer.current);
     saveTimer.current = setTimeout(() => {
-      fetch('/api/test/cases', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version: 1, cases: next }) }).catch(() => {});
+      fetch('/api/test/cases', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ version: 2, cases: next }) }).catch(() => {});
     }, 500);
   };
   const active = cases.find((c) => c.id === caseId) || cases[0];
@@ -59,10 +59,9 @@ export default function TestPanel({ state, onClose }: { state: StudioState; onCl
   const checkStatus = (chId: string): 'ok' | 'bad' | null => {
     if (sel == null || tiles[sel].status === 'idle' || tiles[sel].status === 'scanning') return null;
     const t = tiles[sel];
-    if (chId === 'no-overflow' || chId === 'no-overwide') return t.over > 1 ? 'bad' : 'ok';
-    if (chId === 'no-broken-img') return t.broken.length ? 'bad' : 'ok';
-    if (chId === 'no-empty-section') return 'ok';
-    return t.status === 'pass' ? 'ok' : null;
+    if (chId === 're-01' || chId === 're-02') return t.over > 1 ? 'bad' : 'ok';
+    if (chId === 're-03') return 'ok';
+    return null; // other checks aren't measured by the quick client scan (see ▶ Run with Playwright)
   };
 
   // ---- client scanner (full-page thumbnail) ----
@@ -136,7 +135,7 @@ export default function TestPanel({ state, onClose }: { state: StudioState; onCl
             <div key={t.w} className={`pf-test-tile ${t.status} ${sel === i ? 'active' : ''}`}>
               <div className="pf-test-tile-head"><b>{t.w}px</b>
                 <span className="pf-test-badge">{t.status === 'scanning' ? '⏳' : t.status === 'pass' ? '✓' : t.status === 'fail' ? '⚠' : '·'}</span></div>
-              <div className="pf-test-thumb" onClick={() => { setSel(i); setCaseId('responsive-layout'); }}>
+              <div className="pf-test-thumb" onClick={() => { setSel(i); setCaseId('responsive'); }}>
                 <div className="pf-test-scroller" style={{ ['--scroll' as string]: `-${Math.max(0, Math.round(t.ph * t.scale - THUMB_H))}px` }}>
                   <iframe ref={(el) => (frames.current[i] = el)} src={`/preview/${id}`} title={`${t.w}px`} tabIndex={-1}
                     style={{ width: t.w, height: t.ph, transform: `scale(${t.scale})`, transformOrigin: 'top left', pointerEvents: 'none' }} onLoad={() => scanTile(i)} />
@@ -144,7 +143,7 @@ export default function TestPanel({ state, onClose }: { state: StudioState; onCl
                 {t.status === 'scanning' && <div className="pf-test-scanline" />}
                 <div className="pf-test-hover">
                   <button onClick={(e) => { e.stopPropagation(); setZoom(i); }}>⤢ Zoom</button>
-                  <button onClick={(e) => { e.stopPropagation(); setSel(i); setCaseId('responsive-layout'); }}>☰ Test case</button>
+                  <button onClick={(e) => { e.stopPropagation(); setSel(i); setCaseId('responsive'); }}>☰ Test case</button>
                 </div>
               </div>
               <div className="pf-test-tile-foot">{t.status === 'fail' ? <span className="bad">{t.over > 1 ? `overflow ${Math.round(t.over)}px` : ''}{t.broken.length ? ` · ${t.broken.length} broken img` : ''}</span> : t.status === 'pass' ? <span className="ok">clean · hover to scroll</span> : t.status === 'scanning' ? 'scanning…' : 'idle'}</div>

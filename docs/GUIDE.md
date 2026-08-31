@@ -131,22 +131,33 @@ The top-bar device switcher:
 
 ## 9. Test & scan (prove it works everywhere)
 
-Click **▶ Test** to open the dashboard:
+Two tools in the editor:
 
-- A **live thumbnail per breakpoint**, 320→3200. **Hover** to auto-scroll the whole page; **⤢ Zoom**
-  to inspect at real size; **☰ Test case** to open its checklist.
-- The **client scan** flags horizontal overflow, over-wide elements, broken images and empty sections
-  — offenders outlined in the thumbnail.
-- **▶ Run with Playwright** runs the authoritative end-to-end suite and streams it live.
-- The **test-case library** (`tests/cases.json`) is editable: tick/edit a check, add a check, or add a
-  whole case. It saves to the file so it's tracked in git and Claude can honor it next run.
+**▶ Test — fast dashboard.** A **live thumbnail per breakpoint**, 320→3200. **Hover** to auto-scroll
+the whole page; **⤢ Zoom** to inspect at real size; **☰ Test case** to open its checklist. The client
+scan flags overflow / over-wide / broken-image / empty-section issues (offenders outlined in the
+thumbnail); **▶ Run with Playwright** runs the authoritative suite and streams it live.
+
+**🔬 QA — AI QA pipeline (the QA simulation).** Click **🔬 QA → ▶ Run AI QA** and watch it work. For
+every breakpoint it runs real stages — **Navigate → Measure → Screenshot → AI review** — and every
+check shows **Expected · Current · Delta** (delta must be 0 to pass). A **Page-wide** card checks
+semantics/SEO, zero-JS, fonts and fluid scaling; each breakpoint checks typography, colour/contrast,
+spacing/box-model, flex/grid, images and interactive elements (~100 measured checks). The **AI stage
+sends the real screenshot to your local Claude**, which reviews it like a QA engineer and returns a
+verdict. It takes real time and saves **evidence screenshots** (click any to enlarge). Deltas that
+aren't 0 point at exactly what to fix.
+
+**The test-case library** (`tests/cases.json`) is editable in the ▶ Test dashboard — tick/edit a check,
+add a check, or add a whole case; it saves to the file (tracked in git). The full deterministic
+catalog is `tests/qa-catalog.md`.
 
 Headless (dev server up):
 
 ```sh
 npm run test:ui      # routes · screens · layout 320→3200 · SEO/a11y · assets/perf ·
-                     # fluid type & spacing · every editor interaction · editor↔preview parity
+                     # fluid · every editor interaction · editor↔preview parity
 npm run gate         # typecheck + test:ui  (gate publish/export in CI)
+node scripts/qa-run.mjs --project <id> [--full]   # the AI QA pipeline, headless
 ```
 
 ---

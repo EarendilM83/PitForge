@@ -1,215 +1,189 @@
 {
-  "version": 1,
+  "version": 2,
+  "note": "Precise, deterministic QA cases (senior manual + automation). Full protocol: tests/qa-catalog.md. tags: auto = covered by `npm run test:ui`; manual = eyes-on via ▶ Test / zoom; hybrid = both.",
   "cases": [
     {
-      "id": "fluid-layout",
-      "title": "Fully fluid layout",
-      "description": "The site scales smoothly at EVERY width 320-3200 — not just the two widths a designer drew. Undesigned widths (768, 1024, 1280, 1440) are clean interpolations, fixed with fluid/reflow rules, never fixed-px patches.",
-      "tags": ["fluid", "auto"],
+      "id": "typography",
+      "title": "Typography — fonts, fluid scale, no overflow",
+      "description": "Every text element uses the design's fonts (not a fallback), scales fluidly with the viewport, stays readable on a phone, and never overflows its box. (catalog §1)",
+      "tags": ["design", "fluid", "auto", "manual"],
       "checklist": [
-        { "id": "no-overflow", "text": "No horizontal overflow at any width (page never scrolls sideways)" },
-        { "id": "no-overwide", "text": "No element wider than the viewport" },
-        { "id": "undesigned-ok", "text": "Undesigned widths (768/1024/1280/1440) render unbroken, not desktop-squished" },
-        { "id": "proportional", "text": "Layout scales proportionally (uses the --u unit / %, not fixed px)" },
-        { "id": "no-empty-section", "text": "No zero-height / collapsed sections at any width" }
+        { "id": "ty-01", "text": "h1 uses the design's DISPLAY font and it's loaded (not system fallback)" },
+        { "id": "ty-02", "text": "Body uses the design's BODY font and it's loaded" },
+        { "id": "ty-03", "text": "h1 font-size is strictly larger at 1920 than 320 (fluid clamp, not fixed)" },
+        { "id": "ty-04", "text": "Body font-size >= 14px at 320px" },
+        { "id": "ty-05", "text": "h1 doesn't exceed the desktop design size +10% at 3200px" },
+        { "id": "ty-06", "text": "No heading/paragraph overflows or is clipped by its box at ANY of the 14 widths" },
+        { "id": "ty-07", "text": "line-height is set (not normal); letter-spacing matches the token" },
+        { "id": "ty-08", "text": "No orphan single-word lines / broken headlines at 320 & 375" },
+        { "id": "ty-10", "text": "Every font-weight used (400/700/800…) has a loaded face of that weight" }
       ]
     },
     {
-      "id": "fluid-type",
-      "title": "Fluid typography",
-      "description": "Type scales smoothly with the viewport (clamp), stays readable on the smallest phone and never grows absurd on a 4K screen; text never overflows its box.",
-      "tags": ["fluid", "auto"],
+      "id": "colour-contrast",
+      "title": "Colour & contrast",
+      "description": "Text meets WCAG AA contrast; brand colours come from tokens; hover/focus/active states are visibly distinct. (catalog §2)",
+      "tags": ["design", "a11y", "auto", "manual"],
       "checklist": [
-        { "id": "scales", "text": "Headings & body scale up between 320 and 1920 (fluid, not fixed size)" },
-        { "id": "readable-min", "text": "Body text stays >= ~14px at 320px (legible on a phone)" },
-        { "id": "no-absurd-max", "text": "Headings don't balloon past the design intent on huge screens" },
-        { "id": "no-text-overflow", "text": "No text overflows or is clipped by its container at any width" },
-        { "id": "no-wrap-orphans", "text": "No awkward single-word wraps / broken headlines" }
+        { "id": "co-01", "text": "Body text contrast >= 4.5:1; large text >= 3:1" },
+        { "id": "co-02", "text": "Links/buttons/headings use design-token colours (no off-palette hex)" },
+        { "id": "co-03", "text": "Every link/button has a visible HOVER state" },
+        { "id": "co-04", "text": "Every interactive element has a visible :focus-visible ring (>=3:1)" },
+        { "id": "co-05", "text": "Buttons have a distinct pressed/active state" }
       ]
     },
     {
-      "id": "fluid-spacing",
-      "title": "Fluid spacing & proportions",
-      "description": "Padding, margins and gaps scale with the viewport so the rhythm feels intentional at every width — never cramped on tablet or cavernous on desktop.",
-      "tags": ["fluid", "auto"],
+      "id": "spacing-box",
+      "title": "Spacing & box model",
+      "description": "border-box everywhere; padding/margins scale proportionally; consistent scale; no fixed-px overflow. (catalog §3)",
+      "tags": ["layout", "fluid", "auto", "manual"],
       "checklist": [
-        { "id": "space-scales", "text": "Section padding / gaps grow between 320 and 1920 (proportional --u)" },
-        { "id": "no-fixed-gap", "text": "No fixed-px gaps that look cramped at large widths" },
-        { "id": "content-maxwidth", "text": "Text columns have a comfortable max line length (not full-bleed on desktop)" },
-        { "id": "consistent-rhythm", "text": "Vertical rhythm between sections stays consistent" }
-      ]
-    },
-    {
-      "id": "reflow",
-      "title": "Reflow & stacking",
-      "description": "Multi-column layouts collapse to stacks at the right point; nav, grids and card rows reflow instead of squishing.",
-      "tags": ["fluid", "manual"],
-      "checklist": [
-        { "id": "cards-stack", "text": "Card rows wrap/stack on narrow widths instead of shrinking to unreadable" },
-        { "id": "nav-reflows", "text": "The nav reflows / becomes a mobile menu on small widths" },
-        { "id": "no-squish", "text": "Mobile shows the real stacked layout, not desktop squeezed into a phone" },
-        { "id": "images-reflow", "text": "Images resize with their column, keeping aspect ratio" }
-      ]
-    },
-    {
-      "id": "design-desktop",
-      "title": "Matches the design — desktop (~1920)",
-      "description": "At the designed desktop width the built page matches the Figma frame: layout, section order, spacing, colours and type.",
-      "tags": ["design", "manual"],
-      "checklist": [
-        { "id": "layout", "text": "Section order & composition match the Figma frame" },
-        { "id": "spacing", "text": "Spacing / alignment match the design at ~1920" },
-        { "id": "type", "text": "Type sizes, weights and line-heights match the design" },
-        { "id": "colour", "text": "Colours match the design tokens (no off-palette values)" }
-      ]
-    },
-    {
-      "id": "design-mobile",
-      "title": "Matches the design — mobile (~390)",
-      "description": "At the designed mobile width the built page matches the Figma mobile frame.",
-      "tags": ["design", "manual"],
-      "checklist": [
-        { "id": "layout-m", "text": "Mobile composition matches the Figma mobile frame" },
-        { "id": "order-m", "text": "Stacking order matches the design" },
-        { "id": "targets", "text": "Tap targets are large enough (>= 44px) and not crowded" }
-      ]
-    },
-    {
-      "id": "type-fidelity",
-      "title": "Typography fidelity",
-      "description": "The intended fonts actually load and render — no silent fallback to a system font.",
-      "tags": ["design", "auto"],
-      "checklist": [
-        { "id": "fonts-loaded", "text": "The design's fonts are loaded (not a fallback like Arial/system)" },
-        { "id": "weights", "text": "Required weights (e.g. 800/700/400) are available" },
-        { "id": "no-fout", "text": "No flash of unstyled / wrong font on load" }
-      ]
-    },
-    {
-      "id": "imagery-fidelity",
-      "title": "Imagery fidelity",
-      "description": "Images match the design: correct asset, right aspect ratio, crisp (not upscaled/blurry), not distorted.",
-      "tags": ["design", "auto"],
-      "checklist": [
-        { "id": "no-broken", "text": "No broken images" },
-        { "id": "aspect", "text": "Rendered aspect ratio matches the source (no squashed/stretched images)" },
-        { "id": "crisp", "text": "Images aren't upscaled beyond their natural size (no blur)" },
-        { "id": "alt", "text": "Every image has alt text" }
-      ]
-    },
-    {
-      "id": "content-complete",
-      "title": "Content completeness",
-      "description": "Everything the design shows is filled in — no placeholder, empty fields, or missing sections.",
-      "tags": ["design", "auto"],
-      "checklist": [
-        { "id": "no-empty", "text": "No empty headings / paragraphs / buttons" },
-        { "id": "all-sections", "text": "Every designed section is present and in order" },
-        { "id": "no-placeholder", "text": "No lorem / placeholder / TODO copy left in" }
-      ]
-    },
-    {
-      "id": "assets-optimization",
-      "title": "Assets & optimization",
-      "description": "Images and fonts are optimized so pages load fast — modern formats, responsive sizes, lazy loading, and no layout shift.",
-      "tags": ["perf", "assets", "auto"],
-      "checklist": [
-        { "id": "dims", "text": "Every image has width & height set (no layout shift / CLS)" },
-        { "id": "lazy", "text": "Below-the-fold images are lazy-loaded" },
-        { "id": "srcset", "text": "Raster images ship responsive srcset / <picture> (webp/avif)" },
-        { "id": "not-oversized", "text": "Images aren't served far larger than they render" },
-        { "id": "fonts-woff2", "text": "Fonts are woff2 and preconnected/preloaded" }
-      ]
-    },
-    {
-      "id": "code-optimization",
-      "title": "Code optimization & zero-JS",
-      "description": "Published output is lean: minified CSS, no client JavaScript, a single stylesheet, no dead code.",
-      "tags": ["perf", "code", "auto"],
-      "checklist": [
-        { "id": "zero-js", "text": "Published page ships no client-side <script> (zero-JS)" },
-        { "id": "single-css", "text": "One minified stylesheet, not many blocking requests" },
-        { "id": "no-inline-bloat", "text": "No large inline style/script blocks" },
-        { "id": "weight-budget", "text": "Total page weight stays within budget" }
-      ]
-    },
-    {
-      "id": "box-model",
-      "title": "Box model — sizes, margins, paddings",
-      "description": "Spacing and sizing behave predictably everywhere: border-box, consistent scale, no fixed px that overflow.",
-      "tags": ["layout", "auto"],
-      "checklist": [
-        { "id": "border-box", "text": "box-sizing: border-box everywhere (padding never overflows width)" },
-        { "id": "no-fixed-overflow", "text": "No fixed-px width/margin that overflows small viewports" },
-        { "id": "spacing-scale", "text": "Margins/paddings follow a consistent scale (no random values)" },
-        { "id": "no-neg-hacks", "text": "No negative-margin hacks that break at some width" }
+        { "id": "sp-01", "text": "box-sizing: border-box on all elements" },
+        { "id": "sp-02", "text": "Section padding grows between 320 and 1920 (proportional --u)" },
+        { "id": "sp-03", "text": "Margins/paddings follow a consistent scale (no 13px/27px one-offs)" },
+        { "id": "sp-04", "text": "No cramped/overlapping content or unintended edge-touching at 320/375" },
+        { "id": "sp-06", "text": "No fixed-px width/margin overflows the viewport at 320" }
       ]
     },
     {
       "id": "layout-engine",
       "title": "Flexbox & grid",
-      "description": "Flex/grid layouts wrap and align correctly at every width; no track overflow, no squished items.",
-      "tags": ["layout", "auto"],
+      "description": "Flex/grid wrap and align correctly; no track overflow; children can shrink. (catalog §4)",
+      "tags": ["layout", "auto", "manual"],
       "checklist": [
-        { "id": "no-track-overflow", "text": "No flex/grid item overflows its container/track" },
-        { "id": "wraps", "text": "Rows wrap (flex-wrap / auto-fit) instead of overflowing" },
-        { "id": "gap", "text": "Gaps use gap, not margin hacks" },
-        { "id": "align", "text": "Items align as designed (no accidental stretch/misalign)" },
-        { "id": "min-width", "text": "Flex/grid children have min-width:0 so text can shrink (no blowout)" }
+        { "id": "la-01", "text": "No flex/grid item's right edge exceeds its container at any width" },
+        { "id": "la-02", "text": "Card/tile rows wrap or stack on narrow widths (not shrink-to-unreadable)" },
+        { "id": "la-03", "text": "Flex/grid text children have min-width:0 (no blowout)" },
+        { "id": "la-04", "text": "Multi-column sections collapse to one column at a sensible point; order stays logical" },
+        { "id": "la-05", "text": "Gaps use `gap`, not margin hacks" },
+        { "id": "la-06", "text": "Items align as designed (no accidental misalignment)" }
       ]
     },
     {
-      "id": "interactive-elements",
-      "title": "Interactive elements",
-      "description": "Buttons, links, menus, accordions and carousels work, are reachable by keyboard, and have visible states — all zero-JS.",
-      "tags": ["interactive", "a11y", "auto"],
+      "id": "responsive",
+      "title": "Responsive at every width (320→3200)",
+      "description": "The page holds up at all 14 breakpoints — the undesigned ones are clean interpolations. (catalog §5)",
+      "tags": ["fluid", "auto", "manual"],
       "checklist": [
-        { "id": "cta-works", "text": "Every button/CTA has a destination or action (no dead buttons)" },
-        { "id": "hover-focus", "text": "Interactive elements have visible hover AND focus states" },
-        { "id": "tap-size", "text": "Tap targets are >= 44px on mobile and not crowded" },
-        { "id": "keyboard", "text": "All interactive elements are keyboard-reachable (tab/enter)" },
-        { "id": "zero-js-widgets", "text": "Accordions/carousels/menus work without JavaScript (CSS / details)" }
+        { "id": "re-01", "text": "No horizontal overflow at any of the 14 widths" },
+        { "id": "re-02", "text": "No element wider than the viewport at any width" },
+        { "id": "re-03", "text": "No zero-height / collapsed sections at any width" },
+        { "id": "re-04", "text": "Undesigned widths (768/1024/1280/1440) are clean, not squished/stretched" },
+        { "id": "re-05", "text": "Layout stable across the phone band (375/390/414)" }
+      ]
+    },
+    {
+      "id": "images-media",
+      "title": "Images & media",
+      "description": "Correct dimensions, formats, sharpness and aspect ratio; lazy below the fold; alt text. (catalog §6)",
+      "tags": ["perf", "design", "a11y", "auto"],
+      "checklist": [
+        { "id": "im-01", "text": "Every image has width & height attributes (no CLS)" },
+        { "id": "im-02", "text": "Below-the-fold images are lazy-loaded" },
+        { "id": "im-03", "text": "Hero/LCP image is NOT lazy and uses fetchpriority=high" },
+        { "id": "im-04", "text": "Raster images ship srcset / <picture> with webp/avif" },
+        { "id": "im-05", "text": "Rendered aspect ratio within 6% of natural (no squash/stretch)" },
+        { "id": "im-06", "text": "Images not upscaled beyond ~2.4x natural (no blur)" },
+        { "id": "im-07", "text": "Every image has a non-null alt (empty only for decorative)" },
+        { "id": "im-08", "text": "Inline SVG icons render with currentColor, crisp at all zooms" }
+      ]
+    },
+    {
+      "id": "interactive",
+      "title": "Interactive elements (mouse + keyboard, zero-JS)",
+      "description": "Buttons/links/menus/accordions/carousels work, are keyboard-reachable, have visible states, and need no JavaScript. (catalog §7)",
+      "tags": ["interactive", "a11y", "auto", "manual"],
+      "checklist": [
+        { "id": "in-01", "text": "Every link/button has a destination or action (no dead controls)" },
+        { "id": "in-02", "text": "Every interactive element has a visible hover state" },
+        { "id": "in-03", "text": "Whole page is tab-reachable in logical order with a visible focus ring" },
+        { "id": "in-04", "text": "Enter/Space activates the focused control" },
+        { "id": "in-05", "text": "CTA tap targets >= 44x44px and not crowded on mobile" },
+        { "id": "in-06", "text": "Accordions/FAQ expand & collapse without JavaScript, keyboard-operable" },
+        { "id": "in-07", "text": "Carousels advance without JS (scroll-snap), no trapped focus" },
+        { "id": "in-08", "text": "Mobile nav/menu is keyboard-operable and closes on Esc" }
+      ]
+    },
+    {
+      "id": "motion",
+      "title": "Motion",
+      "description": "Transitions are smooth, don't shift layout, and respect reduced-motion. (catalog §8)",
+      "tags": ["interactive", "a11y", "manual", "hybrid"],
+      "checklist": [
+        { "id": "mo-01", "text": "Transitions/animations are smooth (transform/opacity), no jank" },
+        { "id": "mo-02", "text": "Animations don't cause layout shift (no animating width/top)" },
+        { "id": "mo-03", "text": "prefers-reduced-motion is respected" }
+      ]
+    },
+    {
+      "id": "semantics-seo",
+      "title": "Semantics, SEO & landmarks",
+      "description": "One h1, ordered headings, landmarks, title/meta, lang, canonical, structured data. (catalog §9)",
+      "tags": ["seo", "a11y", "auto", "hybrid"],
+      "checklist": [
+        { "id": "se-01", "text": "Exactly one <h1> per page" },
+        { "id": "se-02", "text": "Heading levels don't skip a step" },
+        { "id": "se-03", "text": "<title> 50–60 chars; meta description 50–155 chars" },
+        { "id": "se-04", "text": "header/nav/main/footer landmarks present; one <main>" },
+        { "id": "se-05", "text": "<html lang> matches the page language" },
+        { "id": "se-06", "text": "Canonical URL present; JSON-LD validates" }
+      ]
+    },
+    {
+      "id": "performance-code",
+      "title": "Performance & code",
+      "description": "Zero-JS, minified single stylesheet, weight budget, no CLS, clean console. (catalog §10)",
+      "tags": ["perf", "code", "auto", "hybrid"],
+      "checklist": [
+        { "id": "pe-01", "text": "Published <body> ships zero client-side <script>" },
+        { "id": "pe-02", "text": "One minified stylesheet, not many blocking requests" },
+        { "id": "pe-03", "text": "Total page weight within budget (~<1.5MB uncached)" },
+        { "id": "pe-04", "text": "Fonts are woff2, preconnected/preloaded" },
+        { "id": "pe-05", "text": "No layout shift (CLS) on load" },
+        { "id": "pe-06", "text": "No console/page errors in an editor + preview session" }
       ]
     },
     {
       "id": "editor-preview-parity",
-      "title": "Editor = Preview (exact same source)",
-      "description": "What a marketer sees while editing is byte-identical to what publishes — same render, same media queries.",
+      "title": "Editor = Preview (WYSIWYG)",
+      "description": "The editor's device views ARE the published output; tag/style/translation edits render identically. (catalog §11)",
       "tags": ["parity", "auto", "critical"],
       "checklist": [
-        { "id": "device-iframe", "text": "Tablet/Mobile render in a real iframe at that width (correct media queries)" },
-        { "id": "mobile-stacks", "text": "Mobile layout stacks like the real site, not desktop-squished" },
-        { "id": "no-edit-overflow", "text": "The editor device view has no overflow the preview lacks" },
-        { "id": "utilities-shipped", "text": "Style-override utilities ship in the export bundle" }
+        { "id": "ep-01", "text": "Tablet/Mobile tabs render a real iframe at that width (correct media queries)" },
+        { "id": "ep-02", "text": "Editor Mobile is byte-identical to /preview @390 (stacks, not squished)" },
+        { "id": "ep-03", "text": "Retag (h1→h2) changes tag but NOT size/colour/margin/weight" },
+        { "id": "ep-04", "text": "Bounded style overrides ship in the export bundle and match the editor" },
+        { "id": "ep-05", "text": "Translation renders on canvas; source untouched; export honors active language" }
       ]
     },
     {
-      "id": "semantic-tags",
-      "title": "Semantic tag editing",
-      "description": "Marketers change what an element means without changing how it looks.",
-      "tags": ["editor", "auto"],
+      "id": "fidelity",
+      "title": "Fidelity to the Figma design",
+      "description": "Matches the designed frames at desktop & mobile; nothing empty/placeholder; all sections present. (catalog §12)",
+      "tags": ["design", "manual", "hybrid"],
       "checklist": [
-        { "id": "tag-changes", "text": "The HTML tag actually changes (h1->h2, span->...)" },
-        { "id": "look-unchanged", "text": "Styling stays identical (size, colour, margin, weight)" },
-        { "id": "constrained", "text": "Choices are constrained per element family (no nonsense tags)" }
+        { "id": "fi-01", "text": "@1920 matches the Figma desktop frame (baseline diff <= threshold)" },
+        { "id": "fi-02", "text": "@390 matches the Figma mobile frame" },
+        { "id": "fi-03", "text": "No empty / placeholder / lorem / TODO copy" },
+        { "id": "fi-04", "text": "All designed sections present, in pitforge.json order" },
+        { "id": "fi-05", "text": "Visual baselines exist per key page × {390,1440}; diffs reviewed on change" }
       ]
     },
     {
-      "id": "bounded-style",
-      "title": "Bounded style edits",
-      "description": "Style controls apply safe, on-brand overrides and reset cleanly.",
-      "tags": ["editor", "auto"],
+      "id": "cross-browser",
+      "title": "Cross-browser",
+      "description": "Renders correctly beyond Chromium. (catalog §13)",
+      "tags": ["compat", "manual"],
       "checklist": [
-        { "id": "applies", "text": "Alignment / weight / spacing / opacity apply on the canvas" },
-        { "id": "resets", "text": "Reset-to-design clears every override" },
-        { "id": "no-raw", "text": "Marketer mode offers no raw hex / arbitrary px" },
-        { "id": "builder-unlock", "text": "Builder mode unlocks free-form editing" }
+        { "id": "cb-01", "text": "Chromium: all catalog sections pass" },
+        { "id": "cb-02", "text": "Firefox: layout/type/interaction parity" },
+        { "id": "cb-03", "text": "WebKit/Safari: check gap, clamp, backdrop-filter, sticky" }
       ]
     },
     {
       "id": "i18n",
       "title": "Translations (i18n)",
-      "description": "English is the source; any language can be translated per key with fallback.",
+      "description": "English source + per-key translations with fallback; source stays safe.",
       "tags": ["i18n", "auto"],
       "checklist": [
         { "id": "add-lang", "text": "A new language can be added" },
@@ -219,47 +193,28 @@
       ]
     },
     {
-      "id": "content-editing",
-      "title": "Content editing & autosave",
-      "description": "Text, images and links edit inline and persist.",
+      "id": "editor-controls",
+      "title": "Editor controls",
+      "description": "Every inspector control has an effect and a reset/undo path.",
       "tags": ["editor", "auto"],
       "checklist": [
-        { "id": "text-edit", "text": "Text edits apply and autosave" },
-        { "id": "undo", "text": "Undo reverts the last change; redo re-applies it" },
-        { "id": "repeat", "text": "Repeat items add/remove within min-max" }
-      ]
-    },
-    {
-      "id": "seo",
-      "title": "SEO & headings",
-      "description": "Search-engine essentials hold on every published page.",
-      "tags": ["seo", "auto"],
-      "checklist": [
-        { "id": "one-h1", "text": "Exactly one main title (<h1>) per page" },
-        { "id": "order", "text": "Heading levels don't skip a step" },
-        { "id": "title", "text": "The page has a <title>" }
-      ]
-    },
-    {
-      "id": "accessibility",
-      "title": "Accessibility",
-      "description": "Usable by everyone.",
-      "tags": ["a11y", "auto"],
-      "checklist": [
-        { "id": "alt", "text": "Every image has alt text" },
-        { "id": "href", "text": "Every link has a destination (href)" },
-        { "id": "contrast", "text": "Editor & site text meet contrast in their theme" }
+        { "id": "tag", "text": "Semantic type picker changes tag, constrained per family" },
+        { "id": "style", "text": "Align/weight/spacing/opacity/visibility apply as utility classes" },
+        { "id": "reset", "text": "Reset-to-design clears every override" },
+        { "id": "mode", "text": "Marketer=bounded (no raw hex/px); Builder unlocks free-form" },
+        { "id": "undo", "text": "Undo reverts the last change; redo re-applies" },
+        { "id": "repeat", "text": "Repeat items add/remove within min–max" }
       ]
     },
     {
       "id": "navigation",
-      "title": "Screens & navigation",
+      "title": "Screens & routes",
       "description": "Every screen and route loads without errors.",
       "tags": ["app", "auto"],
       "checklist": [
-        { "id": "routes", "text": "Home, projects API, previews and version routes respond" },
-        { "id": "screens", "text": "Dashboard, editor, preview, test overlay and export dialog render" },
-        { "id": "no-console", "text": "No console or page errors in an editor session" }
+        { "id": "routes", "text": "Home, projects API, previews, version routes respond" },
+        { "id": "screens", "text": "Dashboard, editor, preview, test overlay, export dialog render" },
+        { "id": "no-console", "text": "No console/page errors in an editor session" }
       ]
     }
   ]

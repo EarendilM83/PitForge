@@ -6,6 +6,7 @@ import Canvas from './Canvas';
 import BuilderLeftRail from './BuilderLeftRail';
 import BuilderInspector from './BuilderInspector';
 import TestPanel from './TestPanel';
+import QAPipeline from './QAPipeline';
 import ExportDialog from './ExportDialog';
 import { PFProvider } from '../runtime/context';
 import { RenderPage, type BlockModule } from '../runtime/renderPage';
@@ -39,6 +40,7 @@ export default function App() {
   const [publishing, setPublishing] = React.useState(false);
   const [builderMode, setBuilderMode] = React.useState(false); // Marketer (bounded) vs Builder (free-form)
   const [testOpen, setTestOpen] = React.useState(false);
+  const [qaOpen, setQaOpen] = React.useState(false);
   const saveTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
   const changeBaseline = React.useRef(0);
 
@@ -200,6 +202,7 @@ export default function App() {
           <button className="pro-icobtn" title="Undo" onClick={() => dispatch({ type: 'undo' })} disabled={!state.undoStack.length}>↩</button>
           <button className="pro-icobtn" title="Redo" onClick={() => dispatch({ type: 'redo' })} disabled={!state.redoStack.length}>↪</button>
           <span className="pro-tb-div" />
+          <button className="pro-btn ghost" onClick={() => setQaOpen(true)} title="AI QA pipeline — measured, staged, with evidence">🔬 QA</button>
           <button className="pro-btn ghost" onClick={() => setTestOpen(true)} title="Run the responsive test & scan">▶ Test</button>
           <button className="pro-btn ghost" onClick={() => setPreviewMode(true)}>Preview</button>
           <button className="pro-btn ghost" onClick={() => setExportOpen(true)}>Export</button>
@@ -222,6 +225,7 @@ export default function App() {
       <BuilderInspector state={state} dispatch={dispatch} builderMode={builderMode} />
 
       {testOpen && <TestPanel state={state} onClose={() => setTestOpen(false)} />}
+      {qaOpen && <QAPipeline state={state} onClose={() => setQaOpen(false)} />}
       {exportOpen && <ExportDialog projectId={state.project.id} onClose={() => setExportOpen(false)} />}
       {externalChange && (
         <div className="studio-notice">

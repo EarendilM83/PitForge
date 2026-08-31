@@ -14,6 +14,11 @@ projects/*
 !projects/demo/**
 
 # local Claude / MCP config and scratch — not part of the product
-.claude/
+.claude/*
+!.claude/skills/
+!.claude/skills/**
 demo-*.html
 projects/demo/dist/
+
+# QA evidence screenshots (regenerated per run)
+tests/.qa-evidence/

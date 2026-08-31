@@ -516,11 +516,28 @@ export const DOC_GROUPS: DocGroup[] = [
           <>
             <Lead>The <b>Test</b> button in the editor toolbar opens a panel that renders your page at a whole wall of widths at once — so you catch a broken layout before anyone else does.</Lead>
             <ul>
-              <li><b>Scan now</b> renders every breakpoint (320 up to 3200px) as a thumbnail and flags horizontal overflow or broken images.</li>
+              <li><b>Scan now</b> renders every breakpoint (320 up to 3200px) as a thumbnail; hover to auto-scroll a card and it flags horizontal overflow or broken images.</li>
               <li><b>Run with Playwright</b> runs the authoritative browser test suite and streams pass/fail results live.</li>
               <li><b>Zoom</b> any tile to inspect that exact width full-size.</li>
             </ul>
-            <p>You can also keep a checklist of things each page must guarantee; it’s saved with the site so Claude can honour it on the next build. If a width looks wrong, ask Claude to fix it the fluid way.</p>
+            <p>You can also keep a checklist of things each page must guarantee; it’s saved with the site (<code>tests/cases.json</code>) so Claude can honour it on the next build. If a width looks wrong, ask Claude to fix it the fluid way.</p>
+          </>
+        ),
+      },
+      {
+        id: 'ai-qa',
+        title: 'AI QA pipeline',
+        blurb: 'A senior-QA simulation you watch run — measured, staged, evidenced.',
+        body: (
+          <>
+            <Lead>The <b>🔬 QA</b> button runs a real QA pass, not a label check. Click <b>Run AI QA</b> and watch each breakpoint go through <b>Navigate → Measure → Screenshot → AI review</b>.</Lead>
+            <ul>
+              <li>Every check reports <b>Expected · Current · Delta</b> — the delta must be <b>0</b> to pass, and a non-zero delta points at exactly what to fix.</li>
+              <li>A <b>Page-wide</b> stage checks semantics/SEO, zero-JS, fonts and fluid scaling; each breakpoint checks typography, colour/contrast, spacing, flex/grid, images and interactive elements — about <b>100 measured checks</b>.</li>
+              <li>The <b>AI stage sends the real screenshot to your local Claude</b>, which reviews it like a QA engineer and returns a verdict. Evidence screenshots are saved — click any to enlarge.</li>
+            </ul>
+            <Note kind="gate" title="It takes real time — on purpose">A thorough visual QA pass runs for a minute or two, not a fraction of a second. The full deterministic catalog lives in <code>tests/qa-catalog.md</code>, and any AI agent is forced to run it before a site is “done” (see <code>AGENTS.md</code>).</Note>
+            <Cmd>node scripts/qa-run.mjs --project &lt;slug&gt;</Cmd>
           </>
         ),
       },

@@ -29,6 +29,8 @@ chokidar
 export function createApiApp(getRender: () => Promise<RenderHtml>): express.Express {
   const app = express();
   app.use(express.json({ limit: '10mb' }));
+  // QA evidence screenshots (written by scripts/qa-run.mjs)
+  app.use('/qa-evidence', express.static(path.join(process.cwd(), 'tests', '.qa-evidence')));
 
   // Dev-only: serve project asset files at /assets/* (the same URL shape the
   // export uses). The first project whose assets dir contains the file wins.
@@ -217,6 +219,28 @@ export function createApiApp(getRender: () => Promise<RenderHtml>): express.Expr
 
   // Live responsive test stream — spawns the pipeline in --stream mode and forwards its NDJSON
   // events as SSE so the Studio's test board can show Playwright running in real time.
+  // AI QA run — staged, evidence-producing (navigate → measure → screenshot → AI review),
+  // every check reports expected · current · delta. Streams NDJSON from scripts/qa-run.mjs as SSE.
+  app.get('/api/qa/stream', (req, res) => {
+    const proj = String(req.query.project || '');
+    res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
+    (res as unknown as { flushHeaders?: () => void }).flushHeaders?.();
+    const args = ['scripts/qa-run.mjs'];
+    if (proj) args.push('--project', proj);
+    if (req.query.full) args.push('--full');
+    const child = spawn('node', args, { cwd: process.cwd() });
+    let buf = '';
+    child.stdout.on('data', (d) => {
+      buf += d.toString();
+      const lines = buf.split('\n');
+      buf = lines.pop() || '';
+      for (const line of lines) if (line.trim()) res.write(`data: ${line}\n\n`);
+    });
+    child.stderr.on('data', () => {});
+    child.on('close', () => { res.write('data: {"t":"end"}\n\n'); res.end(); });
+    req.on('close', () => child.kill());
+  });
+
   app.get('/api/test/stream', (req, res) => {
     const project = String(req.query.project || '');
     res.set({ 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', Connection: 'keep-alive' });
