@@ -6,6 +6,7 @@ import multer from 'multer';
 import { listProjects, loadProject, saveContent, PROJECTS_DIR } from './projects';
 import { createProject } from './scaffold';
 import { processUpload } from './media';
+import { importStaticZip } from './importer';
 import { buildHead } from '../seo/head';
 import { runChecks, referencedAssetBytes } from '../seo/checks';
 import { exportProject } from './export';
@@ -14,6 +15,7 @@ import type { RenderHtml } from './ssr-entry';
 import chokidar from 'chokidar';
 
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } });
+const zipUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 50 * 1024 * 1024 } });
 
 // Watch project folders for external changes (§3). The Studio polls /version and
 // offers a reload when the timestamp moves. Stupidly simple on purpose.
@@ -28,12 +30,31 @@ chokidar
 
 export function createApiApp(getRender: () => Promise<RenderHtml>): express.Express {
   const app = express();
+  app.use((req, res, next) => {
+    const ip = req.socket.remoteAddress || '';
+    if (process.env.PITFORGE_ALLOW_NETWORK !== '1' && !['127.0.0.1', '::1', '::ffff:127.0.0.1'].includes(ip)) {
+      return res.status(403).json({ error: 'PitForge Studio is local-only. Set PITFORGE_ALLOW_NETWORK=1 to opt in to network access.' });
+    }
+    next();
+  });
   app.use(express.json({ limit: '10mb' }));
   // QA evidence screenshots (written by scripts/qa-run.mjs)
   app.use('/qa-evidence', express.static(path.join(process.cwd(), 'tests', '.qa-evidence')));
 
-  // Dev-only: serve project asset files at /assets/* (the same URL shape the
-  // export uses). The first project whose assets dir contains the file wins.
+  // Collision-free Studio/preview assets. Static exports keep the portable /assets/* shape.
+  app.get(/^\/assets\/([\w-]+)\/(.+)$/, (req, res, next) => {
+    const params = req.params as Record<string, string>;
+    const id = params[0];
+    const rel = params[1];
+    if (!/^[\w-]+$/.test(id) || rel.includes('..')) return next();
+    const file = path.resolve(PROJECTS_DIR, id, 'assets', rel);
+    const root = path.resolve(PROJECTS_DIR, id, 'assets') + path.sep;
+    if (!file.startsWith(root)) return next();
+    if (fs.existsSync(file)) return res.sendFile(file);
+    next();
+  });
+
+  // Backward-compatible route for authored/export-shaped URLs.
   app.get(/^\/assets\/(.+)$/, (req, res, next) => {
     const rel = (req.params as Record<string, string>)[0];
     if (rel.includes('..')) return next();
@@ -68,6 +89,17 @@ export function createApiApp(getRender: () => Promise<RenderHtml>): express.Expr
       const name = String(req.body?.name || '').trim();
       if (!name) return res.status(400).json({ error: 'A site name is required.' });
       res.status(201).json(createProject(name));
+    } catch (e) {
+      res.status(400).json({ error: (e as Error).message });
+    }
+  });
+
+  app.post('/api/import/zip', zipUpload.single('file'), (req, res) => {
+    try {
+      if (!req.file) return res.status(400).json({ error: 'Choose a ZIP file (field name: file).' });
+      if (!/\.zip$/i.test(req.file.originalname)) return res.status(400).json({ error: 'Only .zip files are accepted.' });
+      const name = String(req.body?.name || '').trim() || undefined;
+      res.status(201).json(importStaticZip(req.file.buffer, name));
     } catch (e) {
       res.status(400).json({ error: (e as Error).message });
     }
@@ -168,7 +200,7 @@ export function createApiApp(getRender: () => Promise<RenderHtml>): express.Expr
         return res.set('Cache-Control', 'no-store').redirect(302, `/preview/${req.params.id}?v=${ver}`);
       }
       const project = loadProject(req.params.id);
-      const body = await (await getRender())(project);
+      const body = (await (await getRender())(project)).replace(/(["'])\/assets\//g, `$1/assets/${encodeURIComponent(project.id)}/`);
       let css = project.tokensCss + '\n' + PF_UTILITIES_CSS + '\n';
       for (const name of project.config.blocks) {
         const p = path.join(PROJECTS_DIR, project.id, 'blocks', `${name}.css`);
@@ -179,6 +211,8 @@ export function createApiApp(getRender: () => Promise<RenderHtml>): express.Expr
       for (const fav of ['favicon.svg', 'favicon.ico']) {
         if (fs.existsSync(path.join(PROJECTS_DIR, project.id, 'assets', fav))) { faviconHref = `/assets/${fav}`; break; }
       }
+      css = css.replace(/\/assets\//g, `/assets/${encodeURIComponent(project.id)}/`);
+      faviconHref = faviconHref.replace(/^\/assets\//, `/assets/${encodeURIComponent(project.id)}/`);
       const head = buildHead(project, project.content, origin, { inlineCss: css, faviconHref });
       const lang = project.config.lang || 'en';
       res

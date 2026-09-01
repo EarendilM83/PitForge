@@ -1,6 +1,6 @@
 import React from 'react';
 
-type Mode = 'choose' | 'figma' | 'blank';
+type Mode = 'choose' | 'figma' | 'zip' | 'blank';
 
 /** "New site" dialog — the two ways a site enters PitForge. */
 export default function NewSiteDialog({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
@@ -9,11 +9,12 @@ export default function NewSiteDialog({ onClose, onCreated }: { onClose: () => v
     <div className="studio-modal-backdrop" onClick={onClose}>
       <div className="studio-modal" onClick={(e) => e.stopPropagation()}>
         <div className="studio-modal-head">
-          <h2>{mode === 'choose' ? 'Create a new site' : mode === 'figma' ? 'Import from Figma' : 'Start blank'}</h2>
+          <h2>{mode === 'choose' ? 'Create a new site' : mode === 'figma' ? 'Import from Figma' : mode === 'zip' ? 'Import a ZIP site' : 'Start blank'}</h2>
           <button className="studio-btn-link" onClick={onClose}>✕</button>
         </div>
         {mode === 'choose' && <Chooser onPick={setMode} />}
         {mode === 'figma' && <FigmaFlow onBack={() => setMode('choose')} />}
+        {mode === 'zip' && <ZipFlow onBack={() => setMode('choose')} onCreated={onCreated} />}
         {mode === 'blank' && <BlankFlow onBack={() => setMode('choose')} onCreated={onCreated} />}
       </div>
     </div>
@@ -39,6 +40,47 @@ function Chooser({ onPick }: { onPick: (m: Mode) => void }) {
         </span>
         <span className="studio-newsite-card-cta">Create a blank site →</span>
       </button>
+      <button className="studio-newsite-card" onClick={() => onPick('zip')}>
+        <span className="studio-newsite-card-title">Upload ZIP</span>
+        <span className="studio-muted">
+          Import a static HTML/CSS site. PitForge preserves its markup and assets, extracts SEO,
+          removes scripts, and creates an editable project.
+        </span>
+        <span className="studio-newsite-card-cta">Choose ZIP →</span>
+      </button>
+    </div>
+  );
+}
+
+function ZipFlow({ onBack, onCreated }: { onBack: () => void; onCreated: () => void }) {
+  const [file, setFile] = React.useState<File | null>(null);
+  const [name, setName] = React.useState('');
+  const [busy, setBusy] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [warnings, setWarnings] = React.useState<string[]>([]);
+  const run = async () => {
+    if (!file || busy) return;
+    setBusy(true); setError(null); setWarnings([]);
+    const body = new FormData(); body.append('file', file); if (name.trim()) body.append('name', name.trim());
+    try {
+      const r = await fetch('/api/import/zip', { method: 'POST', body });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || r.statusText);
+      if (data.warnings?.length) setWarnings(data.warnings);
+      setTimeout(onCreated, data.warnings?.length ? 900 : 0);
+    } catch (e) { setError((e as Error).message); setBusy(false); }
+  };
+  return (
+    <div>
+      <p className="studio-muted">Static HTML/CSS ZIP, up to 50 MB. JavaScript and unsafe markup are removed. Existing projects are never overwritten.</p>
+      <label className="studio-field"><span>ZIP file</span><input type="file" accept=".zip,application/zip" onChange={(e) => setFile(e.target.files?.[0] || null)} /></label>
+      <label className="studio-field"><span>Site name (optional)</span><input value={name} onChange={(e) => setName(e.target.value)} placeholder="Uses the HTML title when blank" /></label>
+      {error && <div className="studio-error">{error}</div>}
+      {!!warnings.length && <div className="studio-error">Imported with notes: {warnings.join(' ')}</div>}
+      <div className="studio-modal-actions">
+        <button className="studio-btn-link" onClick={onBack}>← Back</button>
+        <button className="studio-btn-primary" disabled={!file || busy} onClick={run}>{busy ? 'Importing…' : 'Import ZIP'}</button>
+      </div>
     </div>
   );
 }

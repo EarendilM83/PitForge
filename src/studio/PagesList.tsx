@@ -186,7 +186,7 @@ export default function PagesList({ onOpen }: { onOpen: (project: Project) => vo
                 <button className="pf-card pf-card-new" onClick={() => setNewOpen(true)}>
                   <span className="pf-card-new-plus">+</span>
                   <span>New site</span>
-                  <span className="pf-card-new-sub">Import from Figma or start blank</span>
+                  <span className="pf-card-new-sub">Import Figma/ZIP or start blank</span>
                 </button>
               </div>
             )}

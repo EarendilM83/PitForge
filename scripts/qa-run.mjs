@@ -199,9 +199,15 @@ const globalMetrics = (g) => [
   const lo = BPS[0], hi = BPS[BPS.length - 1];
   const fp = await browser.newPage({ viewport: { width: lo, height: 1000 } });
   await fp.goto(`${BASE}/preview/${project}`, { waitUntil: 'networkidle' });
-  const at = async (w) => { await fp.setViewportSize({ width: w, height: 1000 }); await fp.waitForTimeout(150); return fp.evaluate(() => { const h = document.querySelector('h1'); const s = document.querySelector('section, header, main'); return { h1: h ? Math.round(parseFloat(getComputedStyle(h).fontSize)) : 0, pad: s ? Math.round(parseFloat(getComputedStyle(s).paddingLeft)) : 0 }; }); };
+  const at = async (w) => { await fp.setViewportSize({ width: w, height: 1000 }); await fp.waitForTimeout(150); return fp.evaluate(() => {
+    const h = document.querySelector('h1');
+    const pads = [...document.querySelectorAll('main > *, section, header, footer')]
+      .map((el) => parseFloat(getComputedStyle(el).paddingLeft))
+      .filter(Number.isFinite);
+    return { h1: h ? Math.round(parseFloat(getComputedStyle(h).fontSize)) : 0, pad: pads.length ? Math.round(Math.max(...pads)) : 0 };
+  }); };
   const a = await at(lo), bmax = await at(hi); await fp.close();
-  for (const c of [mk('Fluid', 'type', `Headline scales ${lo}→${hi}px`, 'grows', `${a.h1}→${bmax.h1}px`, bmax.h1 > a.h1 ? 0 : 1), mk('Fluid', 'space', `Padding scales ${lo}→${hi}px`, 'grows', `${a.pad}→${bmax.pad}px`, bmax.pad >= a.pad ? 0 : 1)]) { tally(c.pass); emit({ t: 'gmetric', ...c }); }
+  for (const c of [mk('Fluid', 'type', `Headline scales ${lo}→${hi}px`, 'grows', `${a.h1}→${bmax.h1}px`, bmax.h1 > a.h1 ? 0 : 1), mk('Fluid', 'space', `Padding exists and scales ${lo}→${hi}px`, '>0 and non-decreasing', `${a.pad}→${bmax.pad}px`, a.pad > 0 && bmax.pad >= a.pad ? 0 : 1)]) { tally(c.pass); emit({ t: 'gmetric', ...c }); }
 
   await browser.close();
   // persist the run summary for the setup loop (projects/<id>/qa/last-run.json)

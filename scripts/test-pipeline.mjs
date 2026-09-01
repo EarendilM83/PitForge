@@ -16,6 +16,8 @@
 //         --sites-only | --editor-only | --stream
 
 import { chromium } from 'playwright';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const BASE = 'http://localhost:4321';
 const arg = (n, d) => { const i = process.argv.indexOf(`--${n}`); return i > -1 ? process.argv[i + 1] : d; };
@@ -93,6 +95,7 @@ async function checkScreens(browser, ids) {
   const errs = [];
   page.on('pageerror', (e) => errs.push(e.message.split('\n')[0]));
   page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text().split('\n')[0]); });
+  page.on('requestfailed', (r) => errs.push(`${r.failure()?.errorText || 'request failed'} :: ${r.url()}`));
   const noErr = (label) => check(errs.length === 0, `screen ${label} — no console/page errors${errs.length ? ' :: ' + errs[0] : ''}`, { kind: 'screen' });
   try {
     await page.goto(`${BASE}/`, { waitUntil: 'networkidle' }); await page.waitForTimeout(800);
@@ -101,6 +104,10 @@ async function checkScreens(browser, ids) {
     const enter = await page.$('button:has-text("Open Studio")'); if (enter) { await enter.click(); await page.waitForTimeout(600); }
     await dismissOverlays(page);
     check(await page.$('.pf-card') !== null, 'screen sites list renders', { kind: 'screen' });
+    await page.click('.pf-dash-new'); await page.waitForTimeout(200);
+    check(await page.$('button:has-text("Upload ZIP")') !== null, 'screen ZIP import option renders', { kind: 'screen' });
+    await page.keyboard.press('Escape');
+    const modalClose = await page.$('.studio-modal-head .studio-btn-link'); if (modalClose) await modalClose.click();
     errs.length = 0;
     await openEditor(page, ids[0]);
     check(await page.$('.pro-topbar') !== null && await page.$('.pro-rail') !== null && await page.$('.pro-insp') !== null, 'screen editor renders (3 columns)', { kind: 'screen' });
@@ -230,11 +237,21 @@ async function checkFluid(browser, id) {
   const page = await browser.newPage({ viewport: { width: 375, height: 900 } });
   try {
     await page.goto(`${BASE}/preview/${id}`, { waitUntil: 'networkidle' });
-    const measure = async (w) => { await page.setViewportSize({ width: w, height: 900 }); await page.waitForTimeout(180); return page.evaluate(() => { const h = document.querySelector('h1'); const p = document.querySelector('p'); const sec = document.querySelector('main section, section, header, main'); return { h1: h ? parseFloat(getComputedStyle(h).fontSize) : 0, body: p ? parseFloat(getComputedStyle(p).fontSize) : 0, pad: sec ? parseFloat(getComputedStyle(sec).paddingLeft) : 0 }; }); };
+    const measure = async (w) => { await page.setViewportSize({ width: w, height: 900 }); await page.waitForTimeout(180); return page.evaluate(() => {
+      const h = document.querySelector('h1');
+      const bodySizes = [...document.querySelectorAll('p,li,a,span')]
+        .filter((el) => el.textContent?.trim() && el.getBoundingClientRect().height > 0)
+        .map((el) => parseFloat(getComputedStyle(el).fontSize))
+        .filter((n) => Number.isFinite(n) && n <= 24);
+      const pads = [...document.querySelectorAll('main > *, section, header, footer')]
+        .map((el) => parseFloat(getComputedStyle(el).paddingLeft))
+        .filter(Number.isFinite);
+      return { h1: h ? parseFloat(getComputedStyle(h).fontSize) : 0, body: bodySizes.length ? Math.max(...bodySizes) : 0, pad: pads.length ? Math.max(...pads) : 0 };
+    }); };
     const a = await measure(375), b = await measure(1440);
     check(b.h1 > a.h1 + 1, `fluid ${id}: headline scales with width (${Math.round(a.h1)}->${Math.round(b.h1)}px)`, { kind: 'fluid' });
-    check(a.body === 0 || a.body >= 13, `fluid ${id}: body readable at 375px (${Math.round(a.body)}px)`, { kind: 'fluid' });
-    check(b.pad >= a.pad, `fluid ${id}: section padding scales up (${Math.round(a.pad)}->${Math.round(b.pad)}px)`, { kind: 'fluid' });
+    check(a.body >= 13, `fluid ${id}: body text exists and is readable at 375px (${Math.round(a.body)}px)`, { kind: 'fluid' });
+    check(a.pad > 0 && b.pad >= a.pad, `fluid ${id}: section padding exists and scales up (${Math.round(a.pad)}->${Math.round(b.pad)}px)`, { kind: 'fluid' });
     await page.setViewportSize({ width: 320, height: 900 }); await page.waitForTimeout(180);
     const over = await page.evaluate(() => [...document.querySelectorAll('h1,h2,h3,p')].filter((el) => el.scrollWidth > el.clientWidth + 4 && getComputedStyle(el).overflowX === 'visible').length);
     check(over === 0, `fluid ${id}: no text overflows its box at 320px (${over})`, { kind: 'fluid' });
@@ -252,10 +269,20 @@ async function checkInteractive(browser, id) {
       const small = ctas.filter((el) => { const b = el.getBoundingClientRect(); return b.height > 0 && (b.height < 40 || b.width < 40); }).length;
       const deadLinks = [...document.querySelectorAll('a')].filter((a) => !a.getAttribute('href')).length;
       const deadButtons = [...document.querySelectorAll('button')].filter((b) => !b.getAttribute('onclick') && b.type !== 'submit').length;
-      return { ctas: ctas.length, small, deadLinks };
+      const unfocusableLinks = [...document.querySelectorAll('a[href]')].filter((a) => a.tabIndex < 0).length;
+      return { ctas: ctas.length, small, deadLinks, unfocusableLinks, summaries: document.querySelectorAll('summary').length };
     });
     check(r.deadLinks === 0, `interactive ${id}: no links without a destination (${r.deadLinks})`, { kind: 'interactive' });
     check(r.small === 0, `interactive ${id}: CTA tap targets >= 40px on mobile (${r.small} too small)`, { kind: 'interactive' });
+    check(r.unfocusableLinks === 0, `interactive ${id}: links are keyboard-focusable (${r.unfocusableLinks} excluded)`, { kind: 'interactive' });
+    if (r.summaries) {
+      const summary = page.locator('summary').first();
+      const before = await summary.evaluate((el) => el.parentElement?.hasAttribute('open'));
+      await summary.focus();
+      await page.keyboard.press('Enter');
+      const after = await summary.evaluate((el) => el.parentElement?.hasAttribute('open'));
+      check(before !== after, `interactive ${id}: FAQ toggles with keyboard Enter`, { kind: 'interactive' });
+    }
   } catch (e) { check(false, `interactive ${id} — ${e.message.split('\n')[0]}`, { kind: 'interactive' }); }
   await page.close();
 }
@@ -287,13 +314,38 @@ async function checkContrast(browser, id) {
   await page.close();
 }
 
+// The editor tests type into a real Studio, and autosave persists to the project's
+// content/default.json — a git-tracked file for the shipped project. Snapshot the raw BYTES:
+// restoring through the API would rewrite the file with JSON.stringify's formatting and LF
+// endings, leaving the project dirty in git even after a clean run. Registering the restore on
+// exit/SIGINT too means an interrupted run (Ctrl+C mid-test) can't leave test copy behind.
+function snapshotContent(id) {
+  const file = path.join(process.cwd(), 'projects', id, 'content', 'default.json');
+  let bytes;
+  try { bytes = fs.readFileSync(file); } catch { return null; }
+  const snap = { file, bytes, done: false };
+  snap.restore = () => {
+    if (snap.done) return;
+    snap.done = true;
+    try { fs.writeFileSync(snap.file, snap.bytes); } catch {}
+  };
+  const onSignal = () => { snap.restore(); process.exit(130); };
+  snap.release = () => {
+    process.off('exit', snap.restore);
+    process.off('SIGINT', onSignal);
+    process.off('SIGTERM', onSignal);
+  };
+  process.on('exit', snap.restore);
+  process.on('SIGINT', onSignal);
+  process.on('SIGTERM', onSignal);
+  return snap;
+}
+
 // ---------- EDITOR: drive every interaction, assert its effect, restore content ----------
 async function editorE2E(browser, id) {
   const page = await browser.newPage({ viewport: { width: 1600, height: 940 } });
   page.on('dialog', (d) => d.accept('de')); // answer the "new language code" prompt
-  // snapshot original content so nothing this test does is persisted
-  let original = null;
-  try { original = await (await fetch(`${BASE}/api/projects/${id}`)).json(); } catch {}
+  const snap = snapshotContent(id);
   try {
     await openEditor(page, id);
     check(await page.$('.builder-layers') !== null, 'editor: Layers rail renders', { kind: 'editor' });
@@ -386,9 +438,13 @@ async function editorE2E(browser, id) {
     // undo/redo available after edits
     check(await page.$('.pro-icobtn[title="Undo"]') !== null, 'editor: undo control present', { kind: 'editor' });
   } catch (e) { check(false, `editor E2E — ${e.message.split('\n')[0]}`, { kind: 'editor' }); }
-  // restore original content so the project is untouched
-  if (original) { try { await fetch(`${BASE}/api/projects/${id}/content`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(original.content) }); } catch {} }
-  await page.close();
+  finally {
+    // Close the page FIRST: the Studio's autosave is debounced 800ms, so a pending PUT would
+    // otherwise land after the restore and dirty the file again. Then put the bytes back.
+    await page.close().catch(() => {});
+    await new Promise((r) => setTimeout(r, 300)); // let any in-flight save finish writing
+    if (snap) { snap.restore(); snap.release(); }
+  }
 }
 
 // ---------- run ----------

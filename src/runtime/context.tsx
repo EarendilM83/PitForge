@@ -5,6 +5,8 @@ export type Mode = 'edit' | 'static';
 
 export interface PFContextValue {
   mode: Mode;
+  /** Project namespace used for collision-free Studio/preview asset URLs. */
+  projectId?: string;
   content: Content;
   manifest: Manifest;
   selected: string | null;
