@@ -99,7 +99,8 @@ export function createApiApp(getRender: () => Promise<RenderHtml>): express.Expr
       if (!req.file) return res.status(400).json({ error: 'Choose a ZIP file (field name: file).' });
       if (!/\.zip$/i.test(req.file.originalname)) return res.status(400).json({ error: 'Only .zip files are accepted.' });
       const name = String(req.body?.name || '').trim() || undefined;
-      res.status(201).json(importStaticZip(req.file.buffer, name));
+      const mode = req.body?.mode === 'sections' ? 'sections' : 'preserve';
+      res.status(201).json(importStaticZip(req.file.buffer, name, { mode, source: `zip:${req.file.originalname}` }));
     } catch (e) {
       res.status(400).json({ error: (e as Error).message });
     }

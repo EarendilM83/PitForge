@@ -150,12 +150,16 @@ rewrites local assets, removes scripts/unsafe markup, and creates a validated pr
 overwriting an existing slug.
 
 ```sh
-npm run import -- --zip ./site.zip --name "My imported site"
+npm run import -- --zip ./site.zip --name "My imported site" --mode sections
+npm run import -- --github https://github.com/owner/repo --branch main --mode sections
 node scripts/qa-setup.mjs --project my-imported-site --init
 npm run test:ui -- --project my-imported-site
 ```
 
-The same importer is available in **Sites → New site → Upload ZIP**. ZIPs are limited to 50 MB
+The same ZIP importer is available in **Sites → New site → Upload ZIP**. `preserve` keeps one page
+block; `sections` creates separate Header/Section/Footer blocks when semantic markup is present.
+GitHub import performs a shallow clone without executing repository code; private repositories use
+the credentials already configured for Git. ZIPs are limited to 50 MB
 compressed, 200 MB unpacked and 5,000 files. This first version imports static output; JavaScript
 applications must be exported to static HTML first.
 

@@ -56,12 +56,13 @@ function ZipFlow({ onBack, onCreated }: { onBack: () => void; onCreated: () => v
   const [file, setFile] = React.useState<File | null>(null);
   const [name, setName] = React.useState('');
   const [busy, setBusy] = React.useState(false);
+  const [importMode, setImportMode] = React.useState<'preserve' | 'sections'>('preserve');
   const [error, setError] = React.useState<string | null>(null);
   const [warnings, setWarnings] = React.useState<string[]>([]);
   const run = async () => {
     if (!file || busy) return;
     setBusy(true); setError(null); setWarnings([]);
-    const body = new FormData(); body.append('file', file); if (name.trim()) body.append('name', name.trim());
+    const body = new FormData(); body.append('file', file); body.append('mode', importMode); if (name.trim()) body.append('name', name.trim());
     try {
       const r = await fetch('/api/import/zip', { method: 'POST', body });
       const data = await r.json();
@@ -75,6 +76,7 @@ function ZipFlow({ onBack, onCreated }: { onBack: () => void; onCreated: () => v
       <p className="studio-muted">Static HTML/CSS ZIP, up to 50 MB. JavaScript and unsafe markup are removed. Existing projects are never overwritten.</p>
       <label className="studio-field"><span>ZIP file</span><input type="file" accept=".zip,application/zip" onChange={(e) => setFile(e.target.files?.[0] || null)} /></label>
       <label className="studio-field"><span>Site name (optional)</span><input value={name} onChange={(e) => setName(e.target.value)} placeholder="Uses the HTML title when blank" /></label>
+      <label className="studio-field"><span>Import mode</span><select value={importMode} onChange={(e) => setImportMode(e.target.value as 'preserve' | 'sections')}><option value="preserve">Preserve as one page block</option><option value="sections">Split header/sections/footer</option></select></label>
       {error && <div className="studio-error">{error}</div>}
       {!!warnings.length && <div className="studio-error">Imported with notes: {warnings.join(' ')}</div>}
       <div className="studio-modal-actions">

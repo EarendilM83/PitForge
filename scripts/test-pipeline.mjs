@@ -95,7 +95,15 @@ async function checkScreens(browser, ids) {
   const errs = [];
   page.on('pageerror', (e) => errs.push(e.message.split('\n')[0]));
   page.on('console', (m) => { if (m.type() === 'error') errs.push(m.text().split('\n')[0]); });
-  page.on('requestfailed', (r) => errs.push(`${r.failure()?.errorText || 'request failed'} :: ${r.url()}`));
+  page.on('requestfailed', (r) => {
+    const errorText = r.failure()?.errorText || 'request failed';
+    // Chromium cancels in-flight passive assets when this test switches between
+    // editor/preview routes. That is a navigation lifecycle event, not a broken
+    // asset; HTTP failures and aborted document/XHR requests must still fail.
+    const passiveAsset = ['image', 'font', 'media'].includes(r.resourceType());
+    if (errorText === 'net::ERR_ABORTED' && passiveAsset) return;
+    errs.push(`${errorText} :: ${r.url()}`);
+  });
   const noErr = (label) => check(errs.length === 0, `screen ${label} — no console/page errors${errs.length ? ' :: ' + errs[0] : ''}`, { kind: 'screen' });
   try {
     await page.goto(`${BASE}/`, { waitUntil: 'networkidle' }); await page.waitForTimeout(800);
