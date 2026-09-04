@@ -2,6 +2,7 @@ import React, { useRef, useCallback, ReactNode } from 'react';
 import { usePF } from './context';
 import { getField, resolveValue, localizedValue, type ContentValue, type ImageValue, type LinkValue, type VideoValue } from './types';
 import { resolveOverrides, type StyleTokens, type VisTokens } from './pfUtilities';
+import { sanitizeRichText } from './sanitize';
 
 // ---------- shared edit-mode helpers ----------
 
@@ -138,7 +139,7 @@ export function PFTag({
 /** Minimal richtext: bold, italic, links only. Stored as a tiny HTML subset. */
 export function PFRichText({ field, className }: { field: string; className?: string }) {
   const { editProps, selected, pf } = useEditable({ field, text: true });
-  const html = String(localizedValue(pf.content, field, pf.lang) ?? '');
+  const html = sanitizeRichText(String(localizedValue(pf.content, field, pf.lang) ?? ''));
   if (pf.mode === 'static') return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />;
   return (
     <div
@@ -150,6 +151,12 @@ export function PFRichText({ field, className }: { field: string; className?: st
 }
 
 const WIDTHS = [400, 800, 1200, 1600];
+
+function assetUrl(src: string, projectId?: string) {
+  return projectId && src.startsWith('/assets/')
+    ? `/assets/${encodeURIComponent(projectId)}/${src.slice('/assets/'.length)}`
+    : src;
+}
 
 function srcsetFor(src: string, ext: string, origWidth?: number) {
   if (!src) return '';
@@ -170,12 +177,12 @@ export function PFImage({ field, className, sizes = '100vw' }: { field: string; 
   // Raster images ship avif + webp variants; webp is a universal fallback, so we drop the
   // heavy PNG entirely. SVGs have no variants — render them as a plain <img> (no dead sources).
   const isRaster = /\.(png|jpe?g)$/i.test(value.src);
-  const fallbackSrc = isRaster ? value.src.replace(/\.[^.]+$/, '.webp') : value.src;
+  const fallbackSrc = assetUrl(isRaster ? value.src.replace(/\.[^.]+$/, '.webp') : value.src, pf.mode === 'edit' ? pf.projectId : undefined);
   const fallbackExt = isRaster ? 'webp' : value.src.split('.').pop() || 'jpg';
   const img = (
     <img
       src={fallbackSrc}
-      srcSet={srcsetFor(value.src, fallbackExt, value.width)}
+      srcSet={srcsetFor(assetUrl(value.src, pf.mode === 'edit' ? pf.projectId : undefined), fallbackExt, value.width)}
       sizes={sizes}
       alt={value.alt}
       width={value.width}
@@ -187,7 +194,7 @@ export function PFImage({ field, className, sizes = '100vw' }: { field: string; 
   );
   const picture = value.src && isRaster ? (
     <picture>
-      <source type="image/avif" srcSet={srcsetFor(value.src, 'avif', value.width)} sizes={sizes} />
+      <source type="image/avif" srcSet={srcsetFor(assetUrl(value.src, pf.mode === 'edit' ? pf.projectId : undefined), 'avif', value.width)} sizes={sizes} />
       {img}
     </picture>
   ) : (
@@ -211,7 +218,7 @@ export function PFIcon({ field, className }: { field: string; className?: string
   React.useEffect(() => {
     if (pf.mode !== 'edit' || !value.src) return;
     let alive = true;
-    fetch(value.src)
+    fetch(assetUrl(value.src, pf.projectId))
       .then((r) => (r.ok ? r.text() : null))
       .then((t) => alive && setFetched(t))
       .catch(() => {});
@@ -224,7 +231,7 @@ export function PFIcon({ field, className }: { field: string; className?: string
   const el = svg ? (
     <span className={cls('pf-icon', [className])} role="img" aria-label={value.alt} dangerouslySetInnerHTML={{ __html: svg }} />
   ) : (
-    <img src={value.src} alt={value.alt} className={className} width={value.width} height={value.height} />
+    <img src={assetUrl(value.src, pf.mode === 'edit' ? pf.projectId : undefined)} alt={value.alt} className={className} width={value.width} height={value.height} />
   );
   if (pf.mode === 'static') return el;
   return (

@@ -143,6 +143,26 @@ symlink), so Claude behaves the same on every clone:
 
 ## For developers
 
+### Import an existing static site
+
+PitForge can import a static HTML/CSS ZIP in preserve mode. It extracts SEO metadata, copies and
+rewrites local assets, removes scripts/unsafe markup, and creates a validated project without
+overwriting an existing slug.
+
+```sh
+npm run import -- --zip ./site.zip --name "My imported site" --mode sections
+npm run import -- --github https://github.com/owner/repo --branch main --mode sections
+node scripts/qa-setup.mjs --project my-imported-site --init
+npm run test:ui -- --project my-imported-site
+```
+
+The same ZIP importer is available in **Sites → New site → Upload ZIP**. `preserve` keeps one page
+block; `sections` creates separate Header/Section/Footer blocks when semantic markup is present.
+GitHub import performs a shallow clone without executing repository code; private repositories use
+the credentials already configured for Git. ZIPs are limited to 50 MB
+compressed, 200 MB unpacked and 5,000 files. This first version imports static output; JavaScript
+applications must be exported to static HTML first.
+
 - **Projects are folders** in `./projects/` (no database): `pitforge.json` (config + block order),
   `manifest.json` (field types, zod-validated), `content/default.json`, `tokens.css`, `blocks/*.tsx`,
   `assets/`. The shipped `demo` project exercises every field type. (Your own sites stay local — only

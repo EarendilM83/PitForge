@@ -60,6 +60,7 @@ export async function renderStaticHtml(
     {
       value: {
         mode: 'static' as const,
+        projectId: project.id,
         content,
         manifest: project.manifest,
         selected: null,

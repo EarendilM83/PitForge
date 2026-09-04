@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "export": "node --import ./scripts/register-tsx.mjs src/cli/export.ts",
+    "import": "node --import ./scripts/register-tsx.mjs src/cli/import.ts",
     "typecheck": "tsc --noEmit",
     "verify": "node scripts/verify-responsive.mjs",
     "test:ui": "node scripts/test-pipeline.mjs",

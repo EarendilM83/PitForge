@@ -27,12 +27,13 @@ export default function Canvas({
         <div className="studio-page" style={{ maxWidth: width }}>
           {/* Scope the page's `body` rules (background, colour, font) to the artboard so the
               page renders on its own dark background here — not the Studio's workspace. */}
-          <style>{project.tokensCss.replace(/(^|})\s*body\s*\{/g, '$1 .studio-page{')}</style>
+          <style>{project.tokensCss.replace(/\/assets\//g, `/assets/${encodeURIComponent(project.id)}/`).replace(/(^|})\s*body\s*\{/g, '$1 .studio-page{')}</style>
           {/* Bounded style-override utilities — same set the export bundles ship. */}
           <style>{PF_UTILITIES_CSS}</style>
           <PFProvider
             value={{
               mode: 'edit',
+              projectId: project.id,
               content: state.content,
               manifest: project.manifest,
               selected: state.selected,
